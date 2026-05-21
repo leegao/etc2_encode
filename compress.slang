@@ -304,16 +304,56 @@ uint2 encode_etc1(Pixels pixels) {
   const FlagMode sb1 =
       horizontal ? FlagMode.HORIZONTAL_BOTTOM : FlagMode.VERTICAL_RIGHT;
 
-  uint8_t3 best_c0, best_c1;
-  uint8_t best_t0, best_t1;
+  uint8_t3 colors[2];
+  uint8_t tables[2];
   Selectors best_selectors;
 
-  const int8_t nb = 1; // consider +/- 1 additional neighboring table (3 total)
-  process_subblock<nb>(pixels, Y, sb0, best_c0, best_t0, best_selectors);
-  process_subblock<nb>(pixels, Y, sb1, best_c1, best_t1, best_selectors);
+  const int8_t nb = 2; // consider +/- 1 additional neighboring table (3 total)
+  // Don't unroll this loop, the inlining drastically increases reg pressure
+  for (int block = 0; block < 2; block++) {
+    process_subblock<nb>(pixels, Y, sb0, colors[block], tables[block],
+                         best_selectors);
+  }
 
-  return pack_etc1_individual_payload(best_c0, best_c1, best_t0, best_t1,
-                                      horizontal, best_selectors);
+  return pack_etc1_individual_payload(colors[0], colors[1], tables[0],
+                                      tables[1], horizontal, best_selectors);
+}
+
+void encode_etc2_alpha(uint8_t alphas[16], inout uint alpha_p0,
+                       inout uint alpha_p1) {
+  uint8_t min_a = 255;
+  uint8_t max_a = 0;
+  for (int i = 0; i < 16; ++i) {
+    var a = alphas[i];
+    min_a = min(min_a, a);
+    max_a = max(max_a, a);
+  }
+
+  uint base = min_a;
+  uint range = max_a - min_a;
+  uint multiplier = clamp(range / 22, 0u, 15u);
+
+  alpha_p0 = (base & 0xFF) | ((multiplier & 0xF) << 8) | (0u << 12);
+  alpha_p1 = 0;
+
+  for (int i = 0; i < 16; ++i) {
+    uint a = uint(alphas[i]);
+    int diff = int(a) - int(base);
+    int best_idx = 0;
+    int min_err = 1000;
+    for (int m = 0; m < 4; ++m) {
+      int val = alpha_modifier_table[m] * int(multiplier);
+      int err = abs(diff - val);
+      if (err < min_err) {
+        min_err = err;
+        best_idx = m;
+      }
+    }
+    if (i < 10)
+      alpha_p0 |= (uint(best_idx) << (16 + i * 3));
+    else
+      alpha_p1 |= (uint(best_idx) << ((i - 10) * 3));
+  }
 }
 
 uint flip_endian_encode(uint v) {
@@ -346,40 +386,9 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     }
   }
 
-  // Alpha Encoding
-  uint8_t min_a = 255;
-  uint8_t max_a = 0;
-  for (int i = 0; i < 16; ++i) {
-    var a = alphas[i];
-    min_a = min(min_a, a);
-    max_a = max(max_a, a);
-  }
-
-  uint base = min_a;
-  uint range = max_a - min_a;
-  uint multiplier = clamp(range / 22, 0u, 15u);
-
-  uint alpha_p0 = (base & 0xFF) | ((multiplier & 0xF) << 8) | (0u << 12);
+  uint alpha_p0 = 0;
   uint alpha_p1 = 0;
-
-  for (int i = 0; i < 16; ++i) {
-    uint a = uint(alphas[i]);
-    int diff = int(a) - int(base);
-    int best_idx = 0;
-    int min_err = 1000;
-    for (int m = 0; m < 4; ++m) {
-      int val = alpha_modifier_table[m] * int(multiplier);
-      int err = abs(diff - val);
-      if (err < min_err) {
-        min_err = err;
-        best_idx = m;
-      }
-    }
-    if (i < 10)
-      alpha_p0 |= (uint(best_idx) << (16 + i * 3));
-    else
-      alpha_p1 |= (uint(best_idx) << ((i - 10) * 3));
-  }
+  encode_etc2_alpha(alphas, alpha_p0, alpha_p1);
 
   uint2 packed = encode_etc1(pixels);
 
