@@ -6,7 +6,7 @@
 layout(row_major) uniform;
 layout(row_major) buffer;
 
-#line 27 0
+#line 29 0
 struct PushConstants_0
 {
     ivec2 u_TextureDimensions_0;
@@ -18,69 +18,71 @@ layout(std430) uniform block_PushConstants_0
     ivec2 u_TextureDimensions_0;
 }pushConstants_0;
 
-#line 19
+#line 2
 layout(std430, binding = 0) readonly buffer StructuredBuffer_vectorx3Cuint8_tx2C4x3E_t_0 {
     u8vec4 _data[];
 } input_rgba8_buffer_0;
 layout(std430, binding = 1) buffer StructuredBuffer_vectorx3Cuintx2C4x3E_t_0 {
     uvec4 _data[];
 } etc1_blocks_0;
+
+#line 26
 layout(std430, binding = 2) buffer StructuredBuffer_vectorx3Cuintx2C4x3E_t_1 {
     uvec4 _data[];
 } elapsed_time_0;
 
-#line 36
+#line 38
 const uint8_t  etc1_mod_table_0[16] = { uint8_t(2U), uint8_t(8U), uint8_t(5U), uint8_t(17U), uint8_t(9U), uint8_t(29U), uint8_t(13U), uint8_t(42U), uint8_t(18U), uint8_t(60U), uint8_t(24U), uint8_t(80U), uint8_t(33U), uint8_t(106U), uint8_t(47U), uint8_t(183U) };
 
-#line 34
+#line 36
 const uint8_t  alpha_modifier_table_0[4] = { uint8_t(2U), uint8_t(5U), uint8_t(8U), uint8_t(14U) };
 
-#line 322
+#line 324
 void encode_etc2_alpha_0(uint8_t  alphas_0[16], inout uint alpha_p0_0, inout uint alpha_p1_0)
 {
 
-#line 323
+#line 325
     uint8_t min_a_0 = uint8_t(255U);
 
-#line 323
+#line 325
     uint8_t max_a_0 = uint8_t(0U);
 
-#line 323
+#line 325
     int i_0 = 0;
 
 
     for(;;)
     {
 
-#line 326
+#line 328
         if(i_0 < 16)
         {
         }
         else
         {
 
-#line 326
+#line 328
             break;
         }
         uint8_t _S1 = min(min_a_0, alphas_0[i_0]);
         uint8_t _S2 = max(max_a_0, alphas_0[i_0]);
 
-#line 326
+#line 328
         int i_1 = i_0 + 1;
 
-#line 326
+#line 328
         min_a_0 = _S1;
 
-#line 326
+#line 328
         max_a_0 = _S2;
 
-#line 326
+#line 328
         i_0 = i_1;
 
-#line 326
+#line 328
     }
 
-#line 332
+#line 334
     uint base_0 = uint(min_a_0);
 
     uint multiplier_0 = clamp(uint(max_a_0 - min_a_0) / 22U, 0U, 15U);
@@ -88,110 +90,110 @@ void encode_etc2_alpha_0(uint8_t  alphas_0[16], inout uint alpha_p0_0, inout uin
     alpha_p0_0 = ((base_0 & 255U) | ((multiplier_0 & 15U) << 8)) | 0U;
     alpha_p1_0 = 0U;
 
-#line 337
+#line 339
     i_0 = 0;
 
     for(;;)
     {
 
-#line 339
+#line 341
         if(i_0 < 16)
         {
         }
         else
         {
 
-#line 339
+#line 341
             break;
         }
         int _S3 = int(uint(alphas_0[i_0])) - int(base_0);
 
-#line 341
+#line 343
         int min_err_0 = 1000;
 
-#line 341
+#line 343
         int best_idx_0 = 0;
 
-#line 341
+#line 343
         int m_0 = 0;
 
 
         for(;;)
         {
 
-#line 344
+#line 346
             if(m_0 < 4)
             {
             }
             else
             {
 
-#line 344
+#line 346
                 break;
             }
             int err_0 = abs(_S3 - int(alpha_modifier_table_0[m_0]) * int(multiplier_0));
             if(err_0 < min_err_0)
             {
 
-#line 347
+#line 349
                 min_err_0 = err_0;
 
-#line 347
+#line 349
                 best_idx_0 = m_0;
 
-#line 347
+#line 349
             }
 
-#line 344
+#line 346
             m_0 = m_0 + 1;
 
-#line 344
+#line 346
         }
 
-#line 352
+#line 354
         if(i_0 < 10)
         {
 
-#line 353
+#line 355
             alpha_p0_0 = alpha_p0_0 | (uint(best_idx_0) << (16 + i_0 * 3));
 
-#line 352
+#line 354
         }
         else
         {
             alpha_p1_0 = alpha_p1_0 | (uint(best_idx_0) << ((i_0 - 10) * 3));
 
-#line 352
+#line 354
         }
 
-#line 339
+#line 341
         i_0 = i_0 + 1;
 
-#line 339
+#line 341
     }
 
-#line 357
+#line 359
     return;
 }
 
 
-#line 141
+#line 143
 uint8_t luminance_0(u8vec3 pixel_0)
 {
 
-#line 142
+#line 144
     return uint8_t(int16_t(0.299072265625HF * float16_t(pixel_0.x) + 0.5869140625HF * float16_t(pixel_0.y) + 0.114013671875HF * float16_t(pixel_0.z)));
 }
 
 
-#line 132
+#line 134
 struct Luminances_0
 {
     uint8_t  data_0[16];
 };
 
 
-#line 114
+#line 116
 struct Pixels_0
 {
     u8vec3  data_1[16];
@@ -203,33 +205,33 @@ struct Pixels_0
 Luminances_0 Pixels_Y_0(Pixels_0 this_0)
 {
 
-#line 123
+#line 125
     Luminances_0 Y_0;
 
-#line 123
+#line 125
     int i_2 = 0;
 
     for(;;)
     {
 
-#line 125
+#line 127
         if(i_2 < 16)
         {
         }
         else
         {
 
-#line 125
+#line 127
             break;
         }
 
-#line 126
+#line 128
         Y_0.data_0[uint(i_2)] = uint8_t(int16_t(luminance_0(this_0.data_1[i_2])));
 
-#line 125
+#line 127
         i_2 = i_2 + 1;
 
-#line 125
+#line 127
     }
 
 
@@ -237,16 +239,16 @@ Luminances_0 Pixels_Y_0(Pixels_0 this_0)
 }
 
 
-#line 136
+#line 138
 int16_t Luminances_operatorx5Bx5D_get_0(Luminances_0 this_1, uint n_0)
 {
 
-#line 136
+#line 138
     return int16_t(this_1.data_0[n_0]);
 }
 
 
-#line 90
+#line 92
 struct FlagMode_0
 {
     uint8_t mode_0;
@@ -257,93 +259,93 @@ struct FlagMode_0
 uint8_t FlagMode_operatorx5Bx5D_get_0(FlagMode_0 this_2, uint8_t n_1)
 {
 
-#line 98
+#line 100
     if((this_2.mode_0) == uint8_t(0U))
     {
 
-#line 99
+#line 101
         return n_1;
     }
     else
     {
 
-#line 100
+#line 102
         if((this_2.mode_0) == uint8_t(1U))
         {
 
-#line 101
+#line 103
             return n_1 + uint8_t(8U);
         }
         else
         {
 
-#line 102
+#line 104
             if((this_2.mode_0) == uint8_t(2U))
             {
 
-#line 103
+#line 105
                 return ((n_1 >> 1) << 2) + (n_1 & uint8_t(1U));
             }
             else
             {
 
-#line 106
+#line 108
                 return ((n_1 >> 1) << 2) + (n_1 & uint8_t(1U)) + uint8_t(2U);
             }
 
-#line 106
+#line 108
         }
 
-#line 106
+#line 108
     }
 
-#line 106
+#line 108
 }
 
 
-#line 118
+#line 120
 u8vec3 Pixels_operatorx5Bx5D_get_0(Pixels_0 this_3, uint n_2)
 {
 
-#line 118
+#line 120
     return this_3.data_1[n_2];
 }
 
 
-#line 175
+#line 177
 void get_avg_color_0(Pixels_0 pixels_0, FlagMode_0 sb_0, out u8vec3 color_0)
 {
 
-#line 176
+#line 178
     i16vec3 _S4 = i16vec3(ivec3(0));
 
-#line 176
+#line 178
     uint8_t i_3 = uint8_t(0U);
 
-#line 176
+#line 178
     i16vec3 avg_0 = _S4;
     for(;;)
     {
 
-#line 177
+#line 179
         if(i_3 < uint8_t(8U))
         {
         }
         else
         {
 
-#line 177
+#line 179
             break;
         }
         i16vec3 avg_1 = avg_0 + i16vec3(Pixels_operatorx5Bx5D_get_0(pixels_0, uint(int(FlagMode_operatorx5Bx5D_get_0(sb_0, i_3)))));
 
-#line 177
+#line 179
         i_3 = i_3 + uint8_t(1U);
 
-#line 177
+#line 179
         avg_0 = avg_1;
 
-#line 177
+#line 179
     }
 
 
@@ -356,152 +358,152 @@ void get_avg_color_0(Pixels_0 pixels_0, FlagMode_0 sb_0, out u8vec3 color_0)
 }
 
 
-#line 40
+#line 42
 uint8_t select_table_index_0(float c_target_0)
 {
 
-#line 41
+#line 43
     if(c_target_0 < 12.5)
     {
 
-#line 42
+#line 44
         return uint8_t(0U);
     }
 
-#line 43
+#line 45
     if(c_target_0 < 23.0)
     {
 
-#line 44
+#line 46
         return uint8_t(1U);
     }
 
-#line 45
+#line 47
     if(c_target_0 < 35.5)
     {
 
-#line 46
+#line 48
         return uint8_t(2U);
     }
 
-#line 47
+#line 49
     if(c_target_0 < 51.0)
     {
 
-#line 48
+#line 50
         return uint8_t(3U);
     }
 
-#line 49
+#line 51
     if(c_target_0 < 70.0)
     {
 
-#line 50
+#line 52
         return uint8_t(4U);
     }
 
-#line 51
+#line 53
     if(c_target_0 < 93.0)
     {
 
-#line 52
+#line 54
         return uint8_t(5U);
     }
 
-#line 53
+#line 55
     if(c_target_0 < 144.5)
     {
 
-#line 54
+#line 56
         return uint8_t(6U);
     }
 
-#line 55
+#line 57
     return uint8_t(7U);
 }
 
 
-#line 200
+#line 202
 uint8_t get_table_index_0(Luminances_0 Y_1, FlagMode_0 sb_1)
 {
 
-#line 200
+#line 202
     uint8_t i_4 = uint8_t(0U);
 
-#line 200
+#line 202
     int16_t avg_Y_0 = int16_t(0S);
 
-#line 207
+#line 209
     for(;;)
     {
 
-#line 207
+#line 209
         if(i_4 < uint8_t(8U))
         {
         }
         else
         {
 
-#line 207
+#line 209
             break;
         }
         int16_t avg_Y_1 = avg_Y_0 + Luminances_operatorx5Bx5D_get_0(Y_1, uint(int(FlagMode_operatorx5Bx5D_get_0(sb_1, i_4))));
 
-#line 207
+#line 209
         i_4 = i_4 + uint8_t(1U);
 
-#line 207
+#line 209
         avg_Y_0 = avg_Y_1;
 
-#line 207
+#line 209
     }
 
 
 
     int16_t avg_Y_2 = avg_Y_0 / int16_t(8S);
 
-#line 211
+#line 213
     i_4 = uint8_t(0U);
 
-#line 211
+#line 213
     float16_t high_Y_sum_0 = 0.0HF;
 
-#line 211
+#line 213
     uint8_t high_count_0 = uint8_t(0U);
 
-#line 211
+#line 213
     float16_t low_Y_sum_0 = 0.0HF;
 
-#line 211
+#line 213
     uint8_t low_count_0 = uint8_t(0U);
 
     for(;;)
     {
 
-#line 213
+#line 215
         if(i_4 < uint8_t(8U))
         {
         }
         else
         {
 
-#line 213
+#line 215
             break;
         }
         int16_t _S5 = Luminances_operatorx5Bx5D_get_0(Y_1, uint(FlagMode_operatorx5Bx5D_get_0(sb_1, i_4)));
 
-#line 215
+#line 217
         if(_S5 >= avg_Y_2)
         {
             uint8_t _S6 = high_count_0 + uint8_t(1U);
 
-#line 217
+#line 219
             high_Y_sum_0 = high_Y_sum_0 + float16_t(_S5);
 
-#line 217
+#line 219
             high_count_0 = _S6;
 
-#line 215
+#line 217
         }
         else
         {
@@ -509,59 +511,59 @@ uint8_t get_table_index_0(Luminances_0 Y_1, FlagMode_0 sb_1)
 
             uint8_t _S7 = low_count_0 + uint8_t(1U);
 
-#line 220
+#line 222
             low_Y_sum_0 = low_Y_sum_0 + float16_t(_S5);
 
-#line 220
+#line 222
             low_count_0 = _S7;
 
-#line 215
+#line 217
         }
 
-#line 213
+#line 215
         i_4 = i_4 + uint8_t(1U);
 
-#line 213
+#line 215
     }
 
-#line 213
+#line 215
     float16_t high_avg_0;
 
-#line 225
+#line 227
     if(high_count_0 > uint8_t(0U))
     {
 
-#line 225
+#line 227
         high_avg_0 = high_Y_sum_0 / float16_t(high_count_0);
 
-#line 225
+#line 227
     }
     else
     {
 
-#line 225
+#line 227
         high_avg_0 = float16_t(avg_Y_2);
 
-#line 225
+#line 227
     }
 
-#line 225
+#line 227
     float16_t low_avg_0;
     if(low_count_0 > uint8_t(0U))
     {
 
-#line 226
+#line 228
         low_avg_0 = low_Y_sum_0 / float16_t(low_count_0);
 
-#line 226
+#line 228
     }
     else
     {
 
-#line 226
+#line 228
         low_avg_0 = float16_t(avg_Y_2);
 
-#line 226
+#line 228
     }
 
 
@@ -570,118 +572,118 @@ uint8_t get_table_index_0(Luminances_0 Y_1, FlagMode_0 sb_1)
 }
 
 
-#line 58
+#line 60
 void get_table_modifiers_0(int idx_0, out int16_t small_0, out int16_t big_0)
 {
 
-#line 59
+#line 61
     int _S8 = idx_0 * 2;
 
-#line 59
+#line 61
     small_0 = int16_t(etc1_mod_table_0[_S8]);
     big_0 = int16_t(etc1_mod_table_0[_S8 + 1]);
     return;
 }
 
 
-#line 187
+#line 189
 int16_t opt_selector_0(int table_idx_0, int Y_idx_0, int Y_avg_0, out uint8_t s_0)
 {
 
-#line 188
+#line 190
     int16_t d_0;
 
-#line 188
+#line 190
     int16_t c_0;
     get_table_modifiers_0(table_idx_0, d_0, c_0);
     int16_t T_0 = c_0 / int16_t(2S) + d_0 / int16_t(2S);
 
     int e_0 = Y_idx_0 - Y_avg_0;
 
-#line 192
+#line 194
     int _S9;
     if(e_0 < 0)
     {
 
-#line 193
+#line 195
         _S9 = 1;
 
-#line 193
+#line 195
     }
     else
     {
 
-#line 193
+#line 195
         _S9 = 0;
 
-#line 193
+#line 195
     }
 
-#line 193
+#line 195
     uint8_t sign_bit_0 = uint8_t(_S9);
     if((abs(e_0)) > int(T_0))
     {
 
-#line 194
+#line 196
         _S9 = 1;
 
-#line 194
+#line 196
     }
     else
     {
 
-#line 194
+#line 196
         _S9 = 0;
 
-#line 194
+#line 196
     }
 
-#line 194
+#line 196
     uint8_t mag_bit_0 = uint8_t(_S9);
     s_0 = (sign_bit_0 << 1) | mag_bit_0;
 
-#line 195
+#line 197
     int16_t _S10;
 
     if(mag_bit_0 == uint8_t(1U))
     {
 
-#line 197
+#line 199
         _S10 = c_0;
 
-#line 197
+#line 199
     }
     else
     {
 
-#line 197
+#line 199
         _S10 = d_0;
 
-#line 197
+#line 199
     }
 
-#line 197
+#line 199
     int _S11 = int(_S10);
 
-#line 197
+#line 199
     if(sign_bit_0 == uint8_t(1U))
     {
 
-#line 197
+#line 199
         _S9 = -1;
 
-#line 197
+#line 199
     }
     else
     {
 
-#line 197
+#line 199
         _S9 = 1;
 
-#line 197
+#line 199
     }
 
-#line 197
+#line 199
     return int16_t(_S11 * _S9);
 }
 
@@ -727,18 +729,18 @@ int dot_0(ivec3 x_0, ivec3 y_0)
 }
 
 
-#line 233 0
+#line 235 0
 struct Selectors_0
 {
     uint8_t  data_2[16];
 };
 
 
-#line 242
+#line 244
 void process_subblock_0(Pixels_0 pixels_1, Luminances_0 Y_2, FlagMode_0 sb_2, inout u8vec3 packed_color_0, out uint8_t best_table_0, out Selectors_0 best_selectors_0)
 {
 
-#line 248
+#line 250
     get_avg_color_0(pixels_1, sb_2, packed_color_0);
     uint8_t _S12 = luminance_0(packed_color_0 * uint8_t(17U));
 
@@ -750,59 +752,59 @@ void process_subblock_0(Pixels_0 pixels_1, Luminances_0 Y_2, FlagMode_0 sb_2, in
 
     uint8_t _S14 = uint8_t(initial_table_idx_0 - int8_t(2));
 
-#line 257
+#line 259
     int min_block_error_0 = 2147483647;
 
-#line 257
+#line 259
     uint8_t t_0 = _S14;
 
-#line 257
+#line 259
     for(;;)
     {
 
-#line 257
+#line 259
         if(t_0 <= uint8_t(initial_table_idx_0 + int8_t(2)))
         {
         }
         else
         {
 
-#line 257
+#line 259
             break;
         }
         Selectors_0 current_selectors_0;
 
-#line 259
+#line 261
         uint8_t p_0 = uint8_t(0U);
 
-#line 259
+#line 261
         int current_table_error_0 = 0;
 
 
         for(;;)
         {
 
-#line 262
+#line 264
             if(p_0 < uint8_t(8U))
             {
             }
             else
             {
 
-#line 262
+#line 264
                 break;
             }
 
-#line 263
+#line 265
             uint8_t idx_1 = FlagMode_operatorx5Bx5D_get_0(sb_2, p_0);
 
             uint _S15 = uint(idx_1);
 
-#line 264
+#line 266
             uint8_t s_1;
             int16_t modifier_0 = opt_selector_0(int(t_0), int(Luminances_operatorx5Bx5D_get_0(Y_2, _S15)), int(_S12), s_1);
 
-#line 270
+#line 272
             ivec3 diff_0 = clamp(ivec3(i16vec3(_S13) + modifier_0), ivec3(0), ivec3(255)) - ivec3(Pixels_operatorx5Bx5D_get_0(pixels_1, _S15));
 
 
@@ -810,85 +812,85 @@ void process_subblock_0(Pixels_0 pixels_1, Luminances_0 Y_2, FlagMode_0 sb_2, in
 
             current_selectors_0.data_2[idx_1] = s_1;
 
-#line 262
+#line 264
             p_0 = p_0 + uint8_t(1U);
 
-#line 262
+#line 264
             current_table_error_0 = current_table_error_1;
 
-#line 262
+#line 264
         }
 
-#line 278
+#line 280
         if(current_table_error_0 < min_block_error_0)
         {
             best_table_0 = t_0;
             best_selectors_0 = current_selectors_0;
 
-#line 281
+#line 283
             min_block_error_0 = current_table_error_0;
 
-#line 278
+#line 280
         }
 
-#line 257
+#line 259
         t_0 = t_0 + uint8_t(1U);
 
-#line 257
+#line 259
     }
 
-#line 284
+#line 286
     return;
 }
 
 
-#line 90
+#line 92
 FlagMode_0 FlagMode_x24init_0(uint8_t mode_1)
 {
 
-#line 90
+#line 92
     FlagMode_0 _S16;
     _S16.mode_0 = mode_1;
 
-#line 90
+#line 92
     return _S16;
 }
 
 
-#line 237
+#line 239
 uint8_t Selectors_operatorx5Bx5D_get_0(Selectors_0 this_4, uint8_t n_3)
 {
 
-#line 237
+#line 239
     return this_4.data_2[n_3];
 }
 
 
-#line 146
+#line 148
 uvec2 pack_etc1_individual_payload_0(u8vec3 c0_0, u8vec3 c1_0, uint8_t t0_0, uint8_t t1_0, bool horizontal_0, Selectors_0 selectors_0)
 {
 
-#line 154
+#line 156
     uint py_0 = ((((0U | (((uint(c0_0.x) << 28) | (uint(c0_0.y) << 20)) | (uint(c0_0.z) << 12))) | (((uint(c1_0.x) << 24) | (uint(c1_0.y) << 16)) | (uint(c1_0.z) << 8))) | ((uint(t0_0) << 5) | (uint(t1_0) << 2))) | 0U) | uint(horizontal_0);
 
-#line 154
+#line 156
     uint8_t i_6 = uint8_t(0U);
 
-#line 154
+#line 156
     uint px_0 = 0U;
 
-#line 159
+#line 161
     for(;;)
     {
 
-#line 159
+#line 161
         if(i_6 < uint8_t(16U))
         {
         }
         else
         {
 
-#line 159
+#line 161
             break;
         }
 
@@ -896,36 +898,36 @@ uvec2 pack_etc1_individual_payload_0(u8vec3 c0_0, u8vec3 c1_0, uint8_t t0_0, uin
 
         uint8_t sel_0 = Selectors_operatorx5Bx5D_get_0(selectors_0, i_6);
 
-#line 169
+#line 171
         uint px_1 = (px_0 | (uint(sel_0 & uint8_t(1U)) << uint(lp_0))) | (uint((sel_0 >> 1) & uint8_t(1U)) << uint(16 + lp_0));
 
-#line 159
+#line 161
         i_6 = i_6 + uint8_t(1U);
 
-#line 159
+#line 161
         px_0 = px_1;
 
-#line 159
+#line 161
     }
 
-#line 172
+#line 174
     return uvec2(px_0, py_0);
 }
 
 
-#line 286
+#line 288
 uvec2 encode_etc1_0(Pixels_0 pixels_2)
 {
 
-#line 287
+#line 289
     Luminances_0 Y_3 = Pixels_Y_0(pixels_2);
 
-#line 307
+#line 309
     u8vec3  colors_0[2];
     uint8_t  tables_0[2];
     Selectors_0 best_selectors_1;
 
-#line 309
+#line 311
     int block_0 = 0;
 
 
@@ -933,32 +935,32 @@ uvec2 encode_etc1_0(Pixels_0 pixels_2)
     for(;;)
     {
 
-#line 313
+#line 315
         if(block_0 < 2)
         {
         }
         else
         {
 
-#line 313
+#line 315
             break;
         }
 
-#line 314
+#line 316
         process_subblock_0(pixels_2, Y_3, FlagMode_x24init_0(uint8_t(0U)), colors_0[block_0], tables_0[block_0], best_selectors_1);
 
-#line 313
+#line 315
         block_0 = block_0 + 1;
 
-#line 313
+#line 315
     }
 
-#line 318
+#line 320
     return pack_etc1_individual_payload_0(colors_0[0], colors_0[1], tables_0[0], tables_0[1], true, best_selectors_1);
 }
 
 
-#line 359
+#line 361
 uint flip_endian_encode_0(uint v_0)
 {
     uvec4 words_0 = ((uvec4(v_0)) >> uvec4(0U, 8U, 16U, 24U)) & 255U;
@@ -972,80 +974,82 @@ layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 void main()
 {
 
-#line 369
+#line 371
     ivec2 _S17 = ivec2(gl_GlobalInvocationID.xy);
     ivec2 tex_coord_0 = _S17 * 4;
 
+
     uvec2 startTime_0 = (clockRealtime2x32EXT());
+
 
     if((any(bvec2((greaterThanEqual(tex_coord_0,pushConstants_0.u_TextureDimensions_0))))))
     {
 
-#line 375
+#line 379
         return;
     }
     Pixels_0 pixels_3;
     uint8_t  alphas_1[16];
     uint _S18 = uint(pushConstants_0.u_TextureDimensions_0.x);
 
-#line 379
+#line 383
     int y_1 = 0;
     for(;;)
     {
 
-#line 380
+#line 384
         if(y_1 < 4)
         {
         }
         else
         {
 
-#line 380
+#line 384
             break;
         }
 
-#line 380
+#line 384
         int x_1 = 0;
         for(;;)
         {
 
-#line 381
+#line 385
             if(x_1 < 4)
             {
             }
             else
             {
 
-#line 381
+#line 385
                 break;
             }
             u8vec4 tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_1) * _S18 + uint(tex_coord_0.x + x_1))];
             int _S19 = y_1 * 4 + x_1;
 
-#line 384
+#line 388
             pixels_3.data_1[uint(_S19)] = tex_element_0.xyz;
             alphas_1[_S19] = tex_element_0.w;
 
-#line 381
+#line 385
             x_1 = x_1 + 1;
 
-#line 381
+#line 385
         }
 
-#line 380
+#line 384
         y_1 = y_1 + 1;
 
-#line 380
+#line 384
     }
 
-#line 389
+#line 393
     uint alpha_p0_1 = 0U;
     uint alpha_p1_1 = 0U;
     encode_etc2_alpha_0(alphas_1, alpha_p0_1, alpha_p1_1);
 
     uvec2 packed_0 = encode_etc1_0(pixels_3);
 
-#line 399
+#line 403
     uint buffer_index_0 = uint(_S17.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S17.x);
     etc1_blocks_0._data[uint(buffer_index_0)] = uvec4(alpha_p0_1, alpha_p1_1, flip_endian_encode_0(packed_0.y), flip_endian_encode_0(packed_0.x));
 
@@ -1053,11 +1057,12 @@ void main()
 
     uint _S20 = startTime_0.x;
 
-#line 404
+#line 408
     uint _S21 = startTime_0.y;
 
-#line 403
+#line 407
     elapsed_time_0._data[uint(buffer_index_0)] = uvec4(_S20, _S21, _S20, _S21);
+
 
     return;
 }

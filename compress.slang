@@ -1,3 +1,10 @@
+[[vk::binding(0, 0)]]
+StructuredBuffer<uint8_t4> input_rgba8_buffer;
+
+[[vk::binding(1, 0)]]
+RWStructuredBuffer<uint4> etc1_blocks;
+
+#ifdef ENABLE_DIAGNOSTICS
 __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
   __target_switch {
   case spirv:
@@ -15,14 +22,9 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
   }
 }
 
-[[vk::binding(0, 0)]]
-StructuredBuffer<uint8_t4> input_rgba8_buffer;
-
-[[vk::binding(1, 0)]]
-RWStructuredBuffer<uint4> etc1_blocks;
-
 [[vk::binding(2, 0)]]
 RWStructuredBuffer<uint4> elapsed_time;
+#endif
 
 struct PushConstants {
   int2 u_TextureDimensions;
@@ -369,7 +371,9 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   int2 block_pos = int2(gl_GlobalInvocationID.xy);
   int2 tex_coord = block_pos * 4;
 
+#ifdef ENABLE_DIAGNOSTICS
   uint2 startTime = clockRealtime2x32EXT();
+#endif
 
   if (any(tex_coord >= pushConstants.u_TextureDimensions))
     return;
@@ -399,7 +403,8 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
       block_pos.y * (pushConstants.u_TextureDimensions.x / 4) + block_pos.x;
   etc1_blocks[buffer_index] = uint4(alpha_p0, alpha_p1, color_p0, color_p1);
 
-  // uint2 endTime = clockRealtime2x32EXT();
+#ifdef ENABLE_DIAGNOSTICS
   elapsed_time[buffer_index] =
       uint4(startTime.x, startTime.y, startTime.x, startTime.y);
+#endif
 }
