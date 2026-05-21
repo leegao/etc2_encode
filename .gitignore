@@ -18,10 +18,10 @@
 *.pdb
 
 # Compiled Dynamic libraries
-*.so
+# *.so
 *.dylib
 *.dll
-*.so.*
+# *.so.*
 
 
 # Fortran module files
@@ -67,3 +67,8 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+output.*
+*.spv
+compress.inc
+*.old
