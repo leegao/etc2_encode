@@ -121,7 +121,7 @@ struct Pixels {
 
   Luminances Y() {
     Luminances Y;
-    [[unroll]]
+    // [[unroll]]
     for (int i = 0; i < 16; ++i) {
       Y[i] = luminance(data[i]);
     }
@@ -155,7 +155,7 @@ inline uint2 pack_etc1_individual_payload(uint8_t3 c0, uint8_t3 c1, uint8_t t0,
 
   uint px = 0u;
 
-  [[unroll]]
+  // [[unroll]]
   for (uint8_t i = 0; i < 16; ++i) {
     int x = i % 4;
     int y = i / 4;
@@ -258,7 +258,7 @@ void process_subblock<let nb : int8_t = 1>(const Pixels pixels,
     int current_table_error = 0;
     Selectors current_selectors;
 
-    [[unroll]]
+    // [[unroll]]
     for (uint8_t p = 0; p < 8; p++) {
       var idx = sb[p];
       uint8_t s;

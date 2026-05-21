@@ -3,7 +3,6 @@
 #extension GL_EXT_shader_explicit_arithmetic_types : require
 #extension GL_EXT_shader_realtime_clock : require
 #extension GL_EXT_shader_16bit_storage : require
-#extension GL_EXT_control_flow_attributes : require
 layout(row_major) uniform;
 layout(row_major) buffer;
 
@@ -210,7 +209,6 @@ Luminances_0 Pixels_Y_0(Pixels_0 this_0)
 #line 123
     int i_2 = 0;
 
-    [[unroll]]
     for(;;)
     {
 
@@ -781,7 +779,6 @@ void process_subblock_0(Pixels_0 pixels_1, Luminances_0 Y_2, FlagMode_0 sb_2, in
         int current_table_error_0 = 0;
 
 
-        [[unroll]]
         for(;;)
         {
 
@@ -881,7 +878,6 @@ uvec2 pack_etc1_individual_payload_0(u8vec3 c0_0, u8vec3 c1_0, uint8_t t0_0, uin
     uint px_0 = 0U;
 
 #line 159
-    [[unroll]]
     for(;;)
     {
 
