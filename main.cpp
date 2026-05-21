@@ -162,31 +162,9 @@ int main() {
     VkCommandPoolCreateInfo poolInfo{ VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, queueFamilyIndex };
     VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
 
-    VkImage sourceImage;
-    VkImageCreateInfo imgInfo{ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO };
-    imgInfo.imageType = VK_IMAGE_TYPE_2D;
-    imgInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
-    imgInfo.extent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1 };
-    imgInfo.mipLevels = 1;
-    imgInfo.arrayLayers = 1;
-    imgInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imgInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-    imgInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-    VK_CHECK(vkCreateImage(device, &imgInfo, nullptr, &sourceImage));
-
-    VkMemoryRequirements srcMemReqs;
-    vkGetImageMemoryRequirements(device, sourceImage, &srcMemReqs);
-    VkMemoryAllocateInfo srcAlloc{ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, nullptr, srcMemReqs.size, FindMemoryType(physicalDevice, srcMemReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) };
-    VkDeviceMemory sourceImageMemory;
-    VK_CHECK(vkAllocateMemory(device, &srcAlloc, nullptr, &sourceImageMemory));
-    vkBindImageMemory(device, sourceImage, sourceImageMemory, 0);
-
-    VkImageView sourceImageView;
-    VkImageViewCreateInfo viewInfo{ VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, nullptr, 0, sourceImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_UNORM, {}, {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1} };
-    VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &sourceImageView));
-
     VkBuffer stagingBuffer;
-    VkBufferCreateInfo stageBufInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, static_cast<VkDeviceSize>(width * height * 4), VK_BUFFER_USAGE_TRANSFER_SRC_BIT };
+    size_t stagingBufferSize = static_cast<size_t>(width) * height * 4;
+    VkBufferCreateInfo stageBufInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, stagingBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT };
     VK_CHECK(vkCreateBuffer(device, &stageBufInfo, nullptr, &stagingBuffer));
     VkMemoryRequirements stageReqs;
     vkGetBufferMemoryRequirements(device, stagingBuffer, &stageReqs);
@@ -197,8 +175,8 @@ int main() {
 
     // Load test.png into staging buffer
     void* mappedData;
-    vkMapMemory(device, stagingMemory, 0, width * height * 4, 0, &mappedData);
-    std::memcpy(mappedData, pixelData, width * height * 4);
+    vkMapMemory(device, stagingMemory, 0, stagingBufferSize, 0, &mappedData);
+    std::memcpy(mappedData, pixelData, stagingBufferSize);
     vkUnmapMemory(device, stagingMemory);
     stbi_image_free(pixelData);
 
@@ -225,21 +203,13 @@ int main() {
     VkCommandBuffer cmd;
     VkCommandBufferAllocateInfo cmdAllocInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1 };
     vkAllocateCommandBuffers(device, &cmdAllocInfo, &cmd);
-
-    // Copy the staging buffer data (test.png in rgba8) to the source image
     VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
     vkBeginCommandBuffer(cmd, &beginInfo);
-    VkImageMemoryBarrier copyBarrier{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, nullptr, 0, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, queueFamilyIndex, queueFamilyIndex, sourceImage, {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1} };
-    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &copyBarrier);
-    VkBufferImageCopy region{ 0, 0, 0, {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1}, {0, 0, 0}, {static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1} };
-    vkCmdCopyBufferToImage(cmd, stagingBuffer, sourceImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
-    VkImageMemoryBarrier computeBarrier{ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, nullptr, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL, queueFamilyIndex, queueFamilyIndex, sourceImage, {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1} };
-    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &computeBarrier);
 
     VkDescriptorSetLayoutBinding bindings[3] = {};
-    // Binding 0: source image
+    // Binding 0: source buffer (uint8_t4 pixels)
     bindings[0].binding = 0;
-    bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     bindings[0].descriptorCount = 1;
     bindings[0].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
     // Binding 1: etc2 ssbo
@@ -278,7 +248,7 @@ int main() {
     VK_CHECK(vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &computePipeInfo, nullptr, &computePipeline));
 
     VkDescriptorPoolSize poolSizes[3] = {};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE; // src image
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER; // src buffer
     poolSizes[0].descriptorCount = 1;
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER; // etc2 ssbo
     poolSizes[1].descriptorCount = 1;
@@ -292,9 +262,10 @@ int main() {
     VkDescriptorSet descriptorSet;
     VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet));
 
-    VkDescriptorImageInfo imageDescInfo{};
-    imageDescInfo.imageView = sourceImageView;
-    imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+    VkDescriptorBufferInfo srcBufferDescInfo{};
+    srcBufferDescInfo.buffer = stagingBuffer;
+    srcBufferDescInfo.offset = 0;
+    srcBufferDescInfo.range = stagingBufferSize;
 
     VkDescriptorBufferInfo bufferDescInfo{};
     bufferDescInfo.buffer = compressedBuffer;
@@ -307,7 +278,7 @@ int main() {
     bufferDescInfo2.range = profileBufferSize;
 
     VkWriteDescriptorSet descriptorWrites[3] = {};
-    descriptorWrites[0] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, &imageDescInfo, nullptr, nullptr };
+    descriptorWrites[0] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &srcBufferDescInfo, nullptr };
     descriptorWrites[1] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 1, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferDescInfo, nullptr };
     descriptorWrites[2] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 2, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferDescInfo2, nullptr };
 

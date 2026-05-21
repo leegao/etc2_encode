@@ -16,7 +16,7 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
 }
 
 [[vk::binding(0, 0)]]
-RWTexture2D<float4> u_InputTexture;
+StructuredBuffer<uint8_t4> input_rgba8_buffer;
 
 [[vk::binding(1, 0)]]
 RWStructuredBuffer<uint4> etc1_blocks;
@@ -109,7 +109,6 @@ struct FlagMode {
     }
   }
 };
-
 #endif
 
 struct Pixels {
@@ -336,20 +335,22 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     return;
 
   Pixels pixels;
-  half alphas[16];
+  uint8_t alphas[16];
+  uint width = pushConstants.u_TextureDimensions.x;
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
-      float4 tex_element = u_InputTexture[tex_coord + int2(x, y)];
-      pixels[y * 4 + x] = uint8_t3(round(tex_element.rgb * 255.0));
-      alphas[y * 4 + x] = half(tex_element.a);
+      uint8_t4 tex_element =
+          input_rgba8_buffer[(tex_coord.y + y) * width + (tex_coord.x + x)];
+      pixels[y * 4 + x] = tex_element.rgb;
+      alphas[y * 4 + x] = tex_element.a;
     }
   }
 
   // Alpha Encoding
-  uint min_a = 255;
-  uint max_a = 0;
+  uint8_t min_a = 255;
+  uint8_t max_a = 0;
   for (int i = 0; i < 16; ++i) {
-    uint a = uint(alphas[i] * 255.0);
+    var a = alphas[i];
     min_a = min(min_a, a);
     max_a = max(max_a, a);
   }
@@ -362,7 +363,7 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   uint alpha_p1 = 0;
 
   for (int i = 0; i < 16; ++i) {
-    uint a = uint(alphas[i] * 255.0);
+    uint a = uint(alphas[i]);
     int diff = int(a) - int(base);
     int best_idx = 0;
     int min_err = 1000;
