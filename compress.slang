@@ -1,10 +1,17 @@
+// MIT License
+// Copyright (c) 2026 Lee Gao
+
+// Design Doc:
+// https://docs.google.com/document/d/1lyu7vRDGmXe3G0DedLf9aiBVK9pElZ9lzdGqAUd0B8o/edit?usp=sharing
+
 [[vk::binding(0, 0)]]
-StructuredBuffer<uint8_t4> input_rgba8_buffer;
+StructuredBuffer<uint> input_rgba8_buffer;
 
 [[vk::binding(1, 0)]]
 RWStructuredBuffer<uint4> etc1_blocks;
 
 #ifdef ENABLE_DIAGNOSTICS
+// Not available on Mali/Adreno :(
 __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
   __target_switch {
   case spirv:
@@ -33,13 +40,13 @@ struct PushConstants {
 [[vk::push_constant]]
 PushConstants pushConstants;
 
-static const uint8_t alpha_modifier_table[4] = { 2, 5, 8, 14 };
+static const uint alpha_modifier_table[4] = { 2, 5, 8, 14 };
 
-static const uint8_t etc1_mod_table[16] = {
+static const uint etc1_mod_table[16] = {
   2, 8, 5, 17, 9, 29, 13, 42, 18, 60, 24, 80, 33, 106, 47, 183,
 };
 
-uint8_t select_table_index(float c_target) {
+uint select_table_index(float c_target) {
   if (c_target < 12.5)
     return 0;
   if (c_target < 23.0)
@@ -57,7 +64,7 @@ uint8_t select_table_index(float c_target) {
   return 7;
 }
 
-inline void get_table_modifiers(int idx, out int16_t small, out int16_t big) {
+inline void get_table_modifiers(int idx, out int small, out int big) {
   small = etc1_mod_table[idx * 2];
   big = etc1_mod_table[idx * 2 + 1];
 }
@@ -72,30 +79,28 @@ inline void get_table_modifiers(int idx, out int16_t small, out int16_t big) {
 
 #ifdef USE_FLAG_MODE_ARRAY
 struct FlagMode {
-  uint8_t idx[8];
+  uint idx[8];
   static const FlagMode VERTICAL_LEFT = FlagMode( { 0, 1, 4, 5, 8, 9, 12, 13 });
   static const FlagMode VERTICAL_RIGHT =
       FlagMode( { 2, 3, 6, 7, 10, 11, 14, 15 });
   static const FlagMode HORIZONTAL_TOP = FlagMode( { 0, 1, 2, 3, 4, 5, 6, 7 });
   static const FlagMode HORIZONTAL_BOTTOM =
       FlagMode( { 8, 9, 10, 11, 12, 13, 14, 15 });
-  __subscript(uint8_t n)->uint8_t {
+  __subscript(uint n)->uint {
     get { return idx[n]; }
   }
 };
 
 #else
-// static const uint8_t LEFT_ZIG[8] = { 0, 1, 4, 5, 8, 9, 12, 13 };
-
 // For some reason, using a mode-indexed FlagMode causes slangc to
 // compile this shader incorrectly...
 struct FlagMode {
-  uint8_t mode;
+  uint mode;
   static const FlagMode HORIZONTAL_TOP = FlagMode(0);
   static const FlagMode HORIZONTAL_BOTTOM = FlagMode(1);
   static const FlagMode VERTICAL_LEFT = FlagMode(2);
   static const FlagMode VERTICAL_RIGHT = FlagMode(3);
-  __subscript(uint8_t n)->uint8_t {
+  __subscript(uint n)->uint {
     get {
       if (mode == 0) {
         return n;
@@ -103,10 +108,8 @@ struct FlagMode {
         return n + 8;
       } else if (mode == 2) {
         return (((n >> 1) << 2) + (n & 1));
-        // return LEFT_ZIG[n];
       } else {
         return (((n >> 1) << 2) + (n & 1)) + 2;
-        // return LEFT_ZIG[n] + 2;
       }
     }
   }
@@ -114,39 +117,58 @@ struct FlagMode {
 #endif
 
 struct Pixels {
-  uint8_t3 data[16];
+  uint data[16];
 
-  __subscript(uint n)->uint8_t3 {
-    get { return data[n]; }
-    set { data[n] = newValue; }
+  __subscript(uint n)->uint3 {
+    get {
+      return uint3(data[n] & 0xFF, (data[n] >> 8) & 0xFF,
+                   (data[n] >> 16) & 0xFF);
+    }
+    set {
+      data[n] =
+          uint(newValue.x) | (uint(newValue.y) << 8) | (uint(newValue.z) << 16);
+    }
   }
 
   Luminances Y() {
     Luminances Y;
-    // [[unroll]]
     for (int i = 0; i < 16; ++i) {
-      Y[i] = luminance(data[i]);
+      Y[i] = luminance(this[i]);
     }
     return Y;
   }
 };
 
-struct Luminances {
-  uint8_t data[16];
+struct ArrayUint32x4 {
+  uint data[4];
 
-  __subscript(uint n)->int16_t {
-    get { return int16_t(data[n]); }
-    set { data[n] = uint8_t(newValue); }
+  __subscript(uint n)->uint {
+    get {
+      uint arrayIndex = n >> 2;
+      uint byteOffset = (n & 3) << 3;
+      return (data[arrayIndex] >> byteOffset) & 0xFF;
+    }
+    set {
+      uint arrayIndex = n >> 2;
+      uint byteOffset = (n & 3) << 3;
+      uint mask = ~(0xFF << byteOffset);
+      data[arrayIndex] =
+          (data[arrayIndex] & mask) | ((newValue & 0xFF) << byteOffset);
+    }
   }
 };
 
-uint8_t luminance(uint8_t3 pixel) {
-  return uint8_t(int16_t(0.299h * half(pixel.x) + 0.587h * half(pixel.y) +
-                         0.114h * half(pixel.z)));
+typedef ArrayUint32x4 Luminances;
+typedef ArrayUint32x4 Selectors;
+typedef ArrayUint32x4 Alphas;
+
+uint luminance(uint3 pixel) {
+  return uint(0.299 * float(pixel.x) + 0.587 * float(pixel.y) +
+              0.114 * float(pixel.z));
 }
 
-inline uint2 pack_etc1_individual_payload(uint8_t3 c0, uint8_t3 c1, uint8_t t0,
-                                          uint8_t t1, bool horizontal,
+inline uint2 pack_etc1_individual_payload(uint3 c0, uint3 c1, uint t0, uint t1,
+                                          bool horizontal,
                                           const Selectors selectors) {
   uint py = 0u;
   py |= (uint(c0.x) << 28) | (uint(c0.y) << 20) | (uint(c0.z) << 12);
@@ -157,13 +179,12 @@ inline uint2 pack_etc1_individual_payload(uint8_t3 c0, uint8_t3 c1, uint8_t t0,
 
   uint px = 0u;
 
-  // [[unroll]]
-  for (uint8_t i = 0; i < 16; ++i) {
+  for (var i = 0; i < 16; ++i) {
     int x = i % 4;
     int y = i / 4;
     int lp = x * 4 + y;
 
-    uint8_t sel = selectors[i];
+    var sel = selectors[i];
     uint lsb = uint(sel & 1);
     uint msb = uint((sel >> 1) & 1);
 
@@ -174,103 +195,93 @@ inline uint2 pack_etc1_individual_payload(uint8_t3 c0, uint8_t3 c1, uint8_t t0,
   return uint2(px, py);
 }
 
-void get_avg_color(const Pixels pixels, const FlagMode sb, out uint8_t3 color) {
-  int16_t3 avg = int16_t3(0);
-  for (uint8_t i = 0; i < 8; ++i) {
+void get_avg_color(const Pixels pixels, const FlagMode sb, out uint3 color) {
+  uint3 avg = 0u;
+  for (var i = 0; i < 8; ++i) {
     int idx = sb[i];
     avg += pixels[idx];
   }
   avg /= 8;
-  color.x = clamp<uint8_t>(uint8_t(round(half(avg.x) / 17)), 0, 15);
-  color.y = clamp<uint8_t>(uint8_t(round(half(avg.y) / 17)), 0, 15);
-  color.z = clamp<uint8_t>(uint8_t(round(half(avg.z) / 17)), 0, 15);
+  color.x = clamp(uint(round(float(avg.x) / 17)), 0, 15);
+  color.y = clamp(uint(round(float(avg.y) / 17)), 0, 15);
+  color.z = clamp(uint(round(float(avg.z) / 17)), 0, 15);
 }
 
-int16_t opt_selector(int table_idx, int Y_idx, int Y_avg, out uint8_t s) {
-  int16_t d, c;
+int opt_selector(int table_idx, int Y_idx, int Y_avg, out uint s) {
+  int d, c;
   get_table_modifiers(table_idx, d, c);
-  int16_t T = c / 2 + d / 2;
+  var T = c / 2 + d / 2;
 
   var e = Y_idx - Y_avg;
-  uint8_t sign_bit = uint8_t((e < 0) ? 1 : 0);
-  uint8_t mag_bit = uint8_t((abs(e) > T) ? 1 : 0);
+  uint sign_bit = (e < 0) ? 1 : 0;
+  uint mag_bit = (abs(e) > T) ? 1 : 0;
   s = (sign_bit << 1) | mag_bit;
 
-  return int16_t((mag_bit == 1 ? c : d) * (sign_bit == 1 ? -1 : 1));
+  return (mag_bit == 1 ? c : d) * (sign_bit == 1 ? -1 : 1);
 }
 
-inline uint8_t get_table_index(const Luminances Y, const FlagMode sb) {
-  var high_Y_sum = 0.0h;
-  var low_Y_sum = 0.0h;
-  uint8_t high_count = 0;
-  uint8_t low_count = 0;
+inline uint get_table_index(const Luminances Y, const FlagMode sb) {
+  var high_Y_sum = 0.0;
+  var low_Y_sum = 0.0;
+  var high_count = 0;
+  var low_count = 0;
 
-  int16_t avg_Y = 0;
-  for (uint8_t i = 0; i < 8; ++i) {
+  var avg_Y = 0;
+  for (var i = 0; i < 8; ++i) {
     int idx = sb[i];
     avg_Y += Y[idx];
   }
   avg_Y /= 8;
 
-  for (uint8_t i = 0; i < 8; ++i) {
-    uint8_t idx = sb[i];
+  for (var i = 0; i < 8; ++i) {
+    var idx = sb[i];
     if (Y[idx] >= avg_Y) {
-      high_Y_sum += half(Y[idx]);
+      high_Y_sum += float(Y[idx]);
       high_count++;
     } else {
-      low_Y_sum += half(Y[idx]);
+      low_Y_sum += float(Y[idx]);
       low_count++;
     }
   }
 
-  half high_avg =
-      (high_count > 0) ? (high_Y_sum / half(high_count)) : half(avg_Y);
-  half low_avg = (low_count > 0) ? (low_Y_sum / half(low_count)) : half(avg_Y);
+  float high_avg =
+      (high_count > 0) ? (high_Y_sum / float(high_count)) : float(avg_Y);
+  float low_avg =
+      (low_count > 0) ? (low_Y_sum / float(low_count)) : float(avg_Y);
 
   var spread = high_avg - low_avg;
-  var c_target = 0.5h * spread;
+  var c_target = 0.5 * spread;
   return select_table_index(c_target);
 }
 
-struct Selectors {
-  uint8_t data[16]; // 16x 2-bit selectors
-
-  __subscript(uint8_t n)->uint8_t {
-    get { return data[n]; }
-    set { data[n] = newValue; }
-  }
-};
-
-void process_subblock<let nb : int8_t = 1>(const Pixels pixels,
-                                           const Luminances Y,
-                                           const FlagMode sb,
-                                           inout uint8_t3 packed_color,
-                                           out uint8_t best_table,
-                                           out Selectors best_selectors) {
+void process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
+                                        const FlagMode sb,
+                                        inout uint3 packed_color,
+                                        out uint best_table,
+                                        out Selectors best_selectors) {
   get_avg_color(pixels, sb, packed_color);
   var Y_base = luminance(packed_color * 17);
   int table_idx = get_table_index(Y, sb);
-  int8_t initial_table_idx = clamp<int8_t>(int8_t(table_idx), nb, 7 - nb);
+  var initial_table_idx = clamp(table_idx, nb, 7 - nb);
 
-  uint8_t3 base8 = packed_color * 17;
+  var base8 = packed_color * 17;
 
   int min_block_error = 2147483647;
 
-  for (uint8_t t = initial_table_idx - nb; t <= initial_table_idx + nb; t++) {
+  for (var t = initial_table_idx - nb; t <= initial_table_idx + nb; t++) {
     int current_table_error = 0;
     Selectors current_selectors;
 
-    // [[unroll]]
-    for (uint8_t p = 0; p < 8; p++) {
+    for (var p = 0; p < 8; p++) {
       var idx = sb[p];
-      uint8_t s;
+      uint s;
       var modifier = opt_selector(t, Y[idx], Y_base, s);
 
       if (nb > 0) {
         var pixel = pixels[idx];
         var mod_color = clamp(base8 + modifier, 0, 255);
         var diff = mod_color - int3(pixel);
-        var err = dot(diff, diff);
+        var err = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
 
         current_table_error += err;
       }
@@ -306,11 +317,11 @@ uint2 encode_etc1(Pixels pixels) {
   const FlagMode sb1 =
       horizontal ? FlagMode.HORIZONTAL_BOTTOM : FlagMode.VERTICAL_RIGHT;
 
-  uint8_t3 colors[2];
-  uint8_t tables[2];
+  uint3 colors[2];
+  uint tables[2];
   Selectors best_selectors;
 
-  const int8_t nb = 2; // consider +/- 1 additional neighboring table (3 total)
+  const int nb = 2; // consider +/- 1 additional neighboring table (3 total)
   // Don't unroll this loop, the inlining drastically increases reg pressure
   for (int block = 0; block < 2; block++) {
     process_subblock<nb>(pixels, Y, sb0, colors[block], tables[block],
@@ -321,31 +332,31 @@ uint2 encode_etc1(Pixels pixels) {
                                       tables[1], horizontal, best_selectors);
 }
 
-void encode_etc2_alpha(uint8_t alphas[16], inout uint alpha_p0,
+void encode_etc2_alpha(Alphas alphas, inout uint alpha_p0,
                        inout uint alpha_p1) {
-  uint8_t min_a = 255;
-  uint8_t max_a = 0;
-  for (int i = 0; i < 16; ++i) {
+  var min_a = 255;
+  var max_a = 0;
+  for (var i = 0; i < 16; ++i) {
     var a = alphas[i];
     min_a = min(min_a, a);
     max_a = max(max_a, a);
   }
 
-  uint base = min_a;
-  uint range = max_a - min_a;
-  uint multiplier = clamp(range / 22, 0u, 15u);
+  var base = min_a;
+  var range = max_a - min_a;
+  var multiplier = clamp(range / 22, 0u, 15u);
 
   alpha_p0 = (base & 0xFF) | ((multiplier & 0xF) << 8) | (0u << 12);
   alpha_p1 = 0;
 
   for (int i = 0; i < 16; ++i) {
-    uint a = uint(alphas[i]);
-    int diff = int(a) - int(base);
-    int best_idx = 0;
-    int min_err = 1000;
-    for (int m = 0; m < 4; ++m) {
-      int val = alpha_modifier_table[m] * int(multiplier);
-      int err = abs(diff - val);
+    var a = uint(alphas[i]);
+    var diff = int(a) - int(base);
+    var best_idx = 0;
+    var min_err = 1000;
+    for (var m = 0; m < 4; ++m) {
+      var val = alpha_modifier_table[m] * int(multiplier);
+      var err = abs<int>(diff - val);
       if (err < min_err) {
         min_err = err;
         best_idx = m;
@@ -379,14 +390,18 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     return;
 
   Pixels pixels;
-  uint8_t alphas[16];
+  Alphas alphas;
   uint width = pushConstants.u_TextureDimensions.x;
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
-      uint8_t4 tex_element =
+      var tex_element =
           input_rgba8_buffer[(tex_coord.y + y) * width + (tex_coord.x + x)];
-      pixels[y * 4 + x] = tex_element.rgb;
-      alphas[y * 4 + x] = tex_element.a;
+      uint a = (tex_element >> 24) & 0xFF;
+      uint b = (tex_element >> 16) & 0xFF;
+      uint g = (tex_element >> 8) & 0xFF;
+      uint r = (tex_element >> 0) & 0xFF;
+      pixels[y * 4 + x] = uint3(r, g, b);
+      alphas[y * 4 + x] = a;
     }
   }
 
