@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <iterator>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -21,7 +22,8 @@ struct ETC2Block {
 
 struct Clock {
     uint64_t start;
-    uint64_t end;
+    float mse;
+    uint32_t unused;
 };
 
 struct PushConstants {
@@ -317,13 +319,15 @@ int main() {
     vkUnmapMemory(device, profileBufferMemory);
 
     uint64_t first_start = profiler[0].start;
-    uint64_t last_start = profiler[0].end;
+    uint64_t last_start = profiler[0].start;
+    double mse = 0.0;
     for (Clock clock : profiler) {
         if (clock.start < first_start) first_start = clock.start;
         if (clock.start > last_start) last_start = clock.start;
+        mse += double(clock.mse);
     }
     std::cout << "Total time: " << (double)(last_start - first_start) / 100000.0 << " ms" << std::endl;
-    
+    std::cout << "  MSE: " << mse / profiler.size() << ", PSNR: " << -10 * log10(mse / profiler.size()) << std::endl;
 
     std::ofstream outFile("output.etc2", std::ios::binary);
     if (outFile.is_open()) {

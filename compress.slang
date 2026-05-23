@@ -29,8 +29,14 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
   }
 }
 
+struct Diagnostics {
+  uint2 start_time;
+  float sse;
+  uint unused;
+};
+
 [[vk::binding(2, 0)]]
-RWStructuredBuffer<uint4> elapsed_time;
+RWStructuredBuffer<Diagnostics> diagnostics;
 #endif
 
 struct PushConstants {
@@ -39,6 +45,32 @@ struct PushConstants {
 
 [[vk::push_constant]]
 PushConstants pushConstants;
+
+struct PackedArray<let M : uint, let N : uint> {
+  static const uint kElementsPerStorage = 32 / M;
+  static const uint kStorageCount =
+      (N + kElementsPerStorage - 1u) / kElementsPerStorage;
+  static const uint kMask = (1u << M) - 1u;
+
+  uint data[kStorageCount];
+
+  inline __subscript(uint n)->uint {
+    get {
+      var arrayIndex = n / kElementsPerStorage;
+      var bitOffset = (n % kElementsPerStorage) * M;
+
+      return (data[arrayIndex] >> bitOffset) & kMask;
+    }
+    set {
+      var arrayIndex = n / kElementsPerStorage;
+      var bitOffset = (n % kElementsPerStorage) * M;
+      var clearMask = ~(kMask << bitOffset);
+
+      data[arrayIndex] =
+          (data[arrayIndex] & clearMask) | ((newValue & kMask) << bitOffset);
+    }
+  }
+};
 
 static const uint alpha_modifier_table[4] = { 2, 5, 8, 14 };
 
@@ -69,15 +101,13 @@ inline void get_table_modifiers(int idx, out int small, out int big) {
   big = etc1_mod_table[idx * 2 + 1];
 }
 
+#ifdef USE_FLAG_MODE_ARRAY
+
 // 0   1  |  2   3
 // 4   5  |  6   7
 // -------+-------
 // 8   9  | 10  11
 // 12  13 | 14  15
-
-// #define USE_FLAG_MODE_ARRAY
-
-#ifdef USE_FLAG_MODE_ARRAY
 struct FlagMode {
   uint idx[8];
   static const FlagMode VERTICAL_LEFT = FlagMode( { 0, 1, 4, 5, 8, 9, 12, 13 });
@@ -119,9 +149,9 @@ struct FlagMode {
 struct Pixels {
   uint data[16];
 
-  __subscript(uint n)->uint3 {
+  __subscript(uint n)->Pixel {
     get {
-      return uint3(data[n] & 0xFF, (data[n] >> 8) & 0xFF,
+      return Pixel(data[n] & 0xFF, (data[n] >> 8) & 0xFF,
                    (data[n] >> 16) & 0xFF);
     }
     set {
@@ -139,40 +169,28 @@ struct Pixels {
   }
 };
 
-struct ArrayUint32x4 {
-  uint data[4];
+typedef PackedArray<8, 16> Luminances;
+typedef PackedArray<2, 16> Selectors;
+typedef PackedArray<8, 16> Alphas;
+typedef uint3 Pixel;
 
-  __subscript(uint n)->uint {
-    get {
-      uint arrayIndex = n >> 2;
-      uint byteOffset = (n & 3) << 3;
-      return (data[arrayIndex] >> byteOffset) & 0xFF;
-    }
-    set {
-      uint arrayIndex = n >> 2;
-      uint byteOffset = (n & 3) << 3;
-      uint mask = ~(0xFF << byteOffset);
-      data[arrayIndex] =
-          (data[arrayIndex] & mask) | ((newValue & 0xFF) << byteOffset);
-    }
-  }
-};
-
-typedef ArrayUint32x4 Luminances;
-typedef ArrayUint32x4 Selectors;
-typedef ArrayUint32x4 Alphas;
-
-uint luminance(uint3 pixel) {
+uint luminance(Pixel pixel) {
   return uint(0.299 * float(pixel.x) + 0.587 * float(pixel.y) +
               0.114 * float(pixel.z));
 }
 
-inline uint2 pack_etc1_individual_payload(uint3 c0, uint3 c1, uint t0, uint t1,
+inline uint pack_color(uint c) {
+  return clamp(uint(round(float(c) / 17)), 0, 15);
+}
+
+inline uint2 pack_etc1_individual_payload(Pixel c0, Pixel c1, uint t0, uint t1,
                                           bool horizontal,
                                           const Selectors selectors) {
   uint py = 0u;
-  py |= (uint(c0.x) << 28) | (uint(c0.y) << 20) | (uint(c0.z) << 12);
-  py |= (uint(c1.x) << 24) | (uint(c1.y) << 16) | (uint(c1.z) << 8);
+  py |= (pack_color(c0.x) << 28) | (pack_color(c0.y) << 20) |
+        (pack_color(c0.z) << 12);
+  py |= (pack_color(c1.x) << 24) | (pack_color(c1.y) << 16) |
+        (pack_color(c1.z) << 8);
   py |= (uint(t0) << 5) | (uint(t1) << 2);
   py |= (0u << 1);
   py |= uint(horizontal);
@@ -195,16 +213,25 @@ inline uint2 pack_etc1_individual_payload(uint3 c0, uint3 c1, uint t0, uint t1,
   return uint2(px, py);
 }
 
-void get_avg_color(const Pixels pixels, const FlagMode sb, out uint3 color) {
-  uint3 avg = 0u;
+Pixel quantize_and_expand_5bit(Pixel color) {
+  uint3 clamped = uint3(clamp(color, int3(0), int3(255)));
+  uint3 c5 = (clamped >> 3) & 0x1FU;
+  return (c5 << 3) | (c5 >> 2);
+}
+
+uint sse(Pixel target, Pixel base, int modifier) {
+  var reconstructed = clamp(int3(base) + modifier, 0, 255);
+  var diff = int3(target) - reconstructed;
+  return uint(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
+}
+
+void get_avg_color(const Pixels pixels, const FlagMode sb, inout Pixel color) {
+  color = 0u;
   for (var i = 0; i < 8; ++i) {
-    int idx = sb[i];
-    avg += pixels[idx];
+    color += pixels[sb[i]];
   }
-  avg /= 8;
-  color.x = clamp(uint(round(float(avg.x) / 17)), 0, 15);
-  color.y = clamp(uint(round(float(avg.y) / 17)), 0, 15);
-  color.z = clamp(uint(round(float(avg.z) / 17)), 0, 15);
+  color /= 8;
+  color = quantize_and_expand_5bit(color);
 }
 
 int opt_selector(int table_idx, int Y_idx, int Y_avg, out uint s) {
@@ -228,7 +255,7 @@ inline uint get_table_index(const Luminances Y, const FlagMode sb) {
 
   var avg_Y = 0;
   for (var i = 0; i < 8; ++i) {
-    int idx = sb[i];
+    var idx = sb[i];
     avg_Y += Y[idx];
   }
   avg_Y /= 8;
@@ -254,17 +281,15 @@ inline uint get_table_index(const Luminances Y, const FlagMode sb) {
   return select_table_index(c_target);
 }
 
-void process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
-                                        const FlagMode sb,
-                                        inout uint3 packed_color,
-                                        out uint best_table,
-                                        out Selectors best_selectors) {
-  get_avg_color(pixels, sb, packed_color);
-  var Y_base = luminance(packed_color * 17);
+int process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
+                                       const FlagMode sb,
+                                       inout Pixel best_color,
+                                       out uint best_table,
+                                       out Selectors best_selectors) {
+  get_avg_color(pixels, sb, best_color);
+  var Y_base = luminance(best_color);
   int table_idx = get_table_index(Y, sb);
   var initial_table_idx = clamp(table_idx, nb, 7 - nb);
-
-  var base8 = packed_color * 17;
 
   int min_block_error = 2147483647;
 
@@ -279,11 +304,7 @@ void process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
 
       if (nb > 0) {
         var pixel = pixels[idx];
-        var mod_color = clamp(base8 + modifier, 0, 255);
-        var diff = mod_color - int3(pixel);
-        var err = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
-
-        current_table_error += err;
+        current_table_error += sse(pixel, best_color, modifier);
       }
       current_selectors[idx] = s;
     }
@@ -294,6 +315,8 @@ void process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
       best_selectors = current_selectors;
     }
   }
+
+  return min_block_error;
 }
 
 uint2 encode_etc1(Pixels pixels) {
@@ -317,15 +340,24 @@ uint2 encode_etc1(Pixels pixels) {
   const FlagMode sb1 =
       horizontal ? FlagMode.HORIZONTAL_BOTTOM : FlagMode.VERTICAL_RIGHT;
 
-  uint3 colors[2];
+  Pixel colors[2];
   uint tables[2];
   Selectors best_selectors;
 
   const int nb = 2; // consider +/- 1 additional neighboring table (3 total)
+#ifdef ENABLE_DIAGNOSTICS
+  diagnostics[buffer_index].sse = 0;
+#endif
+
   // Don't unroll this loop, the inlining drastically increases reg pressure
   for (int block = 0; block < 2; block++) {
-    process_subblock<nb>(pixels, Y, sb0, colors[block], tables[block],
-                         best_selectors);
+    var sb = block == 0 ? sb0 : sb1;
+    var sse = process_subblock<nb>(pixels, Y, sb, colors[block], tables[block],
+                                   best_selectors);
+
+#ifdef ENABLE_DIAGNOSTICS
+    diagnostics[buffer_index].sse += float(sse) / 65025 / 3 / 8;
+#endif
   }
 
   return pack_etc1_individual_payload(colors[0], colors[1], tables[0],
@@ -376,6 +408,8 @@ uint flip_endian_encode(uint v) {
          (words.w << 0u);
 }
 
+static uint buffer_index;
+
 [shader("compute")]
 [numthreads(8, 8, 1)]
 void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
@@ -389,6 +423,9 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   if (any(tex_coord >= pushConstants.u_TextureDimensions))
     return;
 
+  buffer_index =
+      block_pos.y * (pushConstants.u_TextureDimensions.x / 4) + block_pos.x;
+
   Pixels pixels;
   Alphas alphas;
   uint width = pushConstants.u_TextureDimensions.x;
@@ -400,7 +437,7 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
       uint b = (tex_element >> 16) & 0xFF;
       uint g = (tex_element >> 8) & 0xFF;
       uint r = (tex_element >> 0) & 0xFF;
-      pixels[y * 4 + x] = uint3(r, g, b);
+      pixels[y * 4 + x] = Pixel(r, g, b);
       alphas[y * 4 + x] = a;
     }
   }
@@ -409,17 +446,14 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   uint alpha_p1 = 0;
   encode_etc2_alpha(alphas, alpha_p0, alpha_p1);
 
-  uint2 packed = encode_etc1(pixels);
+  var packed = encode_etc1(pixels);
 
-  uint color_p0 = flip_endian_encode(packed.y);
-  uint color_p1 = flip_endian_encode(packed.x);
+  var color_p0 = flip_endian_encode(packed.y);
+  var color_p1 = flip_endian_encode(packed.x);
 
-  uint buffer_index =
-      block_pos.y * (pushConstants.u_TextureDimensions.x / 4) + block_pos.x;
   etc1_blocks[buffer_index] = uint4(alpha_p0, alpha_p1, color_p0, color_p1);
 
 #ifdef ENABLE_DIAGNOSTICS
-  elapsed_time[buffer_index] =
-      uint4(startTime.x, startTime.y, startTime.x, startTime.y);
+  diagnostics[buffer_index].start_time = startTime;
 #endif
 }
