@@ -31,7 +31,7 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
 
 struct Diagnostics {
   uint2 start_time;
-  float sse;
+  float mse;
   uint unused;
 };
 
@@ -54,6 +54,13 @@ struct PackedArray<let M : uint, let N : uint> {
 
   uint data[kStorageCount];
 
+  __init(uint initialValues[N]) {
+    this.data = {};
+    for (int n = 0; n < N; n++) {
+      this[n] = initialValues[n];
+    }
+  }
+
   inline __subscript(uint n)->uint {
     get {
       var arrayIndex = n / kElementsPerStorage;
@@ -72,11 +79,26 @@ struct PackedArray<let M : uint, let N : uint> {
   }
 };
 
-static const uint alpha_modifier_table[4] = { 2, 5, 8, 14 };
+static const var alpha_modifier_table = PackedArray<4, 4>( { 2, 5, 8, 14 });
 
-static const uint etc1_mod_table[16] = {
-  2, 8, 5, 17, 9, 29, 13, 42, 18, 60, 24, 80, 33, 106, 47, 183,
-};
+static const var etc1_mod_table = PackedArray<8, 16>( {
+  2,
+  8,
+  5,
+  17,
+  9,
+  29,
+  13,
+  42,
+  18,
+  60,
+  24,
+  80,
+  33,
+  106,
+  47,
+  183,
+});
 
 uint select_table_index(float c_target) {
   if (c_target < 12.5)
@@ -122,8 +144,12 @@ struct FlagMode {
 };
 
 #else
-// For some reason, using a mode-indexed FlagMode causes slangc to
-// compile this shader incorrectly...
+
+// 0   1  |  2   3
+// 4   5  |  6   7
+// -------+-------
+// 8   9  | 10  11
+// 12  13 | 14  15
 struct FlagMode {
   uint mode;
   static const FlagMode HORIZONTAL_TOP = FlagMode(0);
@@ -145,6 +171,11 @@ struct FlagMode {
   }
 };
 #endif
+
+uint luminance(Pixel pixel) {
+  // Prioritize color correctness - use gray-luminance instead of YUV
+  return (pixel.x + pixel.y + pixel.z) / 3;
+}
 
 struct Pixels {
   uint data[16];
@@ -174,29 +205,51 @@ typedef PackedArray<2, 16> Selectors;
 typedef PackedArray<8, 16> Alphas;
 typedef uint3 Pixel;
 
-uint luminance(Pixel pixel) {
-  return uint(0.299 * float(pixel.x) + 0.587 * float(pixel.y) +
-              0.114 * float(pixel.z));
-}
-
-inline uint pack_color(uint c) {
-  return clamp(uint(round(float(c) / 17)), 0, 15);
-}
-
 inline uint2 pack_etc1_individual_payload(Pixel c0, Pixel c1, uint t0, uint t1,
                                           bool horizontal,
                                           const Selectors selectors) {
+  var c0_5i = int3(c0.xyz) >> 3;
+  var c1_5i = int3(c1.xyz) >> 3;
+  var c0_5 = uint3(c0_5i) & 0x1Fu;
+  var c0_4 = uint3(c0.xyz >> 4) & 0x0Fu;
+  var c1_4 = uint3(c1.xyz >> 4) & 0x0Fu;
+  var diff_i = c1_5i - c0_5i;
+  var diff_3 = uint3(diff_i) & 0x07u;
+
+  var valid_delta = (diff_i >= -4) && (diff_i <= 3);
+  var valid_target = (c0_5i + diff_i >= 0) && (c0_5i + diff_i <= 31);
+  var use_diffmode = all(valid_delta) && all(valid_target);
+
   uint py = 0u;
-  py |= (pack_color(c0.x) << 28) | (pack_color(c0.y) << 20) |
-        (pack_color(c0.z) << 12);
-  py |= (pack_color(c1.x) << 24) | (pack_color(c1.y) << 16) |
-        (pack_color(c1.z) << 8);
   py |= (uint(t0) << 5) | (uint(t1) << 2);
-  py |= (0u << 1);
   py |= uint(horizontal);
+  if (use_diffmode) {
+    // 63     59 58   56 55    51 50   48 47    43 42   40 39  37 36  34    32
+    // +--------+-------+--------+-------+--------+-------+------+------+-+-+
+    // |   R1   |  dR2  |   G1   |  dG2  |   B1   |  dB2  |  t1  |  t2  |D|F|
+    // +--------+-------+--------+-------+--------+-------+------+------+-+-+
+    //    5 bit   3-bit    5 bit   3-bit    5 bit   3-bit  3 bit  3 bit |   |
+    //                                                                  |   |
+    //    diffbit (Bit 33) = 1 -----------------------------------------+   |
+    //    flipbit (Bit 32) [0 = Vertical (2x4), 1 = Horizontal (4x2)] ------+
+    py |= (c0_5.x << 27) | (c0_5.y << 19) | (c0_5.z << 11);
+    py |= (diff_3.x << 24) | (diff_3.y << 16) | (diff_3.z << 8);
+    py |= (1u << 1);
+  } else {
+    // 63     60 59    56 55    52 51    48 47    44 43    40 39  37 36  34   32
+    // +--------+--------+--------+--------+--------+--------+------+------+-+-+
+    // |   R1   |   R2   |   G1   |   G2   |   B1   |   B2   |  t1  |  t1  |D|F|
+    // +--------+--------+--------+--------+--------+--------+------+------+-+-+
+    //    4 bit    4 bit    4 bit    4 bit    4 bit    4 bit  3 bit  3 bit |   |
+    //                                                                     |   |
+    //     diffbit (Bit 33) = 0 -------------------------------------------+   |
+    //     flipbit (Bit 32) [0 = Vertical (2x4), 1 = Horizontal (4x2)] --------+
+    py |= (c0_4.x << 28) | (c0_4.y << 20) | (c0_4.z << 12);
+    py |= (c1_4.x << 24) | (c1_4.y << 16) | (c1_4.z << 8);
+    py |= (0u << 1);
+  }
 
   uint px = 0u;
-
   for (var i = 0; i < 16; ++i) {
     int x = i % 4;
     int y = i / 4;
@@ -213,10 +266,10 @@ inline uint2 pack_etc1_individual_payload(Pixel c0, Pixel c1, uint t0, uint t1,
   return uint2(px, py);
 }
 
-Pixel quantize_and_expand_5bit(Pixel color) {
-  uint3 clamped = uint3(clamp(color, int3(0), int3(255)));
-  uint3 c5 = (clamped >> 3) & 0x1FU;
-  return (c5 << 3) | (c5 >> 2);
+Pixel quantize_pixel(Pixel color) {
+  // Quantize to 5b since most blocks will be 5b precision
+  var packed = (color >> 3) & 0x1Fu;
+  return packed << 3;
 }
 
 uint sse(Pixel target, Pixel base, int modifier) {
@@ -231,7 +284,6 @@ void get_avg_color(const Pixels pixels, const FlagMode sb, inout Pixel color) {
     color += pixels[sb[i]];
   }
   color /= 8;
-  color = quantize_and_expand_5bit(color);
 }
 
 int opt_selector(int table_idx, int Y_idx, int Y_avg, out uint s) {
@@ -286,6 +338,7 @@ int process_subblock<let nb : int>(const Pixels pixels, const Luminances Y,
                                    out uint best_table,
                                    out Selectors best_selectors) {
   get_avg_color(pixels, sb, best_color);
+  best_color = quantize_pixel(best_color);
   var Y_base = luminance(best_color);
   int table_idx = get_table_index(Y, sb);
   var initial_table_idx = clamp(table_idx, nb, 7 - nb);
@@ -331,12 +384,7 @@ uint2 encode_etc1(Pixels pixels) {
   var H_contrast = abs(Y_top - (Y_total - Y_top));
   var V_contrast = abs(Y_left - (Y_total - Y_left));
 
-#ifdef USE_FLAG_MODE_ARRAY
   const bool horizontal = (H_contrast > V_contrast);
-#else
-  const bool horizontal = (H_contrast > V_contrast);
-#endif
-
   const FlagMode sb0 =
       horizontal ? FlagMode.HORIZONTAL_TOP : FlagMode.VERTICAL_LEFT;
   const FlagMode sb1 =
@@ -346,9 +394,9 @@ uint2 encode_etc1(Pixels pixels) {
   uint tables[2];
   Selectors best_selectors;
 
-  const int nb = 2; // consider +/- 1 additional neighboring table (3 total)
+  const int nb = 1; // consider +/- 1 additional neighboring table (3 total)
 #ifdef ENABLE_DIAGNOSTICS
-  diagnostics[buffer_index].sse = 0;
+  diagnostics[buffer_index].mse = 0;
 #endif
 
   // Don't unroll this loop, the inlining drastically increases reg pressure
@@ -358,7 +406,7 @@ uint2 encode_etc1(Pixels pixels) {
                                    best_selectors);
 
 #ifdef ENABLE_DIAGNOSTICS
-    diagnostics[buffer_index].sse += float(sse) / 65025 / 3 / 8;
+    diagnostics[buffer_index].mse += float(sse) / 65025 / 3 / 8;
 #endif
   }
 
