@@ -281,11 +281,10 @@ inline uint get_table_index(const Luminances Y, const FlagMode sb) {
   return select_table_index(c_target);
 }
 
-int process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
-                                       const FlagMode sb,
-                                       inout Pixel best_color,
-                                       out uint best_table,
-                                       out Selectors best_selectors) {
+int process_subblock<let nb : int>(const Pixels pixels, const Luminances Y,
+                                   const FlagMode sb, inout Pixel best_color,
+                                   out uint best_table,
+                                   out Selectors best_selectors) {
   get_avg_color(pixels, sb, best_color);
   var Y_base = luminance(best_color);
   int table_idx = get_table_index(Y, sb);
@@ -299,14 +298,17 @@ int process_subblock<let nb : int = 1>(const Pixels pixels, const Luminances Y,
 
     for (var p = 0; p < 8; p++) {
       var idx = sb[p];
-      uint s;
-      var modifier = opt_selector(t, Y[idx], Y_base, s);
+      var modifier = opt_selector(t, Y[idx], Y_base, current_selectors[idx]);
 
-      if (nb > 0) {
-        var pixel = pixels[idx];
-        current_table_error += sse(pixel, best_color, modifier);
+#ifdef ENABLE_DIAGNOSTICS
+      var calculate_sse = true;
+#else
+      var calculate_sse = false;
+#endif
+
+      if (nb > 0 || calculate_sse) {
+        current_table_error += sse(pixels[idx], best_color, modifier);
       }
-      current_selectors[idx] = s;
     }
 
     if (nb == 0 || current_table_error < min_block_error) {
@@ -332,7 +334,7 @@ uint2 encode_etc1(Pixels pixels) {
 #ifdef USE_FLAG_MODE_ARRAY
   const bool horizontal = (H_contrast > V_contrast);
 #else
-  const bool horizontal = true;
+  const bool horizontal = (H_contrast > V_contrast);
 #endif
 
   const FlagMode sb0 =
@@ -351,7 +353,7 @@ uint2 encode_etc1(Pixels pixels) {
 
   // Don't unroll this loop, the inlining drastically increases reg pressure
   for (int block = 0; block < 2; block++) {
-    var sb = block == 0 ? sb0 : sb1;
+    let sb = block == 0 ? sb0 : sb1;
     var sse = process_subblock<nb>(pixels, Y, sb, colors[block], tables[block],
                                    best_selectors);
 
