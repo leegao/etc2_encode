@@ -24,11 +24,13 @@ struct Clock {
     uint64_t start;
     float mse;
     uint32_t unused;
+    uint8_t reconstructed[64];
 };
 
 struct PushConstants {
     int32_t width;
     int32_t height;
+    uint32_t flag;
 };
 
 #define VK_CHECK(x) do { \
@@ -290,7 +292,11 @@ int main() {
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, computePipeline);
     vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 
-    PushConstants constants{ width, height };
+    PushConstants constants{ 
+        width, 
+        height,
+        0, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means 
+    };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 
     uint32_t groupCountX = (blocksX + 7) / 8;
@@ -328,6 +334,42 @@ int main() {
     }
     std::cout << "Total time: " << (double)(last_start - first_start) / 100000.0 << " ms" << std::endl;
     std::cout << "  MSE: " << mse / profiler.size() << ", PSNR: " << -10 * log10(mse / profiler.size()) << std::endl;
+
+    // profiler.reconstructed contains a 4x4 block of reconstructed rgba8 pixels, going left to right and top to down
+    // write this to reconstructed.png
+    std::vector<uint8_t> reconstructedImage(width * height * 4);
+
+    for (int by = 0; by < blocksY; ++by) {
+        for (int bx = 0; bx < blocksX; ++bx) {
+            size_t blockIdx = by * blocksX + bx;
+            const uint8_t* blockData = profiler[blockIdx].reconstructed;
+
+            // Loop over 4x4 pixels in the current block
+            for (int y = 0; y < 4; ++y) {
+                for (int x = 0; x < 4; ++x) {
+                    int pixelX = bx * 4 + x;
+                    int pixelY = by * 4 + y;
+
+                    // Bounds check: Only write if inside original image dimensions
+                    if (pixelX < width && pixelY < height) {
+                        int srcIdx = (y * 4 + x) * 4; // 4 bytes per pixel (RGBA)
+                        int dstIdx = (pixelY * width + pixelX) * 4;
+
+                        reconstructedImage[dstIdx + 0] = blockData[srcIdx + 0]; // R
+                        reconstructedImage[dstIdx + 1] = blockData[srcIdx + 1]; // G
+                        reconstructedImage[dstIdx + 2] = blockData[srcIdx + 2]; // B
+                        reconstructedImage[dstIdx + 3] = blockData[srcIdx + 3]; // A
+                    }
+                }
+            }
+        }
+    }
+
+    if (stbi_write_png("reconstructed.png", width, height, 4, reconstructedImage.data(), width * 4)) {
+        std::cout << "Successfully wrote reconstructed.png" << std::endl;
+    } else {
+        std::cerr << "Failed to write reconstructed.png" << std::endl;
+    }
 
     std::ofstream outFile("output.etc2", std::ios::binary);
     if (outFile.is_open()) {
