@@ -62,15 +62,17 @@ uint32_t FindMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter, Vk
 
 #define GL_RGBA                           0x1908
 #define GL_COMPRESSED_RGBA8_ETC2_EAC      0x9278
+#define GL_COMPRESSED_RGB8_ETC2           0x9274
 
 bool WriteETC2ToKTX(const std::string& filename, 
                     uint32_t width, 
                     uint32_t height, 
-                    const std::vector<ETC2Block>& etc2Data) 
+                    const std::vector<ETC2Block>& etc2Data,
+                    bool useAlpha) 
 {
     ktxTextureCreateInfo createInfo;
-    createInfo.glInternalformat = GL_COMPRESSED_RGBA8_ETC2_EAC;
-    createInfo.vkFormat = VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK;
+    createInfo.glInternalformat = useAlpha ? GL_COMPRESSED_RGBA8_ETC2_EAC : GL_COMPRESSED_RGB8_ETC2;
+    createInfo.vkFormat = useAlpha ? VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK : VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK;
     createInfo.baseWidth = width;
     createInfo.baseHeight = height;
     createInfo.baseDepth = 1;
@@ -89,7 +91,11 @@ bool WriteETC2ToKTX(const std::string& filename,
         return false;
     }
 
-    result = ktxTexture_SetImageFromMemory(ktxTexture(texture), 0, 0, 0, (const unsigned char*) etc2Data.data(), etc2Data.size() * sizeof(ETC2Block));
+    int blocksX = (width + 3) / 4;
+    int blocksY = (height + 3) / 4;
+    size_t totalBlocks = static_cast<size_t>(blocksX) * blocksY;
+    int block_size = useAlpha ? 16 : 8;
+    result = ktxTexture_SetImageFromMemory(ktxTexture(texture), 0, 0, 0, (const unsigned char*) etc2Data.data(), totalBlocks * block_size);
     if (result != KTX_SUCCESS) {
         std::cerr << "ktxTexture_SetImageFromMemory failed. Error code: " << result << std::endl;
         return false;
@@ -129,20 +135,53 @@ std::vector<uint8_t> LoadRawRgba8(const std::string& filename, int width, int he
     return data;
 }
 
+std::vector<uint8_t> LoadRawSfloat16(const std::string& filename, int width, int height) {
+    size_t expectedSize = width * height * 4 * 2;
+    
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open raw sfloat16 file: " + filename);
+    }
+    
+    size_t fileSize = file.tellg();
+    if (fileSize != expectedSize) {
+        throw std::runtime_error("File size mismatch. Expected: " + 
+                               std::to_string(expectedSize) + ", Got: " + 
+                               std::to_string(fileSize));
+    }
+    
+    file.seekg(0, std::ios::beg);
+    std::vector<uint8_t> data(fileSize);
+    file.read(reinterpret_cast<char*>(data.data()), fileSize);
+    
+    return data;
+}
+
 int main() {
     int width, height, channels;
+    
     
     auto pixelData = stbi_load("test.png", &width, &height, &channels, STBI_rgb_alpha);
     if (!pixelData) {
         std::cerr << "test.png does not exist" << std::endl;
         return -1;
     }
+    size_t stagingBufferSize = static_cast<size_t>(width) * height * 4;
     
     // width = 2048; height = 2048;
     // auto pixelDataVec = LoadRawRgba8("machick.rgba8", width, height);
     // auto pixelData = pixelDataVec.data();
     // if (!pixelData) {
     //     std::cerr << "test.png does not exist" << std::endl;
+    //     return -1;
+    // }
+    
+    // width = 128; height = 128;
+    // stagingBufferSize = static_cast<size_t>(width) * height * 8;
+    // auto pixelDataVec = LoadRawSfloat16("205.sfloat", width, height);
+    // auto pixelData = pixelDataVec.data();
+    // if (!pixelData) {
+    //     std::cerr << "205.sfloat does not exist" << std::endl;
     //     return -1;
     // }
 
@@ -205,7 +244,6 @@ int main() {
     VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
 
     VkBuffer stagingBuffer;
-    size_t stagingBufferSize = static_cast<size_t>(width) * height * 4;
     VkBufferCreateInfo stageBufInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, stagingBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT };
     VK_CHECK(vkCreateBuffer(device, &stageBufInfo, nullptr, &stagingBuffer));
     VkMemoryRequirements stageReqs;
@@ -333,7 +371,7 @@ int main() {
     PushConstants constants{ 
         width, 
         height,
-        0, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means 
+        0b00100, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means, 4 NO alpha, 8 USE sfloat16, 16 USE snorm
     };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 
@@ -416,6 +454,6 @@ int main() {
         std::cout << "Wrote the raw etc2 ssbo to output.etc2" << std::endl;
     }
 
-    WriteETC2ToKTX("output.ktx", width, height, encodedBlocks);
+    WriteETC2ToKTX("output.ktx", width, height, encodedBlocks, false);
     return 0;
 }
