@@ -106,13 +106,51 @@ bool WriteETC2ToKTX(const std::string& filename,
     return true;
 }
 
+
+std::vector<uint8_t> LoadRawRgba8(const std::string& filename, int width, int height) {
+    size_t expectedSize = width * height * 4; // 16 bytes per BC6H block
+    
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open raw rgba8 file: " + filename);
+    }
+    
+    size_t fileSize = file.tellg();
+    if (fileSize != expectedSize) {
+        throw std::runtime_error("File size mismatch. Expected: " + 
+                               std::to_string(expectedSize) + ", Got: " + 
+                               std::to_string(fileSize));
+    }
+    
+    file.seekg(0, std::ios::beg);
+    std::vector<uint8_t> data(fileSize);
+    file.read(reinterpret_cast<char*>(data.data()), fileSize);
+    
+    return data;
+}
+
 int main() {
     int width, height, channels;
-    stbi_uc* pixelData = stbi_load("test.png", &width, &height, &channels, STBI_rgb_alpha);
+    
+    auto pixelData = stbi_load("test.png", &width, &height, &channels, STBI_rgb_alpha);
     if (!pixelData) {
         std::cerr << "test.png does not exist" << std::endl;
         return -1;
     }
+    
+    // width = 2048; height = 2048;
+    // auto pixelDataVec = LoadRawRgba8("machick.rgba8", width, height);
+    // auto pixelData = pixelDataVec.data();
+    // if (!pixelData) {
+    //     std::cerr << "test.png does not exist" << std::endl;
+    //     return -1;
+    // }
+
+    // if (stbi_write_png("machick.png", width, height, 4, pixelData, width * 4)) {
+    //     std::cout << "Successfully wrote machick.png" << std::endl;
+    // } else {
+    //     std::cerr << "Failed to write machick.png" << std::endl;
+    // }
     
     int blocksX = (width + 3) / 4;
     int blocksY = (height + 3) / 4;

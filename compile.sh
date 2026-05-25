@@ -9,6 +9,9 @@ echo "Compiling compress.comp to SPIR-V"
 glslangValidator -V compress.comp -x -o compress.inc
 xxd -i compress.spv > compress.h
 
+echo "Compiling bc6.comp to SPIR-V"
+glslangValidator -V bc6.comp -x -o bc6.inc
+
 echo "Building..."
 g++ main.cpp -lvulkan -I include -L lib -l ktx
 
