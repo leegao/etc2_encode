@@ -224,9 +224,11 @@ uint unscramble_quantized(uint quant_mode, uint q_val) {
 }
 
 uint get_quant_ep_mode(uint quant_weight_mode, uint num_weights,
-                       uint num_endpoints) {
+                       uint num_endpoints, uint partitions) {
 
-  let config_bits = 17u; // 11 (block mode) + 2 (partition flag) + 4 (CEM)
+  let config_bits =
+      partitions == 1 ? 17u : 27u; // 11 (block mode) + 2 (partition flag) + 4
+                                   // (CEM) + 10 (partition index)
   let weight_bits = compute_ise_bitcount(num_weights, quant_weight_mode);
   let remaining_bits = uint(128u - config_bits - weight_bits);
   // Find the ep mode, which is the maximal mode that fits remaining bits
@@ -240,15 +242,17 @@ uint get_quant_ep_mode(uint quant_weight_mode, uint num_weights,
   return quant_ep_mode;
 }
 
-uint4 pack_astc_4x4_block(const uint4 ep0, const uint4 ep1,
-                          const uint weights[16], uint quant_weight_mode,
-                          bool use_alpha) {
+uint4 pack_astc_4x4_block<let partitions : uint>(const uint4 eps[],
+                                                 const uint weights[16],
+                                                 uint quant_weight_mode,
+                                                 uint partition_seed,
+                                                 bool use_alpha) {
   uint4 final_block = uint4(0, 0, 0, 0);
 
   let num_weights = 16u;
-  let num_endpoints = use_alpha ? 8u : 6u;
-  let quant_ep_mode =
-      get_quant_ep_mode(quant_weight_mode, num_weights, num_endpoints);
+  let num_endpoints = (use_alpha ? 8u : 6u) * partitions;
+  let quant_ep_mode = get_quant_ep_mode(quant_weight_mode, num_weights,
+                                        num_endpoints, partitions);
 
   // Blockmode - C.2.10
   uint a = (4 - 2) & 0x3; // 2
@@ -277,11 +281,28 @@ uint4 pack_astc_4x4_block(const uint4 ep0, const uint4 ep1,
 
   // Endpoints - C.2.13
   let ep_max = ENDPOINT_MAX_VALUES[quant_ep_mode];
-  var a0 = use_alpha ? ep0.w : 0;
-  var a1 = use_alpha ? ep1.w : 0;
-  uint raw_endpoints[8] = { ep0.x, ep1.x, ep0.y, ep1.y, ep0.z, ep1.z, a0, a1 };
-  uint quantized_endpoints[8];
-  for (uint i = 0; i < 8; ++i) {
+
+  uint raw_endpoints[partitions * 8u];
+  uint ep_idx = 0;
+
+  // Interleave endpoints
+  for (uint p = 0; p < partitions; ++p) {
+    var ep0 = eps[p * 2u + 0u];
+    var ep1 = eps[p * 2u + 1u];
+    raw_endpoints[ep_idx++] = ep0.x;
+    raw_endpoints[ep_idx++] = ep1.x;
+    raw_endpoints[ep_idx++] = ep0.y;
+    raw_endpoints[ep_idx++] = ep1.y;
+    raw_endpoints[ep_idx++] = ep0.z;
+    raw_endpoints[ep_idx++] = ep1.z;
+    if (use_alpha) {
+      raw_endpoints[ep_idx++] = ep0.w;
+      raw_endpoints[ep_idx++] = ep1.w;
+    }
+  }
+
+  uint quantized_endpoints[partitions * 8u];
+  for (uint i = 0; i < num_endpoints; ++i) {
     uint q_ep = uint((float(raw_endpoints[i]) * float(ep_max)) / 255.0f + 0.5f);
     q_ep = clamp(q_ep, 0u, ep_max);
     quantized_endpoints[i] = unscramble_quantized(quant_ep_mode, q_ep);
@@ -289,8 +310,11 @@ uint4 pack_astc_4x4_block(const uint4 ep0, const uint4 ep1,
 
   uint fwd_offset = 0;
   write_bits(final_block, fwd_offset, block_mode, 11);
-  // TODO(leegao): add support for 2P
-  fwd_offset += 2; // single partition for now (00)
+  // 1P -> 00, 2P -> 01, 3P -> 10
+  write_bits(final_block, fwd_offset, partitions - 1u, 2);
+  if (partitions > 1u) {
+    write_bits(final_block, fwd_offset, partition_seed, 10);
+  }
   write_bits(final_block, fwd_offset, cem, 4);
 
   // Endpoints are encoded in forward direction (lsb -> msb)

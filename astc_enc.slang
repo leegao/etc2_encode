@@ -129,10 +129,12 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   decompress(pixels, endpoint_start, endpoint_end, weights);
 
   var quant_weight_mode = 8;
-  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6); // 19
+  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6, 1); // 19
+  uint4 eps[2];
+  eps[0] = uint4(endpoint_start, 255);
+  eps[1] = uint4(endpoint_end, 255);
   var packed =
-      pack_astc_4x4_block(uint4(endpoint_start, 255), uint4(endpoint_end, 255),
-                          weights, quant_weight_mode, false);
+      pack_astc_4x4_block<1>(eps, weights, quant_weight_mode, 0u, false);
 
   astc_blocks[buffer_index] = packed;
 
