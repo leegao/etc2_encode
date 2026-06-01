@@ -18,7 +18,7 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
     return spirv_asm {
             OpCapability ShaderClockKHR;
             OpExtension "SPV_KHR_shader_clock";
-            result : $$uint2 = OpReadClockKHR Device; 
+            result : $$uint2 = OpReadClockKHR Device;
         };
 
   case glsl:
@@ -625,12 +625,12 @@ uint2 encode_etc2_block(Pixels pixels) {
 
 #ifdef ENABLE_DIAGNOSTICS
   if (is_T_mode) {
-    diagnostics[buffer_index].mse = float(etc2_sse) / 65025 / 24;
+    diagnostics[buffer_index].mse = float(etc2_sse) / 65025 / 3 / 16;
 #ifndef DISABLE_RECONSTRUCTION
     diagnostics[buffer_index].reconstructed = etc2_reconstructed;
 #endif
   } else {
-    diagnostics[buffer_index].mse = float(etc1_sse) / 65025 / 24;
+    diagnostics[buffer_index].mse = float(etc1_sse) / 65025 / 3 / 16;
 #ifndef DISABLE_RECONSTRUCTION
     diagnostics[buffer_index].reconstructed = etc1_reconstructed;
 #endif
