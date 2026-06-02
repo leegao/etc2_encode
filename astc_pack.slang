@@ -2,27 +2,27 @@
 
 static const uint3 bits_trits_quints_table[21] = {
   // 2^e0 * 3^e1 * 5^e2
-  uint3(1, 0, 0), // QUANT_2
-  uint3(0, 1, 0), // QUANT_3
-  uint3(2, 0, 0), // QUANT_4
-  uint3(0, 0, 1), // QUANT_5
-  uint3(1, 1, 0), // QUANT_6
-  uint3(3, 0, 0), // QUANT_8
-  uint3(1, 0, 1), // QUANT_10
-  uint3(2, 1, 0), // QUANT_12
-  uint3(4, 0, 0), // QUANT_16
-  uint3(2, 0, 1), // QUANT_20
-  uint3(3, 1, 0), // QUANT_24
-  uint3(5, 0, 0), // QUANT_32
-  uint3(3, 0, 1), // QUANT_40
-  uint3(4, 1, 0), // QUANT_48
-  uint3(6, 0, 0), // QUANT_64
-  uint3(4, 0, 1), // QUANT_80
-  uint3(5, 1, 0), // QUANT_96
-  uint3(7, 0, 0), // QUANT_128
-  uint3(5, 0, 1), // QUANT_160
-  uint3(6, 1, 0), // QUANT_192
-  uint3(8, 0, 0), // QUANT_256
+  uint3(1, 0, 0), // 0: QUANT_2
+  uint3(0, 1, 0), // 1: QUANT_3
+  uint3(2, 0, 0), // 2: QUANT_4
+  uint3(0, 0, 1), // 3: QUANT_5
+  uint3(1, 1, 0), // 4: QUANT_6
+  uint3(3, 0, 0), // 5: QUANT_8
+  uint3(1, 0, 1), // 6: QUANT_10
+  uint3(2, 1, 0), // 7: QUANT_12
+  uint3(4, 0, 0), // 8: QUANT_16
+  uint3(2, 0, 1), // 9: QUANT_20
+  uint3(3, 1, 0), // 10: QUANT_24
+  uint3(5, 0, 0), // 11: QUANT_32
+  uint3(3, 0, 1), // 12: QUANT_40
+  uint3(4, 1, 0), // 13: QUANT_48
+  uint3(6, 0, 0), // 14: QUANT_64
+  uint3(4, 0, 1), // 15: QUANT_80
+  uint3(5, 1, 0), // 16: QUANT_96
+  uint3(7, 0, 0), // 17: QUANT_128
+  uint3(5, 0, 1), // 18: QUANT_160
+  uint3(6, 1, 0), // 19: QUANT_192
+  uint3(8, 0, 0), // 20: QUANT_256
 };
 
 static const uint WEIGHT_MAX_VALUES[12] = { 1, 2,  3,  4,  5,  7,
