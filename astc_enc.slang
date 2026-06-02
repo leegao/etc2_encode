@@ -66,11 +66,15 @@ PushConstants pushConstants;
 static uint buffer_index;
 static uint3 pixels[16];
 
+extension uint3 {
+  half3 to_unorm() { return half3(this) / 255.0h; }
+}
+
 void solve_weights(half3 ep0, half3 ep1, out uint weights[16]) {
   let L = ep1 - ep0;
   let invLenSq = 1.0h / (dot(L, L) + 0.000001h);
   for (int i = 0; i < 16; i++) {
-    let C = half3(pixels[i]) / 255.0h;
+    let C = pixels[i].to_unorm();
     let pDotL = dot(C - ep0, L);
     let w = pDotL * invLenSq;
     weights[i] = uint(saturate(w) * 255);
@@ -103,7 +107,7 @@ void find_best_eps_via_pca(out half3 ep0, out half3 ep1) {
   uint count = 0;
 
   for (uint i = 0; i < 16; i++) {
-    centroid += half3(pixels[i]) / 255.0h;
+    centroid += pixels[i].to_unorm();
     count += 1;
   }
   centroid /= half(count);
@@ -122,7 +126,7 @@ void find_best_eps_via_pca(out half3 ep0, out half3 ep1) {
 
   half3x3 C = (half3x3)0;
   for (uint i = 0; i < 16; i++) {
-    half3 d = half3(pixels[i]) / 255.0h - centroid;
+    half3 d = pixels[i].to_unorm() - centroid;
     C[0] += d.x * d; // Row 0: [xx, xy, xz]
     C[1] += d.y * d; // Row 1: [yx, yy, yz]
     C[2] += d.z * d; // Row 2: [zx, zy, zz]
@@ -149,7 +153,7 @@ void find_best_eps_via_pca(out half3 ep0, out half3 ep1) {
   // centroid is valid
   if (dot(axis, axis) < 1e-8) {
     ep0 = saturate(centroid);
-    ep1 = saturate(half3(pixels[0]) / 255.0h);
+    ep1 = saturate(pixels[0].to_unorm());
     return;
   }
 
