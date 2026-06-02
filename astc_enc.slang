@@ -172,13 +172,24 @@ void find_best_eps_via_pca(out half3 ep0, out half3 ep1) {
   ep1 = saturate(centroid + axis * (max_t));
 }
 
-void encode_block(out uint3 ep0, out uint3 ep1, out uint weights[16]) {
-  half3 ep0_ = half3(0.0h);
-  half3 ep1_ = half3(0.0h);
-  find_best_eps_via_pca(ep0_, ep1_);
-  ep0 = uint3(ep0_ * 255.0h);
-  ep1 = uint3(ep1_ * 255.0h);
-  solve_weights(ep0_, ep1_, weights);
+void fix_blue_contract(inout half3 ep0, inout half3 ep1) {
+  // See Table C.2.17
+  if (ep1.x + ep1.y + ep1.z < ep0.x + ep0.y + ep0.z) {
+    half3 temp = ep0;
+    ep0 = ep1;
+    ep1 = temp;
+  }
+}
+
+void encode_block(out uint3 ep0_u8, out uint3 ep1_u8, out uint weights[16]) {
+  half3 ep0 = half3(0.0h);
+  half3 ep1 = half3(0.0h);
+  find_best_eps_via_pca(ep0, ep1);
+  fix_blue_contract(ep0, ep1);
+
+  ep0_u8 = uint3(ep0 * 255.0h);
+  ep1_u8 = uint3(ep1 * 255.0h);
+  solve_weights(ep0, ep1, weights);
   return;
 }
 
@@ -215,16 +226,16 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     }
   }
 
-  uint3 endpoint_start, endpoint_end;
+  uint3 ep0, ep1;
   uint weights[16];
-  encode_block(endpoint_start, endpoint_end, weights);
-  decompress(endpoint_start, endpoint_end, weights);
+  encode_block(ep0, ep1, weights);
+  decompress(ep0, ep1, weights);
 
   var quant_weight_mode = 8;
   var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6, 1); // 19
   uint4 eps[2];
-  eps[0] = uint4(endpoint_start, 255);
-  eps[1] = uint4(endpoint_end, 255);
+  eps[0] = uint4(ep0, 255);
+  eps[1] = uint4(ep1, 255);
   var packed =
       pack_astc_4x4_block<1>(eps, weights, quant_weight_mode, 0u, false);
 
