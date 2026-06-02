@@ -1,6 +1,7 @@
 #version 450
 #extension GL_EXT_shader_16bit_storage : require
 #extension GL_EXT_shader_explicit_arithmetic_types : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
 layout(row_major) uniform;
 layout(row_major) buffer;
 struct PackedArray_0
@@ -33,14 +34,21 @@ layout(std430, binding = 1) buffer StructuredBuffer_vectorx3Cuintx2C4x3E_t_0 {
 } astc_blocks_0;
 const int  integer_from_quints_0[125] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 5, 13, 21, 29, 6, 32, 33, 34, 35, 36, 40, 41, 42, 43, 44, 48, 49, 50, 51, 52, 56, 57, 58, 59, 60, 37, 45, 53, 61, 14, 64, 65, 66, 67, 68, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 88, 89, 90, 91, 92, 69, 77, 85, 93, 22, 96, 97, 98, 99, 100, 104, 105, 106, 107, 108, 112, 113, 114, 115, 116, 120, 121, 122, 123, 124, 101, 109, 117, 125, 30, 102, 103, 70, 71, 38, 110, 111, 78, 79, 46, 118, 119, 86, 87, 54, 126, 127, 94, 95, 62, 39, 47, 55, 63, 31 };
 const int  integer_from_trits_0[243] = { 0, 1, 2, 4, 5, 6, 8, 9, 10, 16, 17, 18, 20, 21, 22, 24, 25, 26, 3, 7, 15, 19, 23, 27, 12, 13, 14, 32, 33, 34, 36, 37, 38, 40, 41, 42, 48, 49, 50, 52, 53, 54, 56, 57, 58, 35, 39, 47, 51, 55, 59, 44, 45, 46, 64, 65, 66, 68, 69, 70, 72, 73, 74, 80, 81, 82, 84, 85, 86, 88, 89, 90, 67, 71, 79, 83, 87, 91, 76, 77, 78, 128, 129, 130, 132, 133, 134, 136, 137, 138, 144, 145, 146, 148, 149, 150, 152, 153, 154, 131, 135, 143, 147, 151, 155, 140, 141, 142, 160, 161, 162, 164, 165, 166, 168, 169, 170, 176, 177, 178, 180, 181, 182, 184, 185, 186, 163, 167, 175, 179, 183, 187, 172, 173, 174, 192, 193, 194, 196, 197, 198, 200, 201, 202, 208, 209, 210, 212, 213, 214, 216, 217, 218, 195, 199, 207, 211, 215, 219, 204, 205, 206, 96, 97, 98, 100, 101, 102, 104, 105, 106, 112, 113, 114, 116, 117, 118, 120, 121, 122, 99, 103, 111, 115, 119, 123, 108, 109, 110, 224, 225, 226, 228, 229, 230, 232, 233, 234, 240, 241, 242, 244, 245, 246, 248, 249, 250, 227, 231, 239, 243, 247, 251, 236, 237, 238, 28, 29, 30, 60, 61, 62, 92, 93, 94, 156, 157, 158, 188, 189, 190, 220, 221, 222, 31, 63, 127, 159, 191, 255, 252, 253, 254 };
-const uint  ENDPOINT_MAX_VALUES_0[21] = { 1U, 2U, 3U, 4U, 5U, 7U, 9U, 11U, 15U, 19U, 23U, 31U, 39U, 47U, 63U, 79U, 95U, 127U, 159U, 191U, 255U };
+const uint  WEIGHT_MAX_VALUES_0[12] = { 1U, 2U, 3U, 4U, 5U, 7U, 9U, 11U, 15U, 19U, 23U, 31U };
+const uint  unquant_lut_0[1206] = { 0U, 255U, 0U, 130U, 255U, 0U, 85U, 170U, 255U, 0U, 65U, 130U, 190U, 255U, 0U, 255U, 51U, 204U, 102U, 153U, 0U, 36U, 73U, 109U, 146U, 182U, 219U, 255U, 0U, 255U, 28U, 227U, 56U, 199U, 84U, 171U, 113U, 142U, 0U, 255U, 69U, 186U, 23U, 232U, 92U, 163U, 46U, 209U, 116U, 139U, 0U, 17U, 34U, 51U, 68U, 85U, 102U, 119U, 136U, 153U, 170U, 187U, 204U, 221U, 238U, 255U, 0U, 255U, 67U, 188U, 13U, 242U, 80U, 175U, 27U, 228U, 94U, 161U, 40U, 215U, 107U, 148U, 54U, 201U, 121U, 134U, 0U, 255U, 33U, 222U, 66U, 189U, 99U, 156U, 11U, 244U, 44U, 211U, 77U, 178U, 110U, 145U, 22U, 233U, 55U, 200U, 88U, 167U, 121U, 134U, 0U, 8U, 16U, 24U, 33U, 41U, 49U, 57U, 66U, 74U, 82U, 90U, 99U, 107U, 115U, 123U, 132U, 140U, 148U, 156U, 165U, 173U, 181U, 189U, 198U, 206U, 214U, 222U, 231U, 239U, 247U, 255U, 0U, 255U, 32U, 223U, 65U, 190U, 97U, 158U, 6U, 249U, 39U, 216U, 71U, 184U, 104U, 151U, 13U, 242U, 45U, 210U, 78U, 177U, 110U, 145U, 19U, 236U, 52U, 203U, 84U, 171U, 117U, 138U, 26U, 229U, 58U, 197U, 91U, 164U, 123U, 132U, 0U, 255U, 16U, 239U, 32U, 223U, 48U, 207U, 65U, 190U, 81U, 174U, 97U, 158U, 113U, 142U, 5U, 250U, 21U, 234U, 38U, 217U, 54U, 201U, 70U, 185U, 86U, 169U, 103U, 152U, 119U, 136U, 11U, 244U, 27U, 228U, 43U, 212U, 59U, 196U, 76U, 179U, 92U, 163U, 108U, 147U, 124U, 131U, 0U, 4U, 8U, 12U, 16U, 20U, 24U, 28U, 32U, 36U, 40U, 44U, 48U, 52U, 56U, 60U, 65U, 69U, 73U, 77U, 81U, 85U, 89U, 93U, 97U, 101U, 105U, 109U, 113U, 117U, 121U, 125U, 130U, 134U, 138U, 142U, 146U, 150U, 154U, 158U, 162U, 166U, 170U, 174U, 178U, 182U, 186U, 190U, 195U, 199U, 203U, 207U, 211U, 215U, 219U, 223U, 227U, 231U, 235U, 239U, 243U, 247U, 251U, 255U, 0U, 255U, 16U, 239U, 32U, 223U, 48U, 207U, 64U, 191U, 80U, 175U, 96U, 159U, 112U, 143U, 3U, 252U, 19U, 236U, 35U, 220U, 51U, 204U, 67U, 188U, 83U, 172U, 100U, 155U, 116U, 139U, 6U, 249U, 22U, 233U, 38U, 217U, 54U, 201U, 71U, 184U, 87U, 168U, 103U, 152U, 119U, 136U, 9U, 246U, 25U, 230U, 42U, 213U, 58U, 197U, 74U, 181U, 90U, 165U, 106U, 149U, 122U, 133U, 13U, 242U, 29U, 226U, 45U, 210U, 61U, 194U, 77U, 178U, 93U, 162U, 109U, 146U, 125U, 130U, 0U, 255U, 8U, 247U, 16U, 239U, 24U, 231U, 32U, 223U, 40U, 215U, 48U, 207U, 56U, 199U, 64U, 191U, 72U, 183U, 80U, 175U, 88U, 167U, 96U, 159U, 104U, 151U, 112U, 143U, 120U, 135U, 2U, 253U, 10U, 245U, 18U, 237U, 26U, 229U, 35U, 220U, 43U, 212U, 51U, 204U, 59U, 196U, 67U, 188U, 75U, 180U, 83U, 172U, 91U, 164U, 99U, 156U, 107U, 148U, 115U, 140U, 123U, 132U, 5U, 250U, 13U, 242U, 21U, 234U, 29U, 226U, 37U, 218U, 45U, 210U, 53U, 202U, 61U, 194U, 70U, 185U, 78U, 177U, 86U, 169U, 94U, 161U, 102U, 153U, 110U, 145U, 118U, 137U, 126U, 129U, 0U, 2U, 4U, 6U, 8U, 10U, 12U, 14U, 16U, 18U, 20U, 22U, 24U, 26U, 28U, 30U, 32U, 34U, 36U, 38U, 40U, 42U, 44U, 46U, 48U, 50U, 52U, 54U, 56U, 58U, 60U, 62U, 64U, 66U, 68U, 70U, 72U, 74U, 76U, 78U, 80U, 82U, 84U, 86U, 88U, 90U, 92U, 94U, 96U, 98U, 100U, 102U, 104U, 106U, 108U, 110U, 112U, 114U, 116U, 118U, 120U, 122U, 124U, 126U, 129U, 131U, 133U, 135U, 137U, 139U, 141U, 143U, 145U, 147U, 149U, 151U, 153U, 155U, 157U, 159U, 161U, 163U, 165U, 167U, 169U, 171U, 173U, 175U, 177U, 179U, 181U, 183U, 185U, 187U, 189U, 191U, 193U, 195U, 197U, 199U, 201U, 203U, 205U, 207U, 209U, 211U, 213U, 215U, 217U, 219U, 221U, 223U, 225U, 227U, 229U, 231U, 233U, 235U, 237U, 239U, 241U, 243U, 245U, 247U, 249U, 251U, 253U, 255U, 0U, 255U, 8U, 247U, 16U, 239U, 24U, 231U, 32U, 223U, 40U, 215U, 48U, 207U, 56U, 199U, 64U, 191U, 72U, 183U, 80U, 175U, 88U, 167U, 96U, 159U, 104U, 151U, 112U, 143U, 120U, 135U, 1U, 254U, 9U, 246U, 17U, 238U, 25U, 230U, 33U, 222U, 41U, 214U, 49U, 206U, 57U, 198U, 65U, 190U, 73U, 182U, 81U, 174U, 89U, 166U, 97U, 158U, 105U, 150U, 113U, 142U, 121U, 134U, 3U, 252U, 11U, 244U, 19U, 236U, 27U, 228U, 35U, 220U, 43U, 212U, 51U, 204U, 59U, 196U, 67U, 188U, 75U, 180U, 83U, 172U, 91U, 164U, 99U, 156U, 107U, 148U, 115U, 140U, 123U, 132U, 4U, 251U, 12U, 243U, 20U, 235U, 28U, 227U, 36U, 219U, 44U, 211U, 52U, 203U, 60U, 195U, 68U, 187U, 76U, 179U, 84U, 171U, 92U, 163U, 100U, 155U, 108U, 147U, 116U, 139U, 124U, 131U, 6U, 249U, 14U, 241U, 22U, 233U, 30U, 225U, 38U, 217U, 46U, 209U, 54U, 201U, 62U, 193U, 70U, 185U, 78U, 177U, 86U, 169U, 94U, 161U, 102U, 153U, 110U, 145U, 118U, 137U, 126U, 129U, 0U, 255U, 4U, 251U, 8U, 247U, 12U, 243U, 16U, 239U, 20U, 235U, 24U, 231U, 28U, 227U, 32U, 223U, 36U, 219U, 40U, 215U, 44U, 211U, 48U, 207U, 52U, 203U, 56U, 199U, 60U, 195U, 64U, 191U, 68U, 187U, 72U, 183U, 76U, 179U, 80U, 175U, 84U, 171U, 88U, 167U, 92U, 163U, 96U, 159U, 100U, 155U, 104U, 151U, 108U, 147U, 112U, 143U, 116U, 139U, 120U, 135U, 124U, 131U, 1U, 254U, 5U, 250U, 9U, 246U, 13U, 242U, 17U, 238U, 21U, 234U, 25U, 230U, 29U, 226U, 33U, 222U, 37U, 218U, 41U, 214U, 45U, 210U, 49U, 206U, 53U, 202U, 57U, 198U, 61U, 194U, 65U, 190U, 69U, 186U, 73U, 182U, 77U, 178U, 81U, 174U, 85U, 170U, 89U, 166U, 93U, 162U, 97U, 158U, 101U, 154U, 105U, 150U, 109U, 146U, 113U, 142U, 117U, 138U, 121U, 134U, 125U, 130U, 2U, 253U, 6U, 249U, 10U, 245U, 14U, 241U, 18U, 237U, 22U, 233U, 26U, 229U, 30U, 225U, 34U, 221U, 38U, 217U, 42U, 213U, 46U, 209U, 50U, 205U, 54U, 201U, 58U, 197U, 62U, 193U, 66U, 189U, 70U, 185U, 74U, 181U, 78U, 177U, 82U, 173U, 86U, 169U, 90U, 165U, 94U, 161U, 98U, 157U, 102U, 153U, 106U, 149U, 110U, 145U, 114U, 141U, 118U, 137U, 122U, 133U, 126U, 129U, 0U, 1U, 2U, 3U, 4U, 5U, 6U, 7U, 8U, 9U, 10U, 11U, 12U, 13U, 14U, 15U, 16U, 17U, 18U, 19U, 20U, 21U, 22U, 23U, 24U, 25U, 26U, 27U, 28U, 29U, 30U, 31U, 32U, 33U, 34U, 35U, 36U, 37U, 38U, 39U, 40U, 41U, 42U, 43U, 44U, 45U, 46U, 47U, 48U, 49U, 50U, 51U, 52U, 53U, 54U, 55U, 56U, 57U, 58U, 59U, 60U, 61U, 62U, 63U, 64U, 65U, 66U, 67U, 68U, 69U, 70U, 71U, 72U, 73U, 74U, 75U, 76U, 77U, 78U, 79U, 80U, 81U, 82U, 83U, 84U, 85U, 86U, 87U, 88U, 89U, 90U, 91U, 92U, 93U, 94U, 95U, 96U, 97U, 98U, 99U, 100U, 101U, 102U, 103U, 104U, 105U, 106U, 107U, 108U, 109U, 110U, 111U, 112U, 113U, 114U, 115U, 116U, 117U, 118U, 119U, 120U, 121U, 122U, 123U, 124U, 125U, 126U, 127U, 128U, 129U, 130U, 131U, 132U, 133U, 134U, 135U, 136U, 137U, 138U, 139U, 140U, 141U, 142U, 143U, 144U, 145U, 146U, 147U, 148U, 149U, 150U, 151U, 152U, 153U, 154U, 155U, 156U, 157U, 158U, 159U, 160U, 161U, 162U, 163U, 164U, 165U, 166U, 167U, 168U, 169U, 170U, 171U, 172U, 173U, 174U, 175U, 176U, 177U, 178U, 179U, 180U, 181U, 182U, 183U, 184U, 185U, 186U, 187U, 188U, 189U, 190U, 191U, 192U, 193U, 194U, 195U, 196U, 197U, 198U, 199U, 200U, 201U, 202U, 203U, 204U, 205U, 206U, 207U, 208U, 209U, 210U, 211U, 212U, 213U, 214U, 215U, 216U, 217U, 218U, 219U, 220U, 221U, 222U, 223U, 224U, 225U, 226U, 227U, 228U, 229U, 230U, 231U, 232U, 233U, 234U, 235U, 236U, 237U, 238U, 239U, 240U, 241U, 242U, 243U, 244U, 245U, 246U, 247U, 248U, 249U, 250U, 251U, 252U, 253U, 254U, 255U };
+const int  unquant_offsets_0[21] = { 0, 2, 5, 9, 14, 20, 28, 38, 50, 66, 86, 110, 142, 182, 230, 294, 374, 470, 598, 758, 950 };
 const uint  unscrambler_lut_0[688] = { 0U, 2U, 4U, 5U, 3U, 1U, 0U, 2U, 4U, 6U, 8U, 9U, 7U, 5U, 3U, 1U, 0U, 4U, 8U, 2U, 6U, 10U, 11U, 7U, 3U, 9U, 5U, 1U, 0U, 4U, 8U, 12U, 16U, 2U, 6U, 10U, 14U, 18U, 19U, 15U, 11U, 7U, 3U, 17U, 13U, 9U, 5U, 1U, 0U, 8U, 16U, 2U, 10U, 18U, 4U, 12U, 20U, 6U, 14U, 22U, 23U, 15U, 7U, 21U, 13U, 5U, 19U, 11U, 3U, 17U, 9U, 1U, 0U, 8U, 16U, 24U, 32U, 2U, 10U, 18U, 26U, 34U, 4U, 12U, 20U, 28U, 36U, 6U, 14U, 22U, 30U, 38U, 39U, 31U, 23U, 15U, 7U, 37U, 29U, 21U, 13U, 5U, 35U, 27U, 19U, 11U, 3U, 33U, 25U, 17U, 9U, 1U, 0U, 16U, 32U, 2U, 18U, 34U, 4U, 20U, 36U, 6U, 22U, 38U, 8U, 24U, 40U, 10U, 26U, 42U, 12U, 28U, 44U, 14U, 30U, 46U, 47U, 31U, 15U, 45U, 29U, 13U, 43U, 27U, 11U, 41U, 25U, 9U, 39U, 23U, 7U, 37U, 21U, 5U, 35U, 19U, 3U, 33U, 17U, 1U, 0U, 16U, 32U, 48U, 64U, 2U, 18U, 34U, 50U, 66U, 4U, 20U, 36U, 52U, 68U, 6U, 22U, 38U, 54U, 70U, 8U, 24U, 40U, 56U, 72U, 10U, 26U, 42U, 58U, 74U, 12U, 28U, 44U, 60U, 76U, 14U, 30U, 46U, 62U, 78U, 79U, 63U, 47U, 31U, 15U, 77U, 61U, 45U, 29U, 13U, 75U, 59U, 43U, 27U, 11U, 73U, 57U, 41U, 25U, 9U, 71U, 55U, 39U, 23U, 7U, 69U, 53U, 37U, 21U, 5U, 67U, 51U, 35U, 19U, 3U, 65U, 49U, 33U, 17U, 1U, 0U, 32U, 64U, 2U, 34U, 66U, 4U, 36U, 68U, 6U, 38U, 70U, 8U, 40U, 72U, 10U, 42U, 74U, 12U, 44U, 76U, 14U, 46U, 78U, 16U, 48U, 80U, 18U, 50U, 82U, 20U, 52U, 84U, 22U, 54U, 86U, 24U, 56U, 88U, 26U, 58U, 90U, 28U, 60U, 92U, 30U, 62U, 94U, 95U, 63U, 31U, 93U, 61U, 29U, 91U, 59U, 27U, 89U, 57U, 25U, 87U, 55U, 23U, 85U, 53U, 21U, 83U, 51U, 19U, 81U, 49U, 17U, 79U, 47U, 15U, 77U, 45U, 13U, 75U, 43U, 11U, 73U, 41U, 9U, 71U, 39U, 7U, 69U, 37U, 5U, 67U, 35U, 3U, 65U, 33U, 1U, 0U, 32U, 64U, 96U, 128U, 2U, 34U, 66U, 98U, 130U, 4U, 36U, 68U, 100U, 132U, 6U, 38U, 70U, 102U, 134U, 8U, 40U, 72U, 104U, 136U, 10U, 42U, 74U, 106U, 138U, 12U, 44U, 76U, 108U, 140U, 14U, 46U, 78U, 110U, 142U, 16U, 48U, 80U, 112U, 144U, 18U, 50U, 82U, 114U, 146U, 20U, 52U, 84U, 116U, 148U, 22U, 54U, 86U, 118U, 150U, 24U, 56U, 88U, 120U, 152U, 26U, 58U, 90U, 122U, 154U, 28U, 60U, 92U, 124U, 156U, 30U, 62U, 94U, 126U, 158U, 159U, 127U, 95U, 63U, 31U, 157U, 125U, 93U, 61U, 29U, 155U, 123U, 91U, 59U, 27U, 153U, 121U, 89U, 57U, 25U, 151U, 119U, 87U, 55U, 23U, 149U, 117U, 85U, 53U, 21U, 147U, 115U, 83U, 51U, 19U, 145U, 113U, 81U, 49U, 17U, 143U, 111U, 79U, 47U, 15U, 141U, 109U, 77U, 45U, 13U, 139U, 107U, 75U, 43U, 11U, 137U, 105U, 73U, 41U, 9U, 135U, 103U, 71U, 39U, 7U, 133U, 101U, 69U, 37U, 5U, 131U, 99U, 67U, 35U, 3U, 129U, 97U, 65U, 33U, 1U, 0U, 64U, 128U, 2U, 66U, 130U, 4U, 68U, 132U, 6U, 70U, 134U, 8U, 72U, 136U, 10U, 74U, 138U, 12U, 76U, 140U, 14U, 78U, 142U, 16U, 80U, 144U, 18U, 82U, 146U, 20U, 84U, 148U, 22U, 86U, 150U, 24U, 88U, 152U, 26U, 90U, 154U, 28U, 92U, 156U, 30U, 94U, 158U, 32U, 96U, 160U, 34U, 98U, 162U, 36U, 100U, 164U, 38U, 102U, 166U, 40U, 104U, 168U, 42U, 106U, 170U, 44U, 108U, 172U, 46U, 110U, 174U, 48U, 112U, 176U, 50U, 114U, 178U, 52U, 116U, 180U, 54U, 118U, 182U, 56U, 120U, 184U, 58U, 122U, 186U, 60U, 124U, 188U, 62U, 126U, 190U, 191U, 127U, 63U, 189U, 125U, 61U, 187U, 123U, 59U, 185U, 121U, 57U, 183U, 119U, 55U, 181U, 117U, 53U, 179U, 115U, 51U, 177U, 113U, 49U, 175U, 111U, 47U, 173U, 109U, 45U, 171U, 107U, 43U, 169U, 105U, 41U, 167U, 103U, 39U, 165U, 101U, 37U, 163U, 99U, 35U, 161U, 97U, 33U, 159U, 95U, 31U, 157U, 93U, 29U, 155U, 91U, 27U, 153U, 89U, 25U, 151U, 87U, 23U, 149U, 85U, 21U, 147U, 83U, 19U, 145U, 81U, 17U, 143U, 79U, 15U, 141U, 77U, 13U, 139U, 75U, 11U, 137U, 73U, 9U, 135U, 71U, 7U, 133U, 69U, 5U, 131U, 67U, 3U, 129U, 65U, 1U };
 const int  unscrambler_offsets_0[21] = { -1, -1, -1, -1, 0, -1, 6, 16, -1, 28, 48, -1, 72, 112, -1, 160, 240, -1, 336, 496, -1 };
-const uint  WEIGHT_MAX_VALUES_0[12] = { 1U, 2U, 3U, 4U, 5U, 7U, 9U, 11U, 15U, 19U, 23U, 31U };
+const uint  ENDPOINT_MAX_VALUES_0[21] = { 1U, 2U, 3U, 4U, 5U, 7U, 9U, 11U, 15U, 19U, 23U, 31U, 39U, 47U, 63U, 79U, 95U, 127U, 159U, 191U, 255U };
 const uvec3  bits_trits_quints_table_0[21] = { uvec3(1U, 0U, 0U), uvec3(0U, 1U, 0U), uvec3(2U, 0U, 0U), uvec3(0U, 0U, 1U), uvec3(1U, 1U, 0U), uvec3(3U, 0U, 0U), uvec3(1U, 0U, 1U), uvec3(2U, 1U, 0U), uvec3(4U, 0U, 0U), uvec3(2U, 0U, 1U), uvec3(3U, 1U, 0U), uvec3(5U, 0U, 0U), uvec3(3U, 0U, 1U), uvec3(4U, 1U, 0U), uvec3(6U, 0U, 0U), uvec3(4U, 0U, 1U), uvec3(5U, 1U, 0U), uvec3(7U, 0U, 0U), uvec3(5U, 0U, 1U), uvec3(6U, 1U, 0U), uvec3(8U, 0U, 0U) };
 uint buffer_index_0;
 
 uvec3  pixels_0[16];
+
+f16vec3 to_unorm_0(uvec3 this_0)
+{
+    return f16vec3(this_0) / 255.0HF;
+}
 
 f16vec3 saturate_0(f16vec3 x_0)
 {
@@ -63,7 +71,7 @@ void find_best_eps_via_pca_0(out f16vec3 ep0_0, out f16vec3 ep1_0)
         {
             break;
         }
-        f16vec3 centroid_1 = centroid_0 + f16vec3(pixels_0[i_0]) / 255.0HF;
+        f16vec3 centroid_1 = centroid_0 + to_unorm_0(pixels_0[i_0]);
         uint count_1 = count_0 + 1U;
         i_0 = i_0 + 1U;
         centroid_0 = centroid_1;
@@ -96,7 +104,7 @@ void find_best_eps_via_pca_0(out f16vec3 ep0_0, out f16vec3 ep1_0)
         {
             break;
         }
-        f16vec3 d_0 = f16vec3(pixels_0[i_0]) / 255.0HF - centroid_2;
+        f16vec3 d_0 = to_unorm_0(pixels_0[i_0]) - centroid_2;
         C_0[0] = C_0[0] + d_0.x * d_0;
         C_0[1] = C_0[1] + d_0.y * d_0;
         C_0[2] = C_0[2] + d_0.z * d_0;
@@ -136,7 +144,7 @@ void find_best_eps_via_pca_0(out f16vec3 ep0_0, out f16vec3 ep1_0)
     if(float(dot(axis_0, axis_0)) < 9.99999993922529029e-09)
     {
         ep0_0 = saturate_0(centroid_2);
-        ep1_0 = saturate_0(f16vec3(pixels_0[0]) / 255.0HF);
+        ep1_0 = saturate_0(to_unorm_0(pixels_0[0]));
         return;
     }
     f16vec3 axis_2 = normalize(axis_0);
@@ -184,35 +192,56 @@ void solve_weights_0(f16vec3 ep0_1, f16vec3 ep1_1, out uint  weights_0[16])
         {
             break;
         }
-        weights_0[i_2] = uint(saturate_1(dot(f16vec3(pixels_0[i_2]) / 255.0HF - ep0_1, _S10) * _S11) * 255.0HF);
+        weights_0[i_2] = uint(saturate_1(dot(to_unorm_0(pixels_0[i_2]) - ep0_1, _S10) * _S11) * 255.0HF);
         i_2 = i_2 + 1;
     }
     return;
 }
 
-void encode_block_0(out uvec3 ep0_2, out uvec3 ep1_2, out uint  weights_1[16])
+void encode_block_0(out uvec3 ep0_u8_0, out uvec3 ep1_u8_0, out uint  weights_1[16])
 {
     const f16vec3 _S12 = f16vec3(0.0HF);
-    f16vec3 ep0_3 = _S12;
-    f16vec3 ep1_3 = _S12;
-    find_best_eps_via_pca_0(ep0_3, ep1_3);
-    ep0_2 = uvec3(ep0_3 * 255.0HF);
-    ep1_2 = uvec3(ep1_3 * 255.0HF);
-    solve_weights_0(ep0_3, ep1_3, weights_1);
+    f16vec3 ep0_2 = _S12;
+    f16vec3 ep1_2 = _S12;
+    find_best_eps_via_pca_0(ep0_2, ep1_2);
+    if((ep1_2.x + ep1_2.y + ep1_2.z) < (ep0_2.x + ep0_2.y + ep0_2.z))
+    {
+        f16vec3 temp_0 = ep0_2;
+        ep0_2 = ep1_2;
+        ep1_2 = temp_0;
+    }
+    ep0_u8_0 = uvec3(ep0_2 * 255.0HF);
+    ep1_u8_0 = uvec3(ep1_2 * 255.0HF);
+    solve_weights_0(ep0_2, ep1_2, weights_1);
     return;
+}
+
+bool trit_get_0(uvec3 this_1)
+{
+    return bool(this_1.y);
+}
+
+uint bits_get_0(uvec3 this_2)
+{
+    return this_2.x;
+}
+
+bool quint_get_0(uvec3 this_3)
+{
+    return bool(this_3.z);
 }
 
 uint compute_ise_bitcount_0(uint items_0, uint range_mode_0)
 {
-    if((bits_trits_quints_table_0[range_mode_0].y) != 0U)
+    if(trit_get_0(bits_trits_quints_table_0[range_mode_0]))
     {
-        return ((8U + 5U * bits_trits_quints_table_0[range_mode_0].x) * items_0 + 4U) / 5U;
+        return ((8U + 5U * bits_get_0(bits_trits_quints_table_0[range_mode_0])) * items_0 + 4U) / 5U;
     }
-    if((bits_trits_quints_table_0[range_mode_0].z) != 0U)
+    if(quint_get_0(bits_trits_quints_table_0[range_mode_0]))
     {
-        return ((7U + 3U * bits_trits_quints_table_0[range_mode_0].x) * items_0 + 2U) / 3U;
+        return ((7U + 3U * bits_get_0(bits_trits_quints_table_0[range_mode_0])) * items_0 + 2U) / 3U;
     }
-    return items_0 * bits_trits_quints_table_0[range_mode_0].x;
+    return items_0 * bits_get_0(bits_trits_quints_table_0[range_mode_0]);
 }
 
 uint get_quant_ep_mode_0(uint quant_weight_mode_0, uint num_weights_0, uint num_endpoints_0, uint partitions_0)
@@ -246,6 +275,30 @@ uint get_quant_ep_mode_0(uint quant_weight_mode_0, uint num_weights_0, uint num_
     return mode_idx_0;
 }
 
+uint quantize_u8_0(uint value_0, uint range_0)
+{
+    float _S14 = float(range_0);
+    return uint(round(float(clamp(uint(float(value_0) * _S14 / 255.0 + 0.5), 0U, range_0)) / _S14 * 255.0));
+}
+
+void quantize_u8_1(inout uvec3 value_1, uint range_1)
+{
+    int i_3 = 0;
+    for(;;)
+    {
+        if(i_3 < 3)
+        {
+        }
+        else
+        {
+            break;
+        }
+        value_1[i_3] = uint(int64_t(quantize_u8_0(value_1[i_3], range_1)));
+        i_3 = i_3 + 1;
+    }
+    return;
+}
+
 uint unscramble_quantized_0(uint quant_mode_0, uint q_val_0)
 {
     if((unscrambler_offsets_0[quant_mode_0]) < 0)
@@ -255,30 +308,107 @@ uint unscramble_quantized_0(uint quant_mode_0, uint q_val_0)
     return unscrambler_lut_0[uint(unscrambler_offsets_0[quant_mode_0]) + q_val_0];
 }
 
-void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_0, uint count_2, bool bwd_0)
+uint unquantize_0(uint quant_mode_1, uint unscrambled_0)
 {
-    uint i_3 = 0U;
+    return unquant_lut_0[uint(unquant_offsets_0[quant_mode_1]) + unscrambled_0];
+}
+
+bool will_blue_contract_0(uvec3 ep0_3, uvec3 ep1_3, uint quant_ep_mode_0)
+{
+    uint  _S15[6] = { ep0_3.x, ep1_3.x, ep0_3.y, ep1_3.y, ep0_3.z, ep1_3.z };
+    uint  v_0[6];
+    uint i_4 = 0U;
     for(;;)
     {
-        if(i_3 < count_2)
+        if(i_4 < 6U)
         {
         }
         else
         {
             break;
         }
-        uint bit_0 = (value_0 >> i_3) & 1U;
-        uint _S14;
-        if(bwd_0)
+        v_0[i_4] = unquantize_0(quant_ep_mode_0, unscramble_quantized_0(quant_ep_mode_0, clamp(uint(float(_S15[i_4]) * float(ENDPOINT_MAX_VALUES_0[quant_ep_mode_0]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[quant_ep_mode_0])));
+        i_4 = i_4 + 1U;
+    }
+    return (v_0[1] + v_0[3] + v_0[5]) < (v_0[0] + v_0[2] + v_0[4]);
+}
+
+void swap_endpoints_0(inout uvec3 ep0_4, inout uvec3 ep1_4, inout uint  weights_2[16])
+{
+    uvec3 temp_1 = ep0_4;
+    ep0_4 = ep1_4;
+    ep1_4 = temp_1;
+    int i_5 = 0;
+    for(;;)
+    {
+        if(i_5 < 16)
         {
-            _S14 = 127U - bit_offset_0;
         }
         else
         {
-            _S14 = bit_offset_0;
+            break;
         }
-        uint word_idx_0 = _S14 >> 5;
-        uint bit_idx_0 = _S14 & 31U;
+        weights_2[i_5] = uint(clamp(255 - int(weights_2[i_5]), 0, 255));
+        i_5 = i_5 + 1;
+    }
+    return;
+}
+
+void quantize_u8_2(inout uint  value_2[16], uint range_2)
+{
+    int i_6 = 0;
+    for(;;)
+    {
+        if(i_6 < 16)
+        {
+        }
+        else
+        {
+            break;
+        }
+        value_2[i_6] = uint(int64_t(quantize_u8_0(value_2[i_6], range_2)));
+        i_6 = i_6 + 1;
+    }
+    return;
+}
+
+uint quantize_0(inout uvec3 ep0_5, inout uvec3 ep1_5, inout uint  weights_3[16])
+{
+    uint quant_ep_mode_1 = get_quant_ep_mode_0(8U, 16U, 6U, 1U);
+    quantize_u8_1(ep0_5, ENDPOINT_MAX_VALUES_0[quant_ep_mode_1]);
+    quantize_u8_1(ep1_5, ENDPOINT_MAX_VALUES_0[quant_ep_mode_1]);
+    if(will_blue_contract_0(ep0_5, ep1_5, quant_ep_mode_1))
+    {
+        swap_endpoints_0(ep0_5, ep1_5, weights_3);
+    }
+    quantize_u8_2(weights_3, 15U);
+    return 8U;
+}
+
+void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_3, uint count_2, bool bwd_0)
+{
+    uint i_7 = 0U;
+    for(;;)
+    {
+        if(i_7 < count_2)
+        {
+        }
+        else
+        {
+            break;
+        }
+        uint bit_0 = (value_3 >> i_7) & 1U;
+        uint _S16;
+        if(bwd_0)
+        {
+            _S16 = 127U - bit_offset_0;
+        }
+        else
+        {
+            _S16 = bit_offset_0;
+        }
+        uint word_idx_0 = _S16 >> 5;
+        uint bit_idx_0 = _S16 & 31U;
         if(word_idx_0 == 0U)
         {
             block_0[0] = (block_0[0]) | (bit_0 << bit_idx_0);
@@ -305,23 +435,23 @@ void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_0, ui
             }
         }
         bit_offset_0 = bit_offset_0 + 1U;
-        i_3 = i_3 + 1U;
+        i_7 = i_7 + 1U;
     }
     return;
 }
 
-void encode_bise_0(inout uvec4 _S15, inout uint _S16, uint  _S17[8], uint _S18, uint _S19, bool _S20)
+void encode_bise_0(inout uvec4 _S17, inout uint _S18, uint  _S19[8], uint _S20, uint _S21, bool _S22)
 {
-    uint _S21 = bits_trits_quints_table_0[_S18].x;
-    uint i_4;
+    uint _S23 = bits_get_0(bits_trits_quints_table_0[_S20]);
+    uint i_8;
     uint j_0;
     uint j_1;
-    if((bits_trits_quints_table_0[_S18].y) == 1U)
+    if(trit_get_0(bits_trits_quints_table_0[_S20]))
     {
-        i_4 = 0U;
+        i_8 = 0U;
         for(;;)
         {
-            if(i_4 < _S19)
+            if(i_8 < _S21)
             {
             }
             else
@@ -344,10 +474,10 @@ void encode_bise_0(inout uvec4 _S15, inout uint _S16, uint  _S17[8], uint _S18, 
                 {
                     break;
                 }
-                uint _S22 = i_4 + j_0;
-                if(_S22 < _S19)
+                uint _S24 = i_8 + j_0;
+                if(_S24 < _S21)
                 {
-                    group_0[j_0] = _S17[_S22];
+                    group_0[j_0] = _S19[_S24];
                 }
                 j_0 = j_0 + 1U;
             }
@@ -363,32 +493,32 @@ void encode_bise_0(inout uvec4 _S15, inout uint _S16, uint  _S17[8], uint _S18, 
                 {
                     break;
                 }
-                m_0[j_1] = (group_0[j_1]) & uint((1 << _S21) - 1);
-                t_1[j_1] = (group_0[j_1]) >> _S21;
+                m_0[j_1] = (group_0[j_1]) & uint((1 << _S23) - 1);
+                t_1[j_1] = (group_0[j_1]) >> _S23;
                 j_1 = j_1 + 1U;
             }
             uint packhigh_0 = uint(integer_from_trits_0[t_1[4] * 81U + t_1[3] * 27U + t_1[2] * 9U + t_1[1] * 3U + t_1[0]]);
-            write_bits_0(_S15, _S16, m_0[0], _S21, _S20);
-            write_bits_0(_S15, _S16, packhigh_0 & 3U, 2U, _S20);
-            write_bits_0(_S15, _S16, m_0[1], _S21, _S20);
-            write_bits_0(_S15, _S16, (packhigh_0 >> 2) & 3U, 2U, _S20);
-            write_bits_0(_S15, _S16, m_0[2], _S21, _S20);
-            write_bits_0(_S15, _S16, (packhigh_0 >> 4) & 1U, 1U, _S20);
-            write_bits_0(_S15, _S16, m_0[3], _S21, _S20);
-            write_bits_0(_S15, _S16, (packhigh_0 >> 5) & 3U, 2U, _S20);
-            write_bits_0(_S15, _S16, m_0[4], _S21, _S20);
-            write_bits_0(_S15, _S16, (packhigh_0 >> 7) & 1U, 1U, _S20);
-            i_4 = i_4 + 5U;
+            write_bits_0(_S17, _S18, m_0[0], _S23, _S22);
+            write_bits_0(_S17, _S18, packhigh_0 & 3U, 2U, _S22);
+            write_bits_0(_S17, _S18, m_0[1], _S23, _S22);
+            write_bits_0(_S17, _S18, (packhigh_0 >> 2) & 3U, 2U, _S22);
+            write_bits_0(_S17, _S18, m_0[2], _S23, _S22);
+            write_bits_0(_S17, _S18, (packhigh_0 >> 4) & 1U, 1U, _S22);
+            write_bits_0(_S17, _S18, m_0[3], _S23, _S22);
+            write_bits_0(_S17, _S18, (packhigh_0 >> 5) & 3U, 2U, _S22);
+            write_bits_0(_S17, _S18, m_0[4], _S23, _S22);
+            write_bits_0(_S17, _S18, (packhigh_0 >> 7) & 1U, 1U, _S22);
+            i_8 = i_8 + 5U;
         }
     }
     else
     {
-        if((bits_trits_quints_table_0[_S18].z) == 1U)
+        if(quint_get_0(bits_trits_quints_table_0[_S20]))
         {
-            i_4 = 0U;
+            i_8 = 0U;
             for(;;)
             {
-                if(i_4 < _S19)
+                if(i_8 < _S21)
                 {
                 }
                 else
@@ -409,10 +539,10 @@ void encode_bise_0(inout uvec4 _S15, inout uint _S16, uint  _S17[8], uint _S18, 
                     {
                         break;
                     }
-                    uint _S23 = i_4 + j_0;
-                    if(_S23 < _S19)
+                    uint _S25 = i_8 + j_0;
+                    if(_S25 < _S21)
                     {
-                        group_1[j_0] = _S17[_S23];
+                        group_1[j_0] = _S19[_S25];
                     }
                     j_0 = j_0 + 1U;
                 }
@@ -428,52 +558,52 @@ void encode_bise_0(inout uvec4 _S15, inout uint _S16, uint  _S17[8], uint _S18, 
                     {
                         break;
                     }
-                    m_1[j_1] = (group_1[j_1]) & uint((1 << _S21) - 1);
-                    q_0[j_1] = (group_1[j_1]) >> _S21;
+                    m_1[j_1] = (group_1[j_1]) & uint((1 << _S23) - 1);
+                    q_0[j_1] = (group_1[j_1]) >> _S23;
                     j_1 = j_1 + 1U;
                 }
                 uint packhigh_1 = uint(integer_from_quints_0[q_0[2] * 25U + q_0[1] * 5U + q_0[0]]);
-                write_bits_0(_S15, _S16, m_1[0], _S21, _S20);
-                write_bits_0(_S15, _S16, packhigh_1 & 7U, 3U, _S20);
-                write_bits_0(_S15, _S16, m_1[1], _S21, _S20);
-                write_bits_0(_S15, _S16, (packhigh_1 >> 3) & 3U, 2U, _S20);
-                write_bits_0(_S15, _S16, m_1[2], _S21, _S20);
-                write_bits_0(_S15, _S16, (packhigh_1 >> 5) & 3U, 2U, _S20);
-                i_4 = i_4 + 3U;
+                write_bits_0(_S17, _S18, m_1[0], _S23, _S22);
+                write_bits_0(_S17, _S18, packhigh_1 & 7U, 3U, _S22);
+                write_bits_0(_S17, _S18, m_1[1], _S23, _S22);
+                write_bits_0(_S17, _S18, (packhigh_1 >> 3) & 3U, 2U, _S22);
+                write_bits_0(_S17, _S18, m_1[2], _S23, _S22);
+                write_bits_0(_S17, _S18, (packhigh_1 >> 5) & 3U, 2U, _S22);
+                i_8 = i_8 + 3U;
             }
         }
         else
         {
-            i_4 = 0U;
+            i_8 = 0U;
             for(;;)
             {
-                if(i_4 < _S19)
+                if(i_8 < _S21)
                 {
                 }
                 else
                 {
                     break;
                 }
-                write_bits_0(_S15, _S16, _S17[i_4], _S21, _S20);
-                i_4 = i_4 + 1U;
+                write_bits_0(_S17, _S18, _S19[i_8], _S23, _S22);
+                i_8 = i_8 + 1U;
             }
         }
     }
     return;
 }
 
-void encode_bise_1(inout uvec4 _S24, inout uint _S25, uint  _S26[16], uint _S27, uint _S28, bool _S29)
+void encode_bise_1(inout uvec4 _S26, inout uint _S27, uint  _S28[16], uint _S29, uint _S30, bool _S31)
 {
-    uint _S30 = bits_trits_quints_table_0[_S27].x;
-    uint i_5;
+    uint _S32 = bits_get_0(bits_trits_quints_table_0[_S29]);
+    uint i_9;
     uint j_2;
     uint j_3;
-    if((bits_trits_quints_table_0[_S27].y) == 1U)
+    if(trit_get_0(bits_trits_quints_table_0[_S29]))
     {
-        i_5 = 0U;
+        i_9 = 0U;
         for(;;)
         {
-            if(i_5 < _S28)
+            if(i_9 < _S30)
             {
             }
             else
@@ -496,10 +626,10 @@ void encode_bise_1(inout uvec4 _S24, inout uint _S25, uint  _S26[16], uint _S27,
                 {
                     break;
                 }
-                uint _S31 = i_5 + j_2;
-                if(_S31 < _S28)
+                uint _S33 = i_9 + j_2;
+                if(_S33 < _S30)
                 {
-                    group_2[j_2] = _S26[_S31];
+                    group_2[j_2] = _S28[_S33];
                 }
                 j_2 = j_2 + 1U;
             }
@@ -515,32 +645,32 @@ void encode_bise_1(inout uvec4 _S24, inout uint _S25, uint  _S26[16], uint _S27,
                 {
                     break;
                 }
-                m_2[j_3] = (group_2[j_3]) & uint((1 << _S30) - 1);
-                t_2[j_3] = (group_2[j_3]) >> _S30;
+                m_2[j_3] = (group_2[j_3]) & uint((1 << _S32) - 1);
+                t_2[j_3] = (group_2[j_3]) >> _S32;
                 j_3 = j_3 + 1U;
             }
             uint packhigh_2 = uint(integer_from_trits_0[t_2[4] * 81U + t_2[3] * 27U + t_2[2] * 9U + t_2[1] * 3U + t_2[0]]);
-            write_bits_0(_S24, _S25, m_2[0], _S30, _S29);
-            write_bits_0(_S24, _S25, packhigh_2 & 3U, 2U, _S29);
-            write_bits_0(_S24, _S25, m_2[1], _S30, _S29);
-            write_bits_0(_S24, _S25, (packhigh_2 >> 2) & 3U, 2U, _S29);
-            write_bits_0(_S24, _S25, m_2[2], _S30, _S29);
-            write_bits_0(_S24, _S25, (packhigh_2 >> 4) & 1U, 1U, _S29);
-            write_bits_0(_S24, _S25, m_2[3], _S30, _S29);
-            write_bits_0(_S24, _S25, (packhigh_2 >> 5) & 3U, 2U, _S29);
-            write_bits_0(_S24, _S25, m_2[4], _S30, _S29);
-            write_bits_0(_S24, _S25, (packhigh_2 >> 7) & 1U, 1U, _S29);
-            i_5 = i_5 + 5U;
+            write_bits_0(_S26, _S27, m_2[0], _S32, _S31);
+            write_bits_0(_S26, _S27, packhigh_2 & 3U, 2U, _S31);
+            write_bits_0(_S26, _S27, m_2[1], _S32, _S31);
+            write_bits_0(_S26, _S27, (packhigh_2 >> 2) & 3U, 2U, _S31);
+            write_bits_0(_S26, _S27, m_2[2], _S32, _S31);
+            write_bits_0(_S26, _S27, (packhigh_2 >> 4) & 1U, 1U, _S31);
+            write_bits_0(_S26, _S27, m_2[3], _S32, _S31);
+            write_bits_0(_S26, _S27, (packhigh_2 >> 5) & 3U, 2U, _S31);
+            write_bits_0(_S26, _S27, m_2[4], _S32, _S31);
+            write_bits_0(_S26, _S27, (packhigh_2 >> 7) & 1U, 1U, _S31);
+            i_9 = i_9 + 5U;
         }
     }
     else
     {
-        if((bits_trits_quints_table_0[_S27].z) == 1U)
+        if(quint_get_0(bits_trits_quints_table_0[_S29]))
         {
-            i_5 = 0U;
+            i_9 = 0U;
             for(;;)
             {
-                if(i_5 < _S28)
+                if(i_9 < _S30)
                 {
                 }
                 else
@@ -561,10 +691,10 @@ void encode_bise_1(inout uvec4 _S24, inout uint _S25, uint  _S26[16], uint _S27,
                     {
                         break;
                     }
-                    uint _S32 = i_5 + j_2;
-                    if(_S32 < _S28)
+                    uint _S34 = i_9 + j_2;
+                    if(_S34 < _S30)
                     {
-                        group_3[j_2] = _S26[_S32];
+                        group_3[j_2] = _S28[_S34];
                     }
                     j_2 = j_2 + 1U;
                 }
@@ -580,86 +710,86 @@ void encode_bise_1(inout uvec4 _S24, inout uint _S25, uint  _S26[16], uint _S27,
                     {
                         break;
                     }
-                    m_3[j_3] = (group_3[j_3]) & uint((1 << _S30) - 1);
-                    q_1[j_3] = (group_3[j_3]) >> _S30;
+                    m_3[j_3] = (group_3[j_3]) & uint((1 << _S32) - 1);
+                    q_1[j_3] = (group_3[j_3]) >> _S32;
                     j_3 = j_3 + 1U;
                 }
                 uint packhigh_3 = uint(integer_from_quints_0[q_1[2] * 25U + q_1[1] * 5U + q_1[0]]);
-                write_bits_0(_S24, _S25, m_3[0], _S30, _S29);
-                write_bits_0(_S24, _S25, packhigh_3 & 7U, 3U, _S29);
-                write_bits_0(_S24, _S25, m_3[1], _S30, _S29);
-                write_bits_0(_S24, _S25, (packhigh_3 >> 3) & 3U, 2U, _S29);
-                write_bits_0(_S24, _S25, m_3[2], _S30, _S29);
-                write_bits_0(_S24, _S25, (packhigh_3 >> 5) & 3U, 2U, _S29);
-                i_5 = i_5 + 3U;
+                write_bits_0(_S26, _S27, m_3[0], _S32, _S31);
+                write_bits_0(_S26, _S27, packhigh_3 & 7U, 3U, _S31);
+                write_bits_0(_S26, _S27, m_3[1], _S32, _S31);
+                write_bits_0(_S26, _S27, (packhigh_3 >> 3) & 3U, 2U, _S31);
+                write_bits_0(_S26, _S27, m_3[2], _S32, _S31);
+                write_bits_0(_S26, _S27, (packhigh_3 >> 5) & 3U, 2U, _S31);
+                i_9 = i_9 + 3U;
             }
         }
         else
         {
-            i_5 = 0U;
+            i_9 = 0U;
             for(;;)
             {
-                if(i_5 < _S28)
+                if(i_9 < _S30)
                 {
                 }
                 else
                 {
                     break;
                 }
-                write_bits_0(_S24, _S25, _S26[i_5], _S30, _S29);
-                i_5 = i_5 + 1U;
+                write_bits_0(_S26, _S27, _S28[i_9], _S32, _S31);
+                i_9 = i_9 + 1U;
             }
         }
     }
     return;
 }
 
-uvec4 pack_astc_4x4_block_0(uvec4  _S33[2], uint  _S34[16], uint _S35, uint _S36, bool _S37)
+uvec4 pack_astc_4x4_block_0(uvec4  _S35[2], uint  _S36[16], uint _S37, uint _S38, bool _S39)
 {
     uvec4 final_block_0 = uvec4(0U, 0U, 0U, 0U);
-    uint _S38;
-    if(_S37)
+    uint _S40;
+    if(_S39)
     {
-        _S38 = 8U;
+        _S40 = 8U;
     }
     else
     {
-        _S38 = 6U;
+        _S40 = 6U;
     }
-    uint _S39 = get_quant_ep_mode_0(_S35, 16U, _S38, 1U);
-    int _S40;
-    if(_S35 < 6U)
+    uint _S41 = get_quant_ep_mode_0(_S37, 16U, _S40, 1U);
+    int _S42;
+    if(_S37 < 6U)
     {
-        _S40 = 0;
-    }
-    else
-    {
-        _S40 = 1;
-    }
-    uint r_0 = _S35 % 6U + 2U;
-    uint block_mode_0 = ((((((r_0 >> 1) & 3U) | ((r_0 & 1U) << 4)) | 64U) | 0U) | (uint(_S40) << 9)) | 0U;
-    uint _S41;
-    if(_S37)
-    {
-        _S41 = 12U;
+        _S42 = 0;
     }
     else
     {
-        _S41 = 8U;
+        _S42 = 1;
+    }
+    uint r_0 = _S37 % 6U + 2U;
+    uint block_mode_0 = ((((((r_0 >> 1) & 3U) | ((r_0 & 1U) << 4)) | 64U) | 0U) | (uint(_S42) << 9)) | 0U;
+    uint _S43;
+    if(_S39)
+    {
+        _S43 = 12U;
+    }
+    else
+    {
+        _S43 = 8U;
     }
     uint  quantized_weights_0[16];
-    uint i_6 = 0U;
+    uint i_10 = 0U;
     for(;;)
     {
-        if(i_6 < 16U)
+        if(i_10 < 16U)
         {
         }
         else
         {
             break;
         }
-        quantized_weights_0[i_6] = unscramble_quantized_0(_S35, clamp(uint(float(_S34[i_6]) * float(WEIGHT_MAX_VALUES_0[_S35]) / 255.0 + 0.5), 0U, WEIGHT_MAX_VALUES_0[_S35]));
-        i_6 = i_6 + 1U;
+        quantized_weights_0[i_10] = unscramble_quantized_0(_S37, clamp(uint(float(_S36[i_10]) * float(WEIGHT_MAX_VALUES_0[_S37]) / 255.0 + 0.5), 0U, WEIGHT_MAX_VALUES_0[_S37]));
+        i_10 = i_10 + 1U;
     }
     uint  raw_endpoints_0[8];
     uint p_0 = 0U;
@@ -673,27 +803,27 @@ uvec4 pack_astc_4x4_block_0(uvec4  _S33[2], uint  _S34[16], uint _S35, uint _S36
         {
             break;
         }
-        uint _S42 = p_0 * 2U;
-        uint _S43 = _S42 + 1U;
+        uint _S44 = p_0 * 2U;
+        uint _S45 = _S44 + 1U;
         uint ep_idx_1 = ep_idx_0 + 1U;
-        raw_endpoints_0[ep_idx_0] = _S33[_S42].x;
+        raw_endpoints_0[ep_idx_0] = _S35[_S44].x;
         uint ep_idx_2 = ep_idx_1 + 1U;
-        raw_endpoints_0[ep_idx_1] = _S33[_S43].x;
+        raw_endpoints_0[ep_idx_1] = _S35[_S45].x;
         uint ep_idx_3 = ep_idx_2 + 1U;
-        raw_endpoints_0[ep_idx_2] = _S33[_S42].y;
+        raw_endpoints_0[ep_idx_2] = _S35[_S44].y;
         uint ep_idx_4 = ep_idx_3 + 1U;
-        raw_endpoints_0[ep_idx_3] = _S33[_S43].y;
+        raw_endpoints_0[ep_idx_3] = _S35[_S45].y;
         uint ep_idx_5 = ep_idx_4 + 1U;
-        raw_endpoints_0[ep_idx_4] = _S33[_S42].z;
+        raw_endpoints_0[ep_idx_4] = _S35[_S44].z;
         uint ep_idx_6 = ep_idx_5 + 1U;
-        raw_endpoints_0[ep_idx_5] = _S33[_S43].z;
-        if(_S37)
+        raw_endpoints_0[ep_idx_5] = _S35[_S45].z;
+        if(_S39)
         {
             uint ep_idx_7 = ep_idx_6 + 1U;
-            raw_endpoints_0[ep_idx_6] = _S33[_S42].w;
-            uint _S44 = ep_idx_7 + 1U;
-            raw_endpoints_0[ep_idx_7] = _S33[_S43].w;
-            ep_idx_0 = _S44;
+            raw_endpoints_0[ep_idx_6] = _S35[_S44].w;
+            uint _S46 = ep_idx_7 + 1U;
+            raw_endpoints_0[ep_idx_7] = _S35[_S45].w;
+            ep_idx_0 = _S46;
         }
         else
         {
@@ -702,40 +832,40 @@ uvec4 pack_astc_4x4_block_0(uvec4  _S33[2], uint  _S34[16], uint _S35, uint _S36
         p_0 = p_0 + 1U;
     }
     uint  quantized_endpoints_0[8];
-    i_6 = 0U;
+    i_10 = 0U;
     for(;;)
     {
-        if(i_6 < _S38)
+        if(i_10 < _S40)
         {
         }
         else
         {
             break;
         }
-        quantized_endpoints_0[i_6] = unscramble_quantized_0(_S39, clamp(uint(float(raw_endpoints_0[i_6]) * float(ENDPOINT_MAX_VALUES_0[_S39]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[_S39]));
-        i_6 = i_6 + 1U;
+        quantized_endpoints_0[i_10] = unscramble_quantized_0(_S41, clamp(uint(float(raw_endpoints_0[i_10]) * float(ENDPOINT_MAX_VALUES_0[_S41]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[_S41]));
+        i_10 = i_10 + 1U;
     }
     uint fwd_offset_0 = 0U;
     write_bits_0(final_block_0, fwd_offset_0, block_mode_0, 11U, false);
     write_bits_0(final_block_0, fwd_offset_0, 0U, 2U, false);
-    write_bits_0(final_block_0, fwd_offset_0, _S41, 4U, false);
-    encode_bise_0(final_block_0, fwd_offset_0, quantized_endpoints_0, _S39, _S38, false);
+    write_bits_0(final_block_0, fwd_offset_0, _S43, 4U, false);
+    encode_bise_0(final_block_0, fwd_offset_0, quantized_endpoints_0, _S41, _S40, false);
     uint bwd_offset_0 = 0U;
-    encode_bise_1(final_block_0, bwd_offset_0, quantized_weights_0, _S35, 16U, true);
+    encode_bise_1(final_block_0, bwd_offset_0, quantized_weights_0, _S37, 16U, true);
     return final_block_0;
 }
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 void main()
 {
-    ivec2 _S45 = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tex_coord_0 = _S45 * 4;
+    ivec2 _S47 = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 tex_coord_0 = _S47 * 4;
     if((any(bvec2((greaterThanEqual(tex_coord_0,pushConstants_0.u_TextureDimensions_0))))))
     {
         return;
     }
-    buffer_index_0 = uint(_S45.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S45.x);
-    uint _S46 = uint(pushConstants_0.u_TextureDimensions_0.x);
+    buffer_index_0 = uint(_S47.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S47.x);
+    uint _S48 = uint(pushConstants_0.u_TextureDimensions_0.x);
     int y_0 = 0;
     for(;;)
     {
@@ -756,20 +886,21 @@ void main()
             {
                 break;
             }
-            uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S46 + uint(tex_coord_0.x + x_2))];
+            uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S48 + uint(tex_coord_0.x + x_2))];
             pixels_0[y_0 * 4 + x_2] = uvec3((tex_element_0 >> 0) & 255U, (tex_element_0 >> 8) & 255U, (tex_element_0 >> 16) & 255U);
             x_2 = x_2 + 1;
         }
         y_0 = y_0 + 1;
     }
-    uvec3 endpoint_start_0;
-    uvec3 endpoint_end_0;
-    uint  weights_2[16];
-    encode_block_0(endpoint_start_0, endpoint_end_0, weights_2);
+    uvec3 ep0_6;
+    uvec3 ep1_6;
+    uint  weights_4[16];
+    encode_block_0(ep0_6, ep1_6, weights_4);
+    uint quant_weight_mode_1 = quantize_0(ep0_6, ep1_6, weights_4);
     uvec4  eps_0[2];
-    eps_0[0] = uvec4(endpoint_start_0, 255U);
-    eps_0[1] = uvec4(endpoint_end_0, 255U);
-    astc_blocks_0._data[uint(buffer_index_0)] = pack_astc_4x4_block_0(eps_0, weights_2, 8U, 0U, false);
+    eps_0[0] = uvec4(ep0_6, 255U);
+    eps_0[1] = uvec4(ep1_6, 255U);
+    astc_blocks_0._data[uint(buffer_index_0)] = pack_astc_4x4_block_0(eps_0, weights_4, quant_weight_mode_1, 0U, false);
     return;
 }
 

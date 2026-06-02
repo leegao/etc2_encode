@@ -9,6 +9,12 @@ RWStructuredBuffer<uint4> astc_blocks;
 
 typedef uint8_t4[16] Reconstruction;
 #ifdef ENABLE_DIAGNOSTICS
+// struct ASTCParameters {
+//   uint32_t ep0;
+//   uint32_t ep1;
+//   uint8_t weights[16];
+// };
+
 struct Diagnostics {
   uint2 start_time;
   float mse;
@@ -18,6 +24,7 @@ struct Diagnostics {
 #else
   uint reconstructed[16];
 #endif
+  // ASTCParameters params;
 };
 
 [[vk::binding(2, 0)]]
@@ -263,6 +270,10 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
 #ifdef ENABLE_DIAGNOSTICS
   diagnostics[buffer_index].start_time = startTime;
-  // diagnostics[buffer_index].mse = quant_ep_mode; // DEBUG
+  // diagnostics[buffer_index].params.ep0 = ep0.x | (ep0.y << 8) | (ep0.z <<
+  // 16); diagnostics[buffer_index].params.ep1 = ep1.x | (ep1.y << 8) | (ep1.z
+  // << 16); for (int i = 0; i < 16; i++) {
+  //   diagnostics[buffer_index].params.weights[i] = weights[i] & 0xFFu;
+  // }
 #endif
 }
