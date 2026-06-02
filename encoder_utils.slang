@@ -19,6 +19,28 @@ __glsl_extension(GL_EXT_shader_realtime_clock) uint2 clockRealtime2x32EXT() {
 }
 #endif
 
+uint quantize_u8(uint value, uint range) {
+  uint quantized = uint((float(value) * float(range)) / 255.0f + 0.5f);
+  quantized = clamp(quantized, 0u, range);
+  // var quantized = round(float(value) / 255.0f * range);
+  return uint(round(quantized / float(range) * 255));
+}
+
+void quantize_u8<E : __BuiltinIntegerType, let M : int>(
+    inout vector<E, M> value, uint range) {
+  for (int i = 0; i < M; i++) {
+    var val = E(value[i]).toUInt();
+    value[i] = E(quantize_u8(val, range));
+  }
+}
+
+void quantize_u8<E : __BuiltinIntegerType, let M : int>(inout Array<E, M> value,
+                                                        uint range) {
+  for (int i = 0; i < M; i++) {
+    var val = E(value[i]).toUInt();
+    value[i] = E(quantize_u8(val, range));
+  }
+}
 
 struct PackedArray<let M : uint, let N : uint> {
   static const uint kElementsPerStorage = 32 / M;

@@ -24,7 +24,7 @@ struct Diagnostics {
 RWStructuredBuffer<Diagnostics> diagnostics;
 #endif
 
-float decompress(uint3 ep0, uint3 ep1, uint weights[16]) {
+float reconstruct(uint3 ep0, uint3 ep1, uint weights[16]) {
   float mse = 0.0;
   for (uint i = 0; i < 16; i++) {
     int3 C = pixels[i];
@@ -172,25 +172,43 @@ void find_best_eps_via_pca(out half3 ep0, out half3 ep1) {
   ep1 = saturate(centroid + axis * (max_t));
 }
 
-void fix_blue_contract(inout half3 ep0, inout half3 ep1) {
-  // See Table C.2.17
-  if (ep1.x + ep1.y + ep1.z < ep0.x + ep0.y + ep0.z) {
-    half3 temp = ep0;
-    ep0 = ep1;
-    ep1 = temp;
-  }
-}
-
 void encode_block(out uint3 ep0_u8, out uint3 ep1_u8, out uint weights[16]) {
   half3 ep0 = half3(0.0h);
   half3 ep1 = half3(0.0h);
   find_best_eps_via_pca(ep0, ep1);
-  fix_blue_contract(ep0, ep1);
+  // 99.9% of the time, this will catch blue contract
+  if (ep1.x + ep1.y + ep1.z < ep0.x + ep0.y + ep0.z) {
+    var temp = ep0;
+    ep0 = ep1;
+    ep1 = temp;
+  }
 
   ep0_u8 = uint3(ep0 * 255.0h);
   ep1_u8 = uint3(ep1 * 255.0h);
   solve_weights(ep0, ep1, weights);
   return;
+}
+
+void swap_endpoints(inout uint3 ep0, inout uint3 ep1, inout uint weights[16]) {
+  // See Table C.2.17
+  var temp = ep0;
+  ep0 = ep1;
+  ep1 = temp;
+  for (int i = 0; i < 16; i++) {
+    weights[i] = clamp(255 - int(weights[i]), 0, 255);
+  }
+}
+
+uint quantize(inout uint3 ep0, inout uint3 ep1, inout uint weights[16]) {
+  // TODO: find an optimal quant mode
+  var quant_weight_mode = 8u;
+  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6, 1);
+  quantize_u8(ep0, ENDPOINT_MAX_VALUES[quant_ep_mode]);
+  quantize_u8(ep1, ENDPOINT_MAX_VALUES[quant_ep_mode]);
+  if (will_blue_contract(ep0, ep1, quant_ep_mode))
+    swap_endpoints(ep0, ep1, weights);
+  quantize_u8(weights, WEIGHT_MAX_VALUES[quant_weight_mode]);
+  return quant_weight_mode;
 }
 
 [shader("compute")]
@@ -229,10 +247,12 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   uint3 ep0, ep1;
   uint weights[16];
   encode_block(ep0, ep1, weights);
-  decompress(ep0, ep1, weights);
+  var quant_weight_mode = quantize(ep0, ep1, weights);
 
-  var quant_weight_mode = 8;
-  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6, 1); // 19
+#ifdef ENABLE_DIAGNOSTICS
+  reconstruct(ep0, ep1, weights);
+#endif
+
   uint4 eps[2];
   eps[0] = uint4(ep0, 255);
   eps[1] = uint4(ep1, 255);
