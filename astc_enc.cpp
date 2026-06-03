@@ -14,13 +14,6 @@
 #include <cstring>
 #include <ktx.h>
 
-struct ETC2Block {
-    uint32_t eacHigh;
-    uint32_t eacLow;
-    uint32_t etcColorPayload;
-    uint32_t etcPixelPayload;
-};
-
 struct ASTCBlock {
     uint32_t x;
     uint32_t y;
@@ -28,17 +21,30 @@ struct ASTCBlock {
     uint32_t w;
 };
 
+struct ASTCParameters {
+    uint8_t ep0[4];
+    uint8_t ep1[4];
+    uint8_t weights[16];
+    uint astc_seed;
+    uint partition_map;
+};
+
 struct Clock {
     uint64_t start;
     float mse;
     uint32_t unused;
     uint8_t reconstructed[64];
+    ASTCParameters params;
 };
 
 struct PushConstants {
     int32_t width;
     int32_t height;
     uint32_t flag;
+};
+
+struct LUT {
+    uint32_t lut2[1024]; // 1024-entry (4KB)
 };
 
 #define VK_CHECK(x) do { \
@@ -165,11 +171,28 @@ std::vector<uint8_t> LoadRawSfloat16(const std::string& filename, int width, int
     return data;
 }
 
+
+std::vector<uint8_t> LoadRawData(const std::string& filename, int expectedSize) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open raw file: " + filename);
+    }
+
+    size_t fileSize = file.tellg();
+    if (fileSize != expectedSize) {
+        throw std::runtime_error("File size mismatch. Expected: " +
+                               std::to_string(expectedSize) + ", Got: " +
+                               std::to_string(fileSize));
+    }
+
+    file.seekg(0, std::ios::beg);
+    std::vector<uint8_t> data(fileSize);
+    file.read(reinterpret_cast<char*>(data.data()), fileSize);
+
+    return data;
+}
+
 int main() {
-
-
-    // WriteASTCToKTX("astc4x4.ktx", 4, 4, {{3761438786, 1750736845, 1, 44717407}});
-
     int width, height, channels;
 
     auto pixelData = stbi_load("test.png", &width, &height, &channels, STBI_rgb_alpha);
@@ -178,6 +201,12 @@ int main() {
         return -1;
     }
     size_t stagingBufferSize = static_cast<size_t>(width) * height * 4;
+    auto astc_partition_lut = LoadRawData("astc_2p_4x4_lut_s2.bin", 43692);
+    size_t partitionLutBufferSize = static_cast<size_t>(43692);
+
+    auto lut2 = LoadRawData("lut2_packed.bin", 4096);
+    struct LUT myLutData = {};
+    std::memcpy(myLutData.lut2, lut2.data(), 4096);
 
     // width = 2048; height = 2048;
     // auto pixelDataVec = LoadRawRgba8("machick.rgba8", width, height);
@@ -254,20 +283,78 @@ int main() {
     VkCommandPoolCreateInfo poolInfo{ VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, queueFamilyIndex };
     VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
 
+    VkBuffer partitionLutBuffer;
+    VkBufferCreateInfo partitionLutBufferInfo{
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = partitionLutBufferSize,
+        .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+    };
+    VK_CHECK(vkCreateBuffer(device, &partitionLutBufferInfo, nullptr, &partitionLutBuffer));
+    VkMemoryRequirements partitionLutBufferReqs;
+    vkGetBufferMemoryRequirements(device, partitionLutBuffer, &partitionLutBufferReqs);
+    VkMemoryAllocateInfo partitionLutBufferAlloc = {
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = partitionLutBufferReqs.size,
+        .memoryTypeIndex = FindMemoryType(
+            physicalDevice,
+            partitionLutBufferReqs.memoryTypeBits,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+    };
+    VkDeviceMemory partitionLutBufferMemory;
+    VK_CHECK(vkAllocateMemory(device, &partitionLutBufferAlloc, nullptr, &partitionLutBufferMemory));
+    vkBindBufferMemory(device, partitionLutBuffer, partitionLutBufferMemory, 0);
+
+    void* mappedData;
+    vkMapMemory(device, partitionLutBufferMemory, 0, partitionLutBufferReqs.size, 0, &mappedData);
+    std::memcpy(mappedData, astc_partition_lut.data(), partitionLutBufferSize);
+    vkUnmapMemory(device, partitionLutBufferMemory);
+
+
+    VkBuffer lutUniformBuffer;
+    VkBufferCreateInfo lutBufferInfo{
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = sizeof(LUT),
+        .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+    };
+    VK_CHECK(vkCreateBuffer(device, &lutBufferInfo, nullptr, &lutUniformBuffer));
+    VkMemoryRequirements lutBufferReqs;
+    vkGetBufferMemoryRequirements(device, lutUniformBuffer, &lutBufferReqs);
+    VkMemoryAllocateInfo lutBufferAlloc{
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = lutBufferReqs.size,
+        .memoryTypeIndex = FindMemoryType(
+            physicalDevice,
+            lutBufferReqs.memoryTypeBits,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+        ),
+    };
+    VkDeviceMemory lutBufferMemory;
+    VK_CHECK(vkAllocateMemory(device, &lutBufferAlloc, nullptr, &lutBufferMemory));
+    vkBindBufferMemory(device, lutUniformBuffer, lutBufferMemory, 0);
+
+    void* mappedLutData;
+    vkMapMemory(device, lutBufferMemory, 0, lutBufferReqs.size, 0, &mappedLutData);
+    std::memcpy(mappedLutData, &myLutData, sizeof(LUT)); // Pass pointer to the struct
+    vkUnmapMemory(device, lutBufferMemory);
+
     VkBuffer stagingBuffer;
-    VkBufferCreateInfo stageBufInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, stagingBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT };
+    VkBufferCreateInfo stageBufInfo = {
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = stagingBufferSize,
+        .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+    };
     VK_CHECK(vkCreateBuffer(device, &stageBufInfo, nullptr, &stagingBuffer));
     VkMemoryRequirements stageReqs;
     vkGetBufferMemoryRequirements(device, stagingBuffer, &stageReqs);
-    VkMemoryAllocateInfo stageAlloc{ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, nullptr, stageReqs.size, FindMemoryType(physicalDevice, stageReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) };
+    VkMemoryAllocateInfo stageAlloc = { VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, nullptr, stageReqs.size, FindMemoryType(physicalDevice, stageReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) };
     VkDeviceMemory stagingMemory;
     VK_CHECK(vkAllocateMemory(device, &stageAlloc, nullptr, &stagingMemory));
     vkBindBufferMemory(device, stagingBuffer, stagingMemory, 0);
 
     // Load test.png into staging buffer
-    void* mappedData;
-    vkMapMemory(device, stagingMemory, 0, stagingBufferSize, 0, &mappedData);
-    std::memcpy(mappedData, pixelData, stagingBufferSize);
+    void* mappedPixelData;
+    vkMapMemory(device, stagingMemory, 0, stagingBufferSize, 0, &mappedPixelData);
+    std::memcpy(mappedPixelData, pixelData, stagingBufferSize);
     vkUnmapMemory(device, stagingMemory);
     stbi_image_free(pixelData);
 
@@ -282,7 +369,7 @@ int main() {
     vkBindBufferMemory(device, compressedBuffer, compressedMemory, 0);
 
     VkBuffer profileBuffer;
-    VkBufferCreateInfo profileBufferInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, profileBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT };
+    VkBufferCreateInfo profileBufferInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, profileBufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT };
     VK_CHECK(vkCreateBuffer(device, &profileBufferInfo, nullptr, &profileBuffer));
     VkMemoryRequirements profileBufferReqs;
     vkGetBufferMemoryRequirements(device, profileBuffer, &profileBufferReqs);
@@ -297,7 +384,7 @@ int main() {
     VkCommandBufferBeginInfo beginInfo{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
     vkBeginCommandBuffer(cmd, &beginInfo);
 
-    VkDescriptorSetLayoutBinding bindings[3] = {};
+    VkDescriptorSetLayoutBinding bindings[5] = {};
     // Binding 0: source buffer (uint8_t4 pixels)
     bindings[0].binding = 0;
     bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -313,8 +400,18 @@ int main() {
     bindings[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     bindings[2].descriptorCount = 1;
     bindings[2].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+    // Binding 3: lut uniform buffer
+    bindings[3].binding = 3;
+    bindings[3].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    bindings[3].descriptorCount = 1;
+    bindings[3].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+    // Binding 4: partitionLutBuffer (astc snapper)
+    bindings[4].binding = 4;
+    bindings[4].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    bindings[4].descriptorCount = 1;
+    bindings[4].stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 
-    VkDescriptorSetLayoutCreateInfo layoutInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, nullptr, 0, 3, bindings };
+    VkDescriptorSetLayoutCreateInfo layoutInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, nullptr, 0, 5, bindings };
     VkDescriptorSetLayout descriptorSetLayout;
     VK_CHECK(vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout));
 
@@ -338,42 +435,65 @@ int main() {
     VkPipeline computePipeline;
     VK_CHECK(vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &computePipeInfo, nullptr, &computePipeline));
 
-    VkDescriptorPoolSize poolSizes[3] = {};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER; // src buffer
-    poolSizes[0].descriptorCount = 1;
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER; // etc2 ssbo
-    poolSizes[1].descriptorCount = 1;
-    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER; // profile ssbo
-    poolSizes[2].descriptorCount = 1;
+    VkDescriptorPoolSize poolSizes[1] = {};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[0].descriptorCount = 10;
 
-    VkDescriptorPoolCreateInfo descPoolInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, nullptr, 0, 1, 3, poolSizes };
+    VkDescriptorPoolCreateInfo descPoolInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, nullptr, 0, 1, 1, poolSizes };
     VkDescriptorPool descriptorPool;
     VK_CHECK(vkCreateDescriptorPool(device, &descPoolInfo, nullptr, &descriptorPool));
     VkDescriptorSetAllocateInfo allocInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, nullptr, descriptorPool, 1, &descriptorSetLayout };
     VkDescriptorSet descriptorSet;
     VK_CHECK(vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet));
 
-    VkDescriptorBufferInfo srcBufferDescInfo{};
-    srcBufferDescInfo.buffer = stagingBuffer;
-    srcBufferDescInfo.offset = 0;
-    srcBufferDescInfo.range = stagingBufferSize;
+    VkDescriptorBufferInfo srcBufferDescInfo{
+        .buffer = stagingBuffer,
+        .offset = 0,
+        .range = stagingBufferSize,
+    };
 
-    VkDescriptorBufferInfo bufferDescInfo{};
-    bufferDescInfo.buffer = compressedBuffer;
-    bufferDescInfo.offset = 0;
-    bufferDescInfo.range = compressedBufferSize;
+    VkDescriptorBufferInfo bufferDescInfo{
+        .buffer = compressedBuffer,
+        .offset = 0,
+        .range = compressedBufferSize,
+    };
 
-    VkDescriptorBufferInfo bufferDescInfo2{};
-    bufferDescInfo2.buffer = profileBuffer;
-    bufferDescInfo2.offset = 0;
-    bufferDescInfo2.range = profileBufferSize;
+    VkDescriptorBufferInfo bufferDescInfo2{
+        .buffer = profileBuffer,
+        .offset = 0,
+        .range = profileBufferSize,
+    };
 
-    VkWriteDescriptorSet descriptorWrites[3] = {};
-    descriptorWrites[0] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &srcBufferDescInfo, nullptr };
-    descriptorWrites[1] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 1, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferDescInfo, nullptr };
-    descriptorWrites[2] = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, descriptorSet, 2, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferDescInfo2, nullptr };
+    VkDescriptorBufferInfo bufferDescInfo3{
+        .buffer = lutUniformBuffer,
+        .offset = 0,
+        .range = VK_WHOLE_SIZE,
+    };
 
-    vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, nullptr);
+    VkDescriptorBufferInfo bufferDescInfo4{
+        .buffer = partitionLutBuffer,
+        .offset = 0,
+        .range = VK_WHOLE_SIZE,
+    };
+
+    #define DESCRIPTOR_WRITE(_dstBinding, _descriptorType, _pBufferInfo) \
+        { \
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, \
+            .dstSet = descriptorSet, \
+            .dstBinding = _dstBinding, \
+            .descriptorCount = 1, \
+            .descriptorType = _descriptorType, \
+            .pBufferInfo = _pBufferInfo, \
+        }
+    VkWriteDescriptorSet descriptorWrites[] = {
+        DESCRIPTOR_WRITE(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, &srcBufferDescInfo),
+        DESCRIPTOR_WRITE(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, &bufferDescInfo),
+        DESCRIPTOR_WRITE(2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, &bufferDescInfo2),
+        DESCRIPTOR_WRITE(3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, &bufferDescInfo3),
+        DESCRIPTOR_WRITE(4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, &bufferDescInfo4),
+    };
+
+    vkUpdateDescriptorSets(device, 5, descriptorWrites, 0, nullptr);
 
     // Dispatch the encoder
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, computePipeline);
@@ -382,10 +502,11 @@ int main() {
     PushConstants constants{
         width,
         height,
-        0b00100, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means, 4 NO alpha, 8 USE sfloat16, 16 USE snorm
+        0b00000, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means, 4 NO alpha, 8 USE sfloat16, 16 USE snorm
     };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 
+    std::cout << "Encoding ASTC: width=" << width << " height=" << height << " flags=" << constants.flag << std::endl;
     uint32_t groupCountX = (blocksX + 7) / 8;
     uint32_t groupCountY = (blocksY + 7) / 8;
     vkCmdDispatch(cmd, groupCountX, groupCountY, 1);
@@ -467,6 +588,21 @@ int main() {
     }
 
     WriteASTCToKTX("astc.ktx", width, height, encodedBlocks);
+
+    // WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
+    // std::cout << "block 0: " << std::hex << encodedBlocks[0].x << ", " << encodedBlocks[0].y << ", " << encodedBlocks[0].z << ", " << encodedBlocks[0].w << std::endl;
+    // std::cout << "params 0: ep0="
+    //           << std::hex << (int)profiler[0].params.ep0[0] << " " << (int)profiler[0].params.ep0[1] << " " << (int)profiler[0].params.ep0[2] << " " << (int)profiler[0].params.ep0[3]
+    //           << " ep1=" << (int)profiler[0].params.ep1[0] << " " << (int)profiler[0].params.ep1[1] << " " << (int)profiler[0].params.ep1[2] << " " << (int)profiler[0].params.ep1[3]
+    //           << " weights=" << std::endl;
+    // for (int i = 0; i < 16; ++i) {
+    //     std::cout << (int)profiler[0].params.weights[i] << " ";
+    // }
+    // std::cout << std::endl;
+    // std::cout << "astc_seed = " << (int)profiler[0].params.astc_seed << std::endl;
+    // for (int i = 0; i < 20; ++i) {
+    //     std::cout << "  partition_map[" << i << "] = " << (int)profiler[i].params.partition_map << " vs " << myLutData.lut2[i % 1024] << std::endl;
+    // }
 
     return 0;
 }

@@ -241,13 +241,13 @@ uint get_quant_ep_mode(uint quant_weight_mode, uint num_weights,
                        uint num_endpoints, uint partitions) {
 
   let config_bits =
-      partitions == 1 ? 17u : 27u; // 11 (block mode) + 2 (partition flag) + 4
+      partitions == 1 ? 17u : 29u; // 11 (block mode) + 2 (partition flag) + 4|6
                                    // (CEM) + 10 (partition index)
   let weight_bits = compute_ise_bitcount(num_weights, quant_weight_mode);
   let remaining_bits = uint(128u - config_bits - weight_bits);
   // Find the ep mode, which is the maximal mode that fits remaining bits
   uint quant_ep_mode;
-  for (uint mode_idx = 20; mode_idx >= 0; --mode_idx) {
+  for (int mode_idx = 20; mode_idx >= 0; --mode_idx) {
     if (compute_ise_bitcount(num_endpoints, mode_idx) <= remaining_bits) {
       quant_ep_mode = mode_idx;
       break;
@@ -328,6 +328,7 @@ uint4 pack_astc_4x4_block<let partitions : uint>(const uint4 eps[],
   write_bits(final_block, fwd_offset, partitions - 1u, 2);
   if (partitions > 1u) {
     write_bits(final_block, fwd_offset, partition_seed, 10);
+    write_bits(final_block, fwd_offset, 0u, 2); // in 2P, CEM is 6 bits
   }
   write_bits(final_block, fwd_offset, cem, 4);
 

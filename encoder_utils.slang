@@ -74,3 +74,35 @@ struct PackedArray<let M : uint, let N : uint> {
     }
   }
 };
+
+static const uint M5 = 0x55555555; // 0101...
+static const uint MA = 0xAAAAAAAA; // 1010...
+
+uint permute_swap(uint x) { return x ^ (~(x >> 1) & M5); }
+
+uint hamming_distance_2b(uint x, uint y) {
+  uint z = x ^ y;
+  z |= z >> 1;
+  z &= M5;
+  return countbits(z);
+}
+
+uint count_diffs(uint val) {
+  return countbits((val | (val >> 1)) & 0x55555555u);
+}
+
+uint lut2_key(uint x) {
+  // pack into bits, preserve proper endianness
+  uint result = 0;
+  [unroll]
+  for (int i = 15; i >= 0; i--) {
+    result = result * 2 + ((x >> (i * 2)) & 3);
+  }
+  return result;
+}
+
+uint canonicalize_lut2(uint x) {
+  var p0 = lut2_key(x);
+  var p1 = lut2_key(permute_swap(x));
+  return min(p0, p1);
+}
