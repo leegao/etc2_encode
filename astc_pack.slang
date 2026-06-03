@@ -256,7 +256,7 @@ uint get_quant_ep_mode(uint quant_weight_mode, uint num_weights,
   return quant_ep_mode;
 }
 
-uint4 pack_astc_4x4_block<let partitions : uint>(const uint4 eps[],
+uint4 pack_astc_4x4_block<let partitions : uint>(const uint4 eps[4],
                                                  const uint weights[16],
                                                  uint quant_weight_mode,
                                                  uint partition_seed,

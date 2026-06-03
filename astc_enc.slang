@@ -95,6 +95,9 @@ struct Flags {
   property bool try_2p {
     get { return bool(flags[1]); }
   }
+  property bool only_2p {
+    get { return bool(flags[2]); }
+  }
 };
 
 struct PushConstants {
@@ -433,48 +436,51 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     }
   }
 
-  //   uint3 ep0, ep1;
-  //   uint weights[16];
-  //   encode_block(ep0, ep1, weights);
-  //   var quant_weight_mode = quantize(ep0, ep1, weights);
-
-  // #ifdef ENABLE_DIAGNOSTICS
-  //   reconstruct(ep0, ep1, weights);
-  // #endif
-
-  //   uint4 eps[2];
-  //   eps[0] = uint4(ep0, 255);
-  //   eps[1] = uint4(ep1, 255);
-  //   var packed =
-  //       pack_astc_4x4_block<1>(eps, weights, quant_weight_mode, 0u, false);
-
   uint3 ep0, ep1, ep2, ep3;
-  uint weights[16];
+  uint weights_1p[16], weights_2p[16];
   PartitionMap partition_map;
   uint astc_seed;
-  encode_block_2p(ep0, ep1, ep2, ep3, weights, partition_map, astc_seed);
-  var quant_weight_mode = quantize(ep0, ep1, ep2, ep3, weights);
+  uint quant_weight_mode_1p, quant_weight_mode_2p;
+  float mse_1p = 1000, mse_2p = 1000;
+  uint4 eps[4] = {};
+  uint4 packed_1p, packed_2p;
 
+  if (!pushConstants.u_Flags.only_2p) {
+    encode_block(ep0, ep1, weights_1p);
+    quant_weight_mode_1p = quantize(ep0, ep1, weights_1p);
+    mse_1p = reconstruct(ep0, ep1, weights_1p);
+    eps[0] = uint4(ep0, 255);
+    eps[1] = uint4(ep1, 255);
+    packed_1p = pack_astc_4x4_block<1>(eps, weights_1p, quant_weight_mode_1p,
+                                       0u, false);
+  }
+
+  if (pushConstants.u_Flags.try_2p || pushConstants.u_Flags.only_2p) {
+    encode_block_2p(ep0, ep1, ep2, ep3, weights_2p, partition_map, astc_seed);
+    quant_weight_mode_2p = quantize(ep0, ep1, ep2, ep3, weights_2p);
+    mse_2p = reconstruct_2p(ep0, ep1, ep2, ep3, weights_2p, partition_map);
+    eps = { uint4(ep0, 255), uint4(ep1, 255), uint4(ep2, 255),
+            uint4(ep3, 255) };
+    packed_2p = pack_astc_4x4_block<2>(eps, weights_2p, quant_weight_mode_2p,
+                                       astc_seed, false);
+  }
+
+  if (mse_1p < mse_2p) {
+    astc_blocks[buffer_index] = packed_1p;
 #ifdef ENABLE_DIAGNOSTICS
-  reconstruct_2p(ep0, ep1, ep2, ep3, weights, partition_map);
+    diagnostics[buffer_index].mse = mse_1p;
 #endif
-
-  uint4 eps[4];
-  eps[0] = uint4(ep0, 255);
-  eps[1] = uint4(ep1, 255);
-  eps[2] = uint4(ep2, 255);
-  eps[3] = uint4(ep3, 255);
-  var packed =
-      pack_astc_4x4_block<2>(eps, weights, quant_weight_mode, astc_seed, false);
-
-  astc_blocks[buffer_index] = packed;
+  } else {
+    astc_blocks[buffer_index] = packed_2p;
+  }
 
 #ifdef ENABLE_DIAGNOSTICS
   diagnostics[buffer_index].start_time = startTime;
   diagnostics[buffer_index].params.ep0 = ep0.x | (ep0.y << 8) | (ep0.z << 16);
   diagnostics[buffer_index].params.ep1 = ep1.x | (ep1.y << 8) | (ep1.z << 16);
   for (int i = 0; i < 16; i++) {
-    diagnostics[buffer_index].params.weights[i] = uint8_t(weights[i] & 0xFFu);
+    diagnostics[buffer_index].params.weights[i] =
+        uint8_t(weights_2p[i] & 0xFFu);
   }
   diagnostics[buffer_index].params.astc_seed = astc_seed;
   diagnostics[buffer_index].params.partition_map = partition_map.data[0];

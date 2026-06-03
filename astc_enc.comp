@@ -1,8 +1,8 @@
 #version 450
 #extension GL_EXT_shader_16bit_storage : require
 #extension GL_EXT_shader_explicit_arithmetic_types : require
-#extension GL_EXT_control_flow_attributes : require
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+#extension GL_EXT_control_flow_attributes : require
 layout(row_major) uniform;
 layout(row_major) buffer;
 struct PackedArray_0
@@ -52,9 +52,9 @@ uint buffer_index_0;
 
 uvec3  pixels_0[16];
 
-f16vec3 to_unorm_0(uvec3 this_0)
+uint PackedArray_operatorx5Bx5D_get_0(PackedArray_0 this_0, uint n_0)
 {
-    return f16vec3(this_0) / 255.0HF;
+    return ((this_0.data_0[n_0 / 32U]) >> (n_0 % 32U)) & 1U;
 }
 
 struct PackedArray_1
@@ -62,9 +62,9 @@ struct PackedArray_1
     uint  data_0[1];
 };
 
-uint PackedArray_operatorx5Bx5D_get_0(PackedArray_1 this_1, uint n_0)
+uint PackedArray_operatorx5Bx5D_get_1(PackedArray_1 this_1, uint n_1)
 {
-    return ((this_1.data_0[n_0 / 16U]) >> (n_0 % 16U * 2U)) & 3U;
+    return ((this_1.data_0[n_1 / 16U]) >> (n_1 % 16U * 2U)) & 3U;
 }
 
 struct PackedArray_2
@@ -72,307 +72,125 @@ struct PackedArray_2
     uint  data_0[1];
 };
 
-uint PackedArray_operatorx5Bx5D_get_1(PackedArray_2 this_2, uint n_1)
+uint PackedArray_operatorx5Bx5D_get_2(PackedArray_2 this_2, uint n_2)
 {
-    return ((this_2.data_0[n_1 / 4U]) >> (n_1 % 4U * 8U)) & 255U;
+    return ((this_2.data_0[n_2 / 4U]) >> (n_2 % 4U * 8U)) & 255U;
 }
 
-void kmeans_0(out PackedArray_1 partition_map_0)
+bool Flags_only_2p_get_0(Flags_0 this_3)
 {
-    f16vec3  centroids_0[2];
-    PackedArray_2 partition_counts_0;
-    uint k_0 = 0U;
+    return bool(PackedArray_operatorx5Bx5D_get_0(this_3.flags_0, 2U));
+}
+
+PackedArray_1 PackedArray_x24init_0(uint  initialValues_0[16])
+{
+    PackedArray_1 _S1;
+    _S1.data_0[0] = 0U;
+    int n_3 = 0;
     for(;;)
     {
-        if(k_0 < 2U)
+        uint _S2 = uint(n_3);
+        if(_S2 < 16U)
         {
         }
         else
         {
             break;
         }
-        centroids_0[k_0] = to_unorm_0(pixels_0[k_0 * 4U % 16U]);
-        k_0 = k_0 + 1U;
+        uint bitOffset_0 = _S2 % 16U * 2U;
+        _S1.data_0[_S2 / 16U] = ((_S1.data_0[_S2 / 16U]) & (~(3U << bitOffset_0))) | (((initialValues_0[n_3]) & 3U) << bitOffset_0);
+        n_3 = n_3 + 1;
     }
-    uint iter_0 = 0U;
+    return _S1;
+}
+
+f16vec3 to_unorm_0(uvec3 this_4)
+{
+    return f16vec3(this_4) / 255.0HF;
+}
+
+f16vec3 saturate_0(f16vec3 x_0)
+{
+    return clamp(x_0, f16vec3(0.0HF), f16vec3(1.0HF));
+}
+
+void find_best_eps_via_pca_0(PackedArray_1 partition_map_0, uint partition_0, out f16vec3 ep0_0, out f16vec3 ep1_0)
+{
+    const f16vec3 _S3 = f16vec3(0.1700439453125HF, 0.830078125HF, 0.3798828125HF);
+    f16vec3 _S4 = f16vec3(ivec3(0));
+    uint i_0 = 0U;
+    f16vec3 centroid_0 = _S4;
+    uint count_0 = 0U;
     for(;;)
     {
-        if(iter_0 < 3U)
+        if(i_0 < 16U)
         {
         }
         else
         {
             break;
         }
-        uint c_0 = 0U;
-        for(;;)
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_0, i_0)) != partition_0)
         {
-            if(c_0 < 2U)
-            {
-            }
-            else
-            {
-                break;
-            }
-            uint bitOffset_0 = c_0 % 4U * 8U;
-            partition_counts_0.data_0[c_0 / 4U] = ((partition_counts_0.data_0[c_0 / 4U]) & (~(255U << bitOffset_0))) | (0U << bitOffset_0);
-            c_0 = c_0 + 1U;
-        }
-        uint centroid_0;
-        uint best_centroid_0;
-        uint i_0 = 0U;
-        for(;;)
-        {
-            if(i_0 < 16U)
-            {
-            }
-            else
-            {
-                break;
-            }
-            f16vec3 _S1 = to_unorm_0(pixels_0[i_0]);
-            float16_t best_dist_0 = 1000.0HF;
-            best_centroid_0 = 0U;
-            centroid_0 = 0U;
-            for(;;)
-            {
-                if(centroid_0 < 2U)
-                {
-                }
-                else
-                {
-                    break;
-                }
-                f16vec3 delta_0 = _S1 - centroids_0[centroid_0];
-                float16_t d_0 = dot(delta_0, delta_0);
-                if(d_0 < best_dist_0)
-                {
-                    best_dist_0 = d_0;
-                    best_centroid_0 = centroid_0;
-                }
-                centroid_0 = centroid_0 + 1U;
-            }
-            uint bitOffset_1 = i_0 % 16U * 2U;
-            partition_map_0.data_0[i_0 / 16U] = ((partition_map_0.data_0[i_0 / 16U]) & (~(3U << bitOffset_1))) | ((best_centroid_0 & 3U) << bitOffset_1);
-            uint bitOffset_2 = best_centroid_0 % 4U * 8U;
-            partition_counts_0.data_0[best_centroid_0 / 4U] = ((partition_counts_0.data_0[best_centroid_0 / 4U]) & (~(255U << bitOffset_2))) | (((PackedArray_operatorx5Bx5D_get_1(partition_counts_0, best_centroid_0) + 1U) & 255U) << bitOffset_2);
             i_0 = i_0 + 1U;
-        }
-        bool changed_map_0;
-        bool changed_map_1 = false;
-        best_centroid_0 = 0U;
-        for(;;)
-        {
-            if(best_centroid_0 < 2U)
-            {
-            }
-            else
-            {
-                break;
-            }
-            if((PackedArray_operatorx5Bx5D_get_1(partition_counts_0, best_centroid_0)) == 0U)
-            {
-                uint steal_idx_0 = (best_centroid_0 * 4U + 1U) % 16U;
-                uint victim_p_0 = PackedArray_operatorx5Bx5D_get_0(partition_map_0, steal_idx_0);
-                if((PackedArray_operatorx5Bx5D_get_1(partition_counts_0, victim_p_0)) > 1U)
-                {
-                    uint bitOffset_3 = steal_idx_0 % 16U * 2U;
-                    partition_map_0.data_0[steal_idx_0 / 16U] = ((partition_map_0.data_0[steal_idx_0 / 16U]) & (~(3U << bitOffset_3))) | ((best_centroid_0 & 3U) << bitOffset_3);
-                    uint bitOffset_4 = best_centroid_0 % 4U * 8U;
-                    partition_counts_0.data_0[best_centroid_0 / 4U] = ((partition_counts_0.data_0[best_centroid_0 / 4U]) & (~(255U << bitOffset_4))) | (((PackedArray_operatorx5Bx5D_get_1(partition_counts_0, best_centroid_0) + 1U) & 255U) << bitOffset_4);
-                    uint bitOffset_5 = victim_p_0 % 4U * 8U;
-                    partition_counts_0.data_0[victim_p_0 / 4U] = ((partition_counts_0.data_0[victim_p_0 / 4U]) & (~(255U << bitOffset_5))) | (((PackedArray_operatorx5Bx5D_get_1(partition_counts_0, victim_p_0) - 1U) & 255U) << bitOffset_5);
-                    changed_map_0 = true;
-                }
-                else
-                {
-                    changed_map_0 = changed_map_1;
-                }
-                changed_map_1 = changed_map_0;
-            }
-            best_centroid_0 = best_centroid_0 + 1U;
-        }
-        if(iter_0 < 2U)
-        {
-            changed_map_0 = true;
-        }
-        else
-        {
-            changed_map_0 = changed_map_1;
-        }
-        if(changed_map_0)
-        {
-            const f16vec3 _S2 = f16vec3(0.0HF);
-            f16vec3  new_sums_0[2];
-            new_sums_0[0] = _S2;
-            new_sums_0[1] = _S2;
-            uint i_1 = 0U;
-            for(;;)
-            {
-                if(i_1 < 16U)
-                {
-                }
-                else
-                {
-                    break;
-                }
-                new_sums_0[PackedArray_operatorx5Bx5D_get_0(partition_map_0, i_1)] = new_sums_0[PackedArray_operatorx5Bx5D_get_0(partition_map_0, i_1)] + to_unorm_0(pixels_0[i_1]);
-                i_1 = i_1 + 1U;
-            }
-            centroid_0 = 0U;
-            for(;;)
-            {
-                if(centroid_0 < 2U)
-                {
-                }
-                else
-                {
-                    break;
-                }
-                uint count_0 = PackedArray_operatorx5Bx5D_get_1(partition_counts_0, centroid_0);
-                if(count_0 != 0U)
-                {
-                    centroids_0[centroid_0] = new_sums_0[centroid_0] / float16_t(count_0);
-                }
-                centroid_0 = centroid_0 + 1U;
-            }
-        }
-        iter_0 = iter_0 + 1U;
-    }
-    return;
-}
-
-uint lut2_key_0(uint x_0)
-{
-    uint result_0 = 0U;
-    int i_2 = 15;
-    [[unroll]]
-    for(;;)
-    {
-        if(i_2 >= 0)
-        {
-        }
-        else
-        {
-            break;
-        }
-        uint _S3 = result_0 * 2U + ((x_0 >> (i_2 * 2)) & 3U);
-        int _S4 = i_2 - 1;
-        result_0 = _S3;
-        i_2 = _S4;
-    }
-    return result_0;
-}
-
-uint permute_swap_0(uint x_1)
-{
-    return x_1 ^ ((~(x_1 >> 1)) & 1431655765U);
-}
-
-uint canonicalize_lut2_0(uint x_2)
-{
-    return min(lut2_key_0(x_2), lut2_key_0(permute_swap_0(x_2)));
-}
-
-uint get_closest_seed2_0(uint input_0, out uint final_pattern_0)
-{
-    uint key_0 = canonicalize_lut2_0(input_0);
-    uint seed_0 = ((astc_2p_lut_s2_0._data[uint(key_0 / 3U)]) >> (key_0 % 3U * 10U)) & 1023U;
-    final_pattern_0 = lut2_0._data[uint(seed_0)];
-    return seed_0;
-}
-
-void snap_0(inout PackedArray_1 partition_map_1, out uint astc_seed_0)
-{
-    uint final_mask_0;
-    uint _S5 = get_closest_seed2_0(partition_map_1.data_0[0], final_mask_0);
-    astc_seed_0 = _S5;
-    partition_map_1.data_0[0] = final_mask_0;
-    return;
-}
-
-f16vec3 saturate_0(f16vec3 x_3)
-{
-    return clamp(x_3, f16vec3(0.0HF), f16vec3(1.0HF));
-}
-
-void find_best_eps_via_pca_0(PackedArray_1 partition_map_2, uint partition_0, out f16vec3 ep0_0, out f16vec3 ep1_0)
-{
-    const f16vec3 _S6 = f16vec3(0.1700439453125HF, 0.830078125HF, 0.3798828125HF);
-    f16vec3 _S7 = f16vec3(ivec3(0));
-    uint i_3 = 0U;
-    f16vec3 centroid_1 = _S7;
-    uint count_1 = 0U;
-    for(;;)
-    {
-        if(i_3 < 16U)
-        {
-        }
-        else
-        {
-            break;
-        }
-        if((PackedArray_operatorx5Bx5D_get_0(partition_map_2, i_3)) != partition_0)
-        {
-            i_3 = i_3 + 1U;
             continue;
         }
-        uint count_2 = count_1 + 1U;
-        centroid_1 = centroid_1 + to_unorm_0(pixels_0[i_3]);
-        count_1 = count_2;
-        i_3 = i_3 + 1U;
+        uint count_1 = count_0 + 1U;
+        centroid_0 = centroid_0 + to_unorm_0(pixels_0[i_0]);
+        count_0 = count_1;
+        i_0 = i_0 + 1U;
     }
-    float16_t _S8 = float16_t(count_1);
-    f16vec3 centroid_2 = centroid_1 / _S8;
-    if(count_1 == 0U)
+    float16_t _S5 = float16_t(count_0);
+    f16vec3 centroid_1 = centroid_0 / _S5;
+    if(count_0 == 0U)
     {
-        const f16vec3 _S9 = f16vec3(0.0HF);
-        ep0_0 = _S9;
-        ep1_0 = _S9;
+        const f16vec3 _S6 = f16vec3(0.0HF);
+        ep0_0 = _S6;
+        ep1_0 = _S6;
         return;
     }
-    if(count_1 == 1U)
+    if(count_0 == 1U)
     {
-        f16vec3 _S10 = saturate_0(centroid_2);
-        ep0_0 = _S10;
-        ep1_0 = _S10;
+        f16vec3 _S7 = saturate_0(centroid_1);
+        ep0_0 = _S7;
+        ep1_0 = _S7;
         return;
     }
     f16mat3x3 C_0 = f16mat3x3(0.0HF, 0.0HF, 0.0HF, 0.0HF, 0.0HF, 0.0HF, 0.0HF, 0.0HF, 0.0HF);
-    i_3 = 0U;
+    i_0 = 0U;
     for(;;)
     {
-        if(i_3 < 16U)
+        if(i_0 < 16U)
         {
         }
         else
         {
             break;
         }
-        if((PackedArray_operatorx5Bx5D_get_0(partition_map_2, i_3)) != partition_0)
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_0, i_0)) != partition_0)
         {
-            i_3 = i_3 + 1U;
+            i_0 = i_0 + 1U;
             continue;
         }
-        f16vec3 d_1 = to_unorm_0(pixels_0[i_3]) - centroid_2;
-        C_0[0] = C_0[0] + d_1.x * d_1;
-        C_0[1] = C_0[1] + d_1.y * d_1;
-        C_0[2] = C_0[2] + d_1.z * d_1;
-        i_3 = i_3 + 1U;
+        f16vec3 d_0 = to_unorm_0(pixels_0[i_0]) - centroid_1;
+        C_0[0] = C_0[0] + d_0.x * d_0;
+        C_0[1] = C_0[1] + d_0.y * d_0;
+        C_0[2] = C_0[2] + d_0.z * d_0;
+        i_0 = i_0 + 1U;
     }
-    C_0 = C_0 / _S8;
+    C_0 = C_0 / _S5;
     if(float(C_0[0].x + C_0[1].y + C_0[2].z) < 0.00030000001424924)
     {
-        f16vec3 _S11 = saturate_0(centroid_2);
-        ep0_0 = _S11;
-        ep1_0 = _S11;
+        f16vec3 _S8 = saturate_0(centroid_1);
+        ep0_0 = _S8;
+        ep1_0 = _S8;
         return;
     }
-    int iter_1 = 0;
-    f16vec3 axis_0 = _S6;
+    int iter_0 = 0;
+    f16vec3 axis_0 = _S3;
     for(;;)
     {
-        if(iter_1 < 4)
+        if(iter_0 < 4)
         {
         }
         else
@@ -389,118 +207,106 @@ void find_best_eps_via_pca_0(PackedArray_1 partition_map_2, uint partition_0, ou
         {
             axis_0 = axis_1;
         }
-        iter_1 = iter_1 + 1;
+        iter_0 = iter_0 + 1;
     }
     if(float(dot(axis_0, axis_0)) < 9.99999993922529029e-09)
     {
-        ep0_0 = saturate_0(centroid_2);
+        ep0_0 = saturate_0(centroid_1);
         ep1_0 = saturate_0(to_unorm_0(pixels_0[0]));
         return;
     }
     f16vec3 axis_2 = normalize(axis_0);
     float16_t min_t_0 = 1000.0HF;
     float16_t max_t_0 = -1000.0HF;
-    int i_4 = 0;
+    int i_1 = 0;
     for(;;)
     {
-        if(i_4 < 16)
+        if(i_1 < 16)
         {
         }
         else
         {
             break;
         }
-        if((PackedArray_operatorx5Bx5D_get_0(partition_map_2, uint(i_4))) != partition_0)
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_0, uint(i_1))) != partition_0)
         {
-            i_4 = i_4 + 1;
+            i_1 = i_1 + 1;
             continue;
         }
-        float16_t t_0 = dot(f16vec3(pixels_0[i_4]) / 255.0HF - centroid_2, axis_2);
-        float16_t _S12 = max(max_t_0, t_0);
+        float16_t t_0 = dot(f16vec3(pixels_0[i_1]) / 255.0HF - centroid_1, axis_2);
+        float16_t _S9 = max(max_t_0, t_0);
         min_t_0 = min(min_t_0, t_0);
-        max_t_0 = _S12;
-        i_4 = i_4 + 1;
+        max_t_0 = _S9;
+        i_1 = i_1 + 1;
     }
-    ep0_0 = saturate_0(centroid_2 + axis_2 * min_t_0);
-    ep1_0 = saturate_0(centroid_2 + axis_2 * max_t_0);
+    ep0_0 = saturate_0(centroid_1 + axis_2 * min_t_0);
+    ep1_0 = saturate_0(centroid_1 + axis_2 * max_t_0);
     return;
 }
 
-float16_t saturate_1(float16_t x_4)
+float16_t saturate_1(float16_t x_1)
 {
-    return clamp(x_4, 0.0HF, 1.0HF);
+    return clamp(x_1, 0.0HF, 1.0HF);
 }
 
-void solve_weights_0(PackedArray_1 partition_map_3, int partition_1, f16vec3 ep0_1, f16vec3 ep1_1, out uint  weights_0[16])
+void solve_weights_0(PackedArray_1 partition_map_1, int partition_1, f16vec3 ep0_1, f16vec3 ep1_1, out uint  weights_0[16])
 {
-    f16vec3 _S13 = ep1_1 - ep0_1;
-    float16_t _S14 = 1.0HF / (dot(_S13, _S13) + 1.01327896118164062e-06HF);
-    int i_5 = 0;
+    f16vec3 _S10 = ep1_1 - ep0_1;
+    float16_t _S11 = 1.0HF / (dot(_S10, _S10) + 1.01327896118164062e-06HF);
+    int i_2 = 0;
     for(;;)
     {
-        if(i_5 < 16)
+        if(i_2 < 16)
         {
         }
         else
         {
             break;
         }
-        if((PackedArray_operatorx5Bx5D_get_0(partition_map_3, uint(i_5))) != uint(partition_1))
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_1, uint(i_2))) != uint(partition_1))
         {
-            i_5 = i_5 + 1;
+            i_2 = i_2 + 1;
             continue;
         }
-        weights_0[i_5] = uint(saturate_1(dot(to_unorm_0(pixels_0[i_5]) - ep0_1, _S13) * _S14) * 255.0HF);
-        i_5 = i_5 + 1;
+        weights_0[i_2] = uint(saturate_1(dot(to_unorm_0(pixels_0[i_2]) - ep0_1, _S10) * _S11) * 255.0HF);
+        i_2 = i_2 + 1;
     }
     return;
 }
 
-void encode_block_2p_0(out uvec3 ep0_u8_0, out uvec3 ep1_u8_0, out uvec3 ep2_u8_0, out uvec3 ep3_u8_0, out uint  weights_1[16], out PackedArray_1 partition_map_4, out uint astc_seed_1)
+void encode_block_0(out uvec3 ep0_u8_0, out uvec3 ep1_u8_0, out uint  weights_1[16])
 {
-    const f16vec3 _S15 = f16vec3(0.0HF);
-    f16vec3 ep0_2 = _S15;
-    f16vec3 ep1_2 = _S15;
-    f16vec3 ep2_0 = _S15;
-    f16vec3 ep3_0 = _S15;
-    kmeans_0(partition_map_4);
-    snap_0(partition_map_4, astc_seed_1);
-    find_best_eps_via_pca_0(partition_map_4, 0U, ep0_2, ep1_2);
-    find_best_eps_via_pca_0(partition_map_4, 1U, ep2_0, ep3_0);
+    const f16vec3 _S12 = f16vec3(0.0HF);
+    f16vec3 ep0_2 = _S12;
+    f16vec3 ep1_2 = _S12;
+    const uint  _S13[16] = { 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U };
+    PackedArray_1 partition_map_2 = PackedArray_x24init_0(_S13);
+    find_best_eps_via_pca_0(partition_map_2, 0U, ep0_2, ep1_2);
     if((ep1_2.x + ep1_2.y + ep1_2.z) < (ep0_2.x + ep0_2.y + ep0_2.z))
     {
         f16vec3 temp_0 = ep0_2;
         ep0_2 = ep1_2;
         ep1_2 = temp_0;
     }
-    if((ep3_0.x + ep3_0.y + ep3_0.z) < (ep2_0.x + ep2_0.y + ep2_0.z))
-    {
-        f16vec3 temp_1 = ep2_0;
-        ep2_0 = ep3_0;
-        ep3_0 = temp_1;
-    }
     ep0_u8_0 = uvec3(ep0_2 * 255.0HF);
     ep1_u8_0 = uvec3(ep1_2 * 255.0HF);
-    ep2_u8_0 = uvec3(ep2_0 * 255.0HF);
-    ep3_u8_0 = uvec3(ep3_0 * 255.0HF);
-    solve_weights_0(partition_map_4, 0, ep0_2, ep1_2, weights_1);
-    solve_weights_0(partition_map_4, 1, ep2_0, ep3_0, weights_1);
+    solve_weights_0(partition_map_2, 0, ep0_2, ep1_2, weights_1);
     return;
 }
 
-bool trit_get_0(uvec3 this_3)
+bool trit_get_0(uvec3 this_5)
 {
-    return bool(this_3.y);
+    return bool(this_5.y);
 }
 
-uint bits_get_0(uvec3 this_4)
+uint bits_get_0(uvec3 this_6)
 {
-    return this_4.x;
+    return this_6.x;
 }
 
-bool quint_get_0(uvec3 this_5)
+bool quint_get_0(uvec3 this_7)
 {
-    return bool(this_5.z);
+    return bool(this_7.z);
 }
 
 uint compute_ise_bitcount_0(uint items_0, uint range_mode_0)
@@ -527,7 +333,7 @@ uint get_quant_ep_mode_0(uint quant_weight_mode_0, uint num_weights_0, uint num_
     {
         quant_ep_mode_0 = 29U;
     }
-    uint _S16 = 128U - quant_ep_mode_0 - compute_ise_bitcount_0(num_weights_0, quant_weight_mode_0);
+    uint _S14 = 128U - quant_ep_mode_0 - compute_ise_bitcount_0(num_weights_0, quant_weight_mode_0);
     int mode_idx_0 = 20;
     for(;;)
     {
@@ -538,10 +344,10 @@ uint get_quant_ep_mode_0(uint quant_weight_mode_0, uint num_weights_0, uint num_
         {
             break;
         }
-        uint _S17 = uint(mode_idx_0);
-        if((compute_ise_bitcount_0(num_endpoints_0, _S17)) <= _S16)
+        uint _S15 = uint(mode_idx_0);
+        if((compute_ise_bitcount_0(num_endpoints_0, _S15)) <= _S14)
         {
-            quant_ep_mode_0 = _S17;
+            quant_ep_mode_0 = _S15;
             break;
         }
         mode_idx_0 = mode_idx_0 - 1;
@@ -551,24 +357,24 @@ uint get_quant_ep_mode_0(uint quant_weight_mode_0, uint num_weights_0, uint num_
 
 uint quantize_u8_0(uint value_0, uint range_0)
 {
-    float _S18 = float(range_0);
-    return uint(round(float(clamp(uint(float(value_0) * _S18 / 255.0 + 0.5), 0U, range_0)) / _S18 * 255.0));
+    float _S16 = float(range_0);
+    return uint(round(float(clamp(uint(float(value_0) * _S16 / 255.0 + 0.5), 0U, range_0)) / _S16 * 255.0));
 }
 
 void quantize_u8_1(inout uvec3 value_1, uint range_1)
 {
-    int i_6 = 0;
+    int i_3 = 0;
     for(;;)
     {
-        if(i_6 < 3)
+        if(i_3 < 3)
         {
         }
         else
         {
             break;
         }
-        value_1[i_6] = uint(int64_t(quantize_u8_0(value_1[i_6], range_1)));
-        i_6 = i_6 + 1;
+        value_1[i_3] = uint(int64_t(quantize_u8_0(value_1[i_3], range_1)));
+        i_3 = i_3 + 1;
     }
     return;
 }
@@ -589,106 +395,121 @@ uint unquantize_0(uint quant_mode_1, uint unscrambled_0)
 
 bool will_blue_contract_0(uvec3 ep0_3, uvec3 ep1_3, uint quant_ep_mode_1)
 {
-    uint  _S19[6] = { ep0_3.x, ep1_3.x, ep0_3.y, ep1_3.y, ep0_3.z, ep1_3.z };
+    uint  _S17[6] = { ep0_3.x, ep1_3.x, ep0_3.y, ep1_3.y, ep0_3.z, ep1_3.z };
     uint  v_0[6];
-    uint i_7 = 0U;
+    uint i_4 = 0U;
     for(;;)
     {
-        if(i_7 < 6U)
+        if(i_4 < 6U)
         {
         }
         else
         {
             break;
         }
-        v_0[i_7] = unquantize_0(quant_ep_mode_1, unscramble_quantized_0(quant_ep_mode_1, clamp(uint(float(_S19[i_7]) * float(ENDPOINT_MAX_VALUES_0[quant_ep_mode_1]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[quant_ep_mode_1])));
-        i_7 = i_7 + 1U;
+        v_0[i_4] = unquantize_0(quant_ep_mode_1, unscramble_quantized_0(quant_ep_mode_1, clamp(uint(float(_S17[i_4]) * float(ENDPOINT_MAX_VALUES_0[quant_ep_mode_1]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[quant_ep_mode_1])));
+        i_4 = i_4 + 1U;
     }
     return (v_0[1] + v_0[3] + v_0[5]) < (v_0[0] + v_0[2] + v_0[4]);
 }
 
 void swap_endpoints_0(inout uvec3 ep0_4, inout uvec3 ep1_4, inout uint  weights_2[16])
 {
-    uvec3 temp_2 = ep0_4;
+    uvec3 temp_1 = ep0_4;
     ep0_4 = ep1_4;
-    ep1_4 = temp_2;
-    int i_8 = 0;
+    ep1_4 = temp_1;
+    int i_5 = 0;
     for(;;)
     {
-        if(i_8 < 16)
+        if(i_5 < 16)
         {
         }
         else
         {
             break;
         }
-        weights_2[i_8] = uint(clamp(255 - int(weights_2[i_8]), 0, 255));
-        i_8 = i_8 + 1;
+        weights_2[i_5] = uint(clamp(255 - int(weights_2[i_5]), 0, 255));
+        i_5 = i_5 + 1;
     }
     return;
 }
 
 void quantize_u8_2(inout uint  value_2[16], uint range_2)
 {
-    int i_9 = 0;
+    int i_6 = 0;
     for(;;)
     {
-        if(i_9 < 16)
+        if(i_6 < 16)
         {
         }
         else
         {
             break;
         }
-        value_2[i_9] = uint(int64_t(quantize_u8_0(value_2[i_9], range_2)));
-        i_9 = i_9 + 1;
+        value_2[i_6] = uint(int64_t(quantize_u8_0(value_2[i_6], range_2)));
+        i_6 = i_6 + 1;
     }
     return;
 }
 
-uint quantize_0(inout uvec3 ep0_5, inout uvec3 ep1_5, inout uvec3 ep2_1, inout uvec3 ep3_1, inout uint  weights_3[16])
+uint quantize_0(inout uvec3 ep0_5, inout uvec3 ep1_5, inout uint  weights_3[16])
 {
-    uint quant_ep_mode_2 = get_quant_ep_mode_0(4U, 16U, 12U, 2U);
+    uint quant_ep_mode_2 = get_quant_ep_mode_0(8U, 16U, 6U, 1U);
     quantize_u8_1(ep0_5, ENDPOINT_MAX_VALUES_0[quant_ep_mode_2]);
     quantize_u8_1(ep1_5, ENDPOINT_MAX_VALUES_0[quant_ep_mode_2]);
-    quantize_u8_1(ep2_1, ENDPOINT_MAX_VALUES_0[quant_ep_mode_2]);
-    quantize_u8_1(ep3_1, ENDPOINT_MAX_VALUES_0[quant_ep_mode_2]);
     if(will_blue_contract_0(ep0_5, ep1_5, quant_ep_mode_2))
     {
         swap_endpoints_0(ep0_5, ep1_5, weights_3);
     }
-    if(will_blue_contract_0(ep2_1, ep3_1, quant_ep_mode_2))
-    {
-        swap_endpoints_0(ep2_1, ep3_1, weights_3);
-    }
-    quantize_u8_2(weights_3, 5U);
-    return 4U;
+    quantize_u8_2(weights_3, 15U);
+    return 8U;
 }
 
-void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_3, uint count_3, bool bwd_0)
+float reconstruct_0(uvec3 ep0_6, uvec3 ep1_6, uint  weights_4[16])
 {
-    uint i_10 = 0U;
+    uint i_7 = 0U;
+    float mse_0 = 0.0;
     for(;;)
     {
-        if(i_10 < count_3)
+        if(i_7 < 16U)
         {
         }
         else
         {
             break;
         }
-        uint bit_0 = (value_3 >> i_10) & 1U;
-        uint _S20;
-        if(bwd_0)
+        vec3 err_0 = vec3(ivec3(pixels_0[i_7]) - ivec3(clamp(mix(vec3(ep0_6), vec3(ep1_6), vec3(float(weights_4[i_7]) / 255.0)), vec3(ivec3(0)), vec3(ivec3(255))))) / 255.0;
+        float mse_1 = mse_0 + dot(err_0, err_0);
+        i_7 = i_7 + 1U;
+        mse_0 = mse_1;
+    }
+    return mse_0 / 3.0 / 16.0;
+}
+
+void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_3, uint count_2, bool bwd_0)
+{
+    uint i_8 = 0U;
+    for(;;)
+    {
+        if(i_8 < count_2)
         {
-            _S20 = 127U - bit_offset_0;
         }
         else
         {
-            _S20 = bit_offset_0;
+            break;
         }
-        uint word_idx_0 = _S20 >> 5;
-        uint bit_idx_0 = _S20 & 31U;
+        uint bit_0 = (value_3 >> i_8) & 1U;
+        uint _S18;
+        if(bwd_0)
+        {
+            _S18 = 127U - bit_offset_0;
+        }
+        else
+        {
+            _S18 = bit_offset_0;
+        }
+        uint word_idx_0 = _S18 >> 5;
+        uint bit_idx_0 = _S18 & 31U;
         if(word_idx_0 == 0U)
         {
             block_0[0] = (block_0[0]) | (bit_0 << bit_idx_0);
@@ -715,23 +536,23 @@ void write_bits_0(inout uvec4 block_0, inout uint bit_offset_0, uint value_3, ui
             }
         }
         bit_offset_0 = bit_offset_0 + 1U;
-        i_10 = i_10 + 1U;
+        i_8 = i_8 + 1U;
     }
     return;
 }
 
-void encode_bise_0(inout uvec4 _S21, inout uint _S22, uint  _S23[16], uint _S24, uint _S25, bool _S26)
+void encode_bise_0(inout uvec4 _S19, inout uint _S20, uint  _S21[8], uint _S22, uint _S23, bool _S24)
 {
-    uint _S27 = bits_get_0(bits_trits_quints_table_0[_S24]);
-    uint i_11;
+    uint _S25 = bits_get_0(bits_trits_quints_table_0[_S22]);
+    uint i_9;
     uint j_0;
     uint j_1;
-    if(trit_get_0(bits_trits_quints_table_0[_S24]))
+    if(trit_get_0(bits_trits_quints_table_0[_S22]))
     {
-        i_11 = 0U;
+        i_9 = 0U;
         for(;;)
         {
-            if(i_11 < _S25)
+            if(i_9 < _S23)
             {
             }
             else
@@ -754,10 +575,10 @@ void encode_bise_0(inout uvec4 _S21, inout uint _S22, uint  _S23[16], uint _S24,
                 {
                     break;
                 }
-                uint _S28 = i_11 + j_0;
-                if(_S28 < _S25)
+                uint _S26 = i_9 + j_0;
+                if(_S26 < _S23)
                 {
-                    group_0[j_0] = _S23[_S28];
+                    group_0[j_0] = _S21[_S26];
                 }
                 j_0 = j_0 + 1U;
             }
@@ -773,32 +594,32 @@ void encode_bise_0(inout uvec4 _S21, inout uint _S22, uint  _S23[16], uint _S24,
                 {
                     break;
                 }
-                m_0[j_1] = (group_0[j_1]) & uint((1 << _S27) - 1);
-                t_1[j_1] = (group_0[j_1]) >> _S27;
+                m_0[j_1] = (group_0[j_1]) & uint((1 << _S25) - 1);
+                t_1[j_1] = (group_0[j_1]) >> _S25;
                 j_1 = j_1 + 1U;
             }
             uint packhigh_0 = uint(integer_from_trits_0[t_1[4] * 81U + t_1[3] * 27U + t_1[2] * 9U + t_1[1] * 3U + t_1[0]]);
-            write_bits_0(_S21, _S22, m_0[0], _S27, _S26);
-            write_bits_0(_S21, _S22, packhigh_0 & 3U, 2U, _S26);
-            write_bits_0(_S21, _S22, m_0[1], _S27, _S26);
-            write_bits_0(_S21, _S22, (packhigh_0 >> 2) & 3U, 2U, _S26);
-            write_bits_0(_S21, _S22, m_0[2], _S27, _S26);
-            write_bits_0(_S21, _S22, (packhigh_0 >> 4) & 1U, 1U, _S26);
-            write_bits_0(_S21, _S22, m_0[3], _S27, _S26);
-            write_bits_0(_S21, _S22, (packhigh_0 >> 5) & 3U, 2U, _S26);
-            write_bits_0(_S21, _S22, m_0[4], _S27, _S26);
-            write_bits_0(_S21, _S22, (packhigh_0 >> 7) & 1U, 1U, _S26);
-            i_11 = i_11 + 5U;
+            write_bits_0(_S19, _S20, m_0[0], _S25, _S24);
+            write_bits_0(_S19, _S20, packhigh_0 & 3U, 2U, _S24);
+            write_bits_0(_S19, _S20, m_0[1], _S25, _S24);
+            write_bits_0(_S19, _S20, (packhigh_0 >> 2) & 3U, 2U, _S24);
+            write_bits_0(_S19, _S20, m_0[2], _S25, _S24);
+            write_bits_0(_S19, _S20, (packhigh_0 >> 4) & 1U, 1U, _S24);
+            write_bits_0(_S19, _S20, m_0[3], _S25, _S24);
+            write_bits_0(_S19, _S20, (packhigh_0 >> 5) & 3U, 2U, _S24);
+            write_bits_0(_S19, _S20, m_0[4], _S25, _S24);
+            write_bits_0(_S19, _S20, (packhigh_0 >> 7) & 1U, 1U, _S24);
+            i_9 = i_9 + 5U;
         }
     }
     else
     {
-        if(quint_get_0(bits_trits_quints_table_0[_S24]))
+        if(quint_get_0(bits_trits_quints_table_0[_S22]))
         {
-            i_11 = 0U;
+            i_9 = 0U;
             for(;;)
             {
-                if(i_11 < _S25)
+                if(i_9 < _S23)
                 {
                 }
                 else
@@ -819,10 +640,10 @@ void encode_bise_0(inout uvec4 _S21, inout uint _S22, uint  _S23[16], uint _S24,
                     {
                         break;
                     }
-                    uint _S29 = i_11 + j_0;
-                    if(_S29 < _S25)
+                    uint _S27 = i_9 + j_0;
+                    if(_S27 < _S23)
                     {
-                        group_1[j_0] = _S23[_S29];
+                        group_1[j_0] = _S21[_S27];
                     }
                     j_0 = j_0 + 1U;
                 }
@@ -838,74 +659,337 @@ void encode_bise_0(inout uvec4 _S21, inout uint _S22, uint  _S23[16], uint _S24,
                     {
                         break;
                     }
-                    m_1[j_1] = (group_1[j_1]) & uint((1 << _S27) - 1);
-                    q_0[j_1] = (group_1[j_1]) >> _S27;
+                    m_1[j_1] = (group_1[j_1]) & uint((1 << _S25) - 1);
+                    q_0[j_1] = (group_1[j_1]) >> _S25;
                     j_1 = j_1 + 1U;
                 }
                 uint packhigh_1 = uint(integer_from_quints_0[q_0[2] * 25U + q_0[1] * 5U + q_0[0]]);
-                write_bits_0(_S21, _S22, m_1[0], _S27, _S26);
-                write_bits_0(_S21, _S22, packhigh_1 & 7U, 3U, _S26);
-                write_bits_0(_S21, _S22, m_1[1], _S27, _S26);
-                write_bits_0(_S21, _S22, (packhigh_1 >> 3) & 3U, 2U, _S26);
-                write_bits_0(_S21, _S22, m_1[2], _S27, _S26);
-                write_bits_0(_S21, _S22, (packhigh_1 >> 5) & 3U, 2U, _S26);
-                i_11 = i_11 + 3U;
+                write_bits_0(_S19, _S20, m_1[0], _S25, _S24);
+                write_bits_0(_S19, _S20, packhigh_1 & 7U, 3U, _S24);
+                write_bits_0(_S19, _S20, m_1[1], _S25, _S24);
+                write_bits_0(_S19, _S20, (packhigh_1 >> 3) & 3U, 2U, _S24);
+                write_bits_0(_S19, _S20, m_1[2], _S25, _S24);
+                write_bits_0(_S19, _S20, (packhigh_1 >> 5) & 3U, 2U, _S24);
+                i_9 = i_9 + 3U;
             }
         }
         else
         {
-            i_11 = 0U;
+            i_9 = 0U;
             for(;;)
             {
-                if(i_11 < _S25)
+                if(i_9 < _S23)
                 {
                 }
                 else
                 {
                     break;
                 }
-                write_bits_0(_S21, _S22, _S23[i_11], _S27, _S26);
-                i_11 = i_11 + 1U;
+                write_bits_0(_S19, _S20, _S21[i_9], _S25, _S24);
+                i_9 = i_9 + 1U;
             }
         }
     }
     return;
 }
 
-uvec4 pack_astc_4x4_block_0(uvec4  _S30[4], uint  _S31[16], uint _S32, uint _S33, bool _S34)
+void encode_bise_1(inout uvec4 _S28, inout uint _S29, uint  _S30[16], uint _S31, uint _S32, bool _S33)
+{
+    uint _S34 = bits_get_0(bits_trits_quints_table_0[_S31]);
+    uint i_10;
+    uint j_2;
+    uint j_3;
+    if(trit_get_0(bits_trits_quints_table_0[_S31]))
+    {
+        i_10 = 0U;
+        for(;;)
+        {
+            if(i_10 < _S32)
+            {
+            }
+            else
+            {
+                break;
+            }
+            uint  group_2[5];
+            group_2[0] = 0U;
+            group_2[1] = 0U;
+            group_2[2] = 0U;
+            group_2[3] = 0U;
+            group_2[4] = 0U;
+            j_2 = 0U;
+            for(;;)
+            {
+                if(j_2 < 5U)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                uint _S35 = i_10 + j_2;
+                if(_S35 < _S32)
+                {
+                    group_2[j_2] = _S30[_S35];
+                }
+                j_2 = j_2 + 1U;
+            }
+            uint  m_2[5];
+            uint  t_2[5];
+            j_3 = 0U;
+            for(;;)
+            {
+                if(j_3 < 5U)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                m_2[j_3] = (group_2[j_3]) & uint((1 << _S34) - 1);
+                t_2[j_3] = (group_2[j_3]) >> _S34;
+                j_3 = j_3 + 1U;
+            }
+            uint packhigh_2 = uint(integer_from_trits_0[t_2[4] * 81U + t_2[3] * 27U + t_2[2] * 9U + t_2[1] * 3U + t_2[0]]);
+            write_bits_0(_S28, _S29, m_2[0], _S34, _S33);
+            write_bits_0(_S28, _S29, packhigh_2 & 3U, 2U, _S33);
+            write_bits_0(_S28, _S29, m_2[1], _S34, _S33);
+            write_bits_0(_S28, _S29, (packhigh_2 >> 2) & 3U, 2U, _S33);
+            write_bits_0(_S28, _S29, m_2[2], _S34, _S33);
+            write_bits_0(_S28, _S29, (packhigh_2 >> 4) & 1U, 1U, _S33);
+            write_bits_0(_S28, _S29, m_2[3], _S34, _S33);
+            write_bits_0(_S28, _S29, (packhigh_2 >> 5) & 3U, 2U, _S33);
+            write_bits_0(_S28, _S29, m_2[4], _S34, _S33);
+            write_bits_0(_S28, _S29, (packhigh_2 >> 7) & 1U, 1U, _S33);
+            i_10 = i_10 + 5U;
+        }
+    }
+    else
+    {
+        if(quint_get_0(bits_trits_quints_table_0[_S31]))
+        {
+            i_10 = 0U;
+            for(;;)
+            {
+                if(i_10 < _S32)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                uint  group_3[3];
+                group_3[0] = 0U;
+                group_3[1] = 0U;
+                group_3[2] = 0U;
+                j_2 = 0U;
+                for(;;)
+                {
+                    if(j_2 < 3U)
+                    {
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    uint _S36 = i_10 + j_2;
+                    if(_S36 < _S32)
+                    {
+                        group_3[j_2] = _S30[_S36];
+                    }
+                    j_2 = j_2 + 1U;
+                }
+                uint  m_3[3];
+                uint  q_1[3];
+                j_3 = 0U;
+                for(;;)
+                {
+                    if(j_3 < 3U)
+                    {
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    m_3[j_3] = (group_3[j_3]) & uint((1 << _S34) - 1);
+                    q_1[j_3] = (group_3[j_3]) >> _S34;
+                    j_3 = j_3 + 1U;
+                }
+                uint packhigh_3 = uint(integer_from_quints_0[q_1[2] * 25U + q_1[1] * 5U + q_1[0]]);
+                write_bits_0(_S28, _S29, m_3[0], _S34, _S33);
+                write_bits_0(_S28, _S29, packhigh_3 & 7U, 3U, _S33);
+                write_bits_0(_S28, _S29, m_3[1], _S34, _S33);
+                write_bits_0(_S28, _S29, (packhigh_3 >> 3) & 3U, 2U, _S33);
+                write_bits_0(_S28, _S29, m_3[2], _S34, _S33);
+                write_bits_0(_S28, _S29, (packhigh_3 >> 5) & 3U, 2U, _S33);
+                i_10 = i_10 + 3U;
+            }
+        }
+        else
+        {
+            i_10 = 0U;
+            for(;;)
+            {
+                if(i_10 < _S32)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                write_bits_0(_S28, _S29, _S30[i_10], _S34, _S33);
+                i_10 = i_10 + 1U;
+            }
+        }
+    }
+    return;
+}
+
+uvec4 pack_astc_4x4_block_0(uvec4  eps_0[4], uint  weights_5[16], uint quant_weight_mode_1, uint partition_seed_0, bool use_alpha_0)
 {
     uvec4 final_block_0 = uvec4(0U, 0U, 0U, 0U);
-    uint _S35;
-    if(_S34)
+    uint _S37;
+    if(use_alpha_0)
     {
-        _S35 = 8U;
+        _S37 = 8U;
     }
     else
     {
-        _S35 = 6U;
+        _S37 = 6U;
     }
-    uint _S36 = _S35 * 2U;
-    uint _S37 = get_quant_ep_mode_0(_S32, 16U, _S36, 2U);
-    int _S38;
-    if(_S32 < 6U)
+    uint _S38 = get_quant_ep_mode_0(quant_weight_mode_1, 16U, _S37, 1U);
+    int _S39;
+    if(quant_weight_mode_1 < 6U)
     {
-        _S38 = 0;
-    }
-    else
-    {
-        _S38 = 1;
-    }
-    uint r_0 = _S32 % 6U + 2U;
-    uint block_mode_0 = ((((((r_0 >> 1) & 3U) | ((r_0 & 1U) << 4)) | 64U) | 0U) | (uint(_S38) << 9)) | 0U;
-    if(_S34)
-    {
-        _S35 = 12U;
+        _S39 = 0;
     }
     else
     {
-        _S35 = 8U;
+        _S39 = 1;
+    }
+    uint r_0 = quant_weight_mode_1 % 6U + 2U;
+    uint block_mode_0 = ((((((r_0 >> 1) & 3U) | ((r_0 & 1U) << 4)) | 64U) | 0U) | (uint(_S39) << 9)) | 0U;
+    uint _S40;
+    if(use_alpha_0)
+    {
+        _S40 = 12U;
+    }
+    else
+    {
+        _S40 = 8U;
     }
     uint  quantized_weights_0[16];
+    uint i_11 = 0U;
+    for(;;)
+    {
+        if(i_11 < 16U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        quantized_weights_0[i_11] = unscramble_quantized_0(quant_weight_mode_1, clamp(uint(float(weights_5[i_11]) * float(WEIGHT_MAX_VALUES_0[quant_weight_mode_1]) / 255.0 + 0.5), 0U, WEIGHT_MAX_VALUES_0[quant_weight_mode_1]));
+        i_11 = i_11 + 1U;
+    }
+    uint  raw_endpoints_0[8];
+    uint p_0 = 0U;
+    uint ep_idx_0 = 0U;
+    for(;;)
+    {
+        if(p_0 < 1U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        uint _S41 = p_0 * 2U;
+        uint _S42 = _S41 + 1U;
+        uint ep_idx_1 = ep_idx_0 + 1U;
+        raw_endpoints_0[ep_idx_0] = eps_0[_S41].x;
+        uint ep_idx_2 = ep_idx_1 + 1U;
+        raw_endpoints_0[ep_idx_1] = eps_0[_S42].x;
+        uint ep_idx_3 = ep_idx_2 + 1U;
+        raw_endpoints_0[ep_idx_2] = eps_0[_S41].y;
+        uint ep_idx_4 = ep_idx_3 + 1U;
+        raw_endpoints_0[ep_idx_3] = eps_0[_S42].y;
+        uint ep_idx_5 = ep_idx_4 + 1U;
+        raw_endpoints_0[ep_idx_4] = eps_0[_S41].z;
+        uint ep_idx_6 = ep_idx_5 + 1U;
+        raw_endpoints_0[ep_idx_5] = eps_0[_S42].z;
+        if(use_alpha_0)
+        {
+            uint ep_idx_7 = ep_idx_6 + 1U;
+            raw_endpoints_0[ep_idx_6] = eps_0[_S41].w;
+            uint _S43 = ep_idx_7 + 1U;
+            raw_endpoints_0[ep_idx_7] = eps_0[_S42].w;
+            ep_idx_0 = _S43;
+        }
+        else
+        {
+            ep_idx_0 = ep_idx_6;
+        }
+        p_0 = p_0 + 1U;
+    }
+    uint  quantized_endpoints_0[8];
+    i_11 = 0U;
+    for(;;)
+    {
+        if(i_11 < _S37)
+        {
+        }
+        else
+        {
+            break;
+        }
+        quantized_endpoints_0[i_11] = unscramble_quantized_0(_S38, clamp(uint(float(raw_endpoints_0[i_11]) * float(ENDPOINT_MAX_VALUES_0[_S38]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[_S38]));
+        i_11 = i_11 + 1U;
+    }
+    uint fwd_offset_0 = 0U;
+    write_bits_0(final_block_0, fwd_offset_0, block_mode_0, 11U, false);
+    write_bits_0(final_block_0, fwd_offset_0, 0U, 2U, false);
+    write_bits_0(final_block_0, fwd_offset_0, _S40, 4U, false);
+    encode_bise_0(final_block_0, fwd_offset_0, quantized_endpoints_0, _S38, _S37, false);
+    uint bwd_offset_0 = 0U;
+    encode_bise_1(final_block_0, bwd_offset_0, quantized_weights_0, quant_weight_mode_1, 16U, true);
+    return final_block_0;
+}
+
+uvec4 pack_astc_4x4_block_1(uvec4  eps_1[4], uint  weights_6[16], uint quant_weight_mode_2, uint partition_seed_1, bool use_alpha_1)
+{
+    uvec4 final_block_1 = uvec4(0U, 0U, 0U, 0U);
+    uint _S44;
+    if(use_alpha_1)
+    {
+        _S44 = 8U;
+    }
+    else
+    {
+        _S44 = 6U;
+    }
+    uint _S45 = _S44 * 2U;
+    uint _S46 = get_quant_ep_mode_0(quant_weight_mode_2, 16U, _S45, 2U);
+    int _S47;
+    if(quant_weight_mode_2 < 6U)
+    {
+        _S47 = 0;
+    }
+    else
+    {
+        _S47 = 1;
+    }
+    uint r_1 = quant_weight_mode_2 % 6U + 2U;
+    uint block_mode_1 = ((((((r_1 >> 1) & 3U) | ((r_1 & 1U) << 4)) | 64U) | 0U) | (uint(_S47) << 9)) | 0U;
+    if(use_alpha_1)
+    {
+        _S44 = 12U;
+    }
+    else
+    {
+        _S44 = 8U;
+    }
+    uint  quantized_weights_1[16];
     uint i_12 = 0U;
     for(;;)
     {
@@ -916,86 +1000,391 @@ uvec4 pack_astc_4x4_block_0(uvec4  _S30[4], uint  _S31[16], uint _S32, uint _S33
         {
             break;
         }
-        quantized_weights_0[i_12] = unscramble_quantized_0(_S32, clamp(uint(float(_S31[i_12]) * float(WEIGHT_MAX_VALUES_0[_S32]) / 255.0 + 0.5), 0U, WEIGHT_MAX_VALUES_0[_S32]));
+        quantized_weights_1[i_12] = unscramble_quantized_0(quant_weight_mode_2, clamp(uint(float(weights_6[i_12]) * float(WEIGHT_MAX_VALUES_0[quant_weight_mode_2]) / 255.0 + 0.5), 0U, WEIGHT_MAX_VALUES_0[quant_weight_mode_2]));
         i_12 = i_12 + 1U;
     }
-    uint  raw_endpoints_0[16];
-    uint p_0 = 0U;
-    uint ep_idx_0 = 0U;
+    uint  raw_endpoints_1[16];
+    uint p_1 = 0U;
+    uint ep_idx_8 = 0U;
     for(;;)
     {
-        if(p_0 < 2U)
+        if(p_1 < 2U)
         {
         }
         else
         {
             break;
         }
-        uint _S39 = p_0 * 2U;
-        uint _S40 = _S39 + 1U;
-        uint ep_idx_1 = ep_idx_0 + 1U;
-        raw_endpoints_0[ep_idx_0] = _S30[_S39].x;
-        uint ep_idx_2 = ep_idx_1 + 1U;
-        raw_endpoints_0[ep_idx_1] = _S30[_S40].x;
-        uint ep_idx_3 = ep_idx_2 + 1U;
-        raw_endpoints_0[ep_idx_2] = _S30[_S39].y;
-        uint ep_idx_4 = ep_idx_3 + 1U;
-        raw_endpoints_0[ep_idx_3] = _S30[_S40].y;
-        uint ep_idx_5 = ep_idx_4 + 1U;
-        raw_endpoints_0[ep_idx_4] = _S30[_S39].z;
-        uint ep_idx_6 = ep_idx_5 + 1U;
-        raw_endpoints_0[ep_idx_5] = _S30[_S40].z;
-        if(_S34)
+        uint _S48 = p_1 * 2U;
+        uint _S49 = _S48 + 1U;
+        uint ep_idx_9 = ep_idx_8 + 1U;
+        raw_endpoints_1[ep_idx_8] = eps_1[_S48].x;
+        uint ep_idx_10 = ep_idx_9 + 1U;
+        raw_endpoints_1[ep_idx_9] = eps_1[_S49].x;
+        uint ep_idx_11 = ep_idx_10 + 1U;
+        raw_endpoints_1[ep_idx_10] = eps_1[_S48].y;
+        uint ep_idx_12 = ep_idx_11 + 1U;
+        raw_endpoints_1[ep_idx_11] = eps_1[_S49].y;
+        uint ep_idx_13 = ep_idx_12 + 1U;
+        raw_endpoints_1[ep_idx_12] = eps_1[_S48].z;
+        uint ep_idx_14 = ep_idx_13 + 1U;
+        raw_endpoints_1[ep_idx_13] = eps_1[_S49].z;
+        if(use_alpha_1)
         {
-            uint ep_idx_7 = ep_idx_6 + 1U;
-            raw_endpoints_0[ep_idx_6] = _S30[_S39].w;
-            uint _S41 = ep_idx_7 + 1U;
-            raw_endpoints_0[ep_idx_7] = _S30[_S40].w;
-            ep_idx_0 = _S41;
+            uint ep_idx_15 = ep_idx_14 + 1U;
+            raw_endpoints_1[ep_idx_14] = eps_1[_S48].w;
+            uint _S50 = ep_idx_15 + 1U;
+            raw_endpoints_1[ep_idx_15] = eps_1[_S49].w;
+            ep_idx_8 = _S50;
         }
         else
         {
-            ep_idx_0 = ep_idx_6;
+            ep_idx_8 = ep_idx_14;
         }
-        p_0 = p_0 + 1U;
+        p_1 = p_1 + 1U;
     }
-    uint  quantized_endpoints_0[16];
+    uint  quantized_endpoints_1[16];
     i_12 = 0U;
     for(;;)
     {
-        if(i_12 < _S36)
+        if(i_12 < _S45)
         {
         }
         else
         {
             break;
         }
-        quantized_endpoints_0[i_12] = unscramble_quantized_0(_S37, clamp(uint(float(raw_endpoints_0[i_12]) * float(ENDPOINT_MAX_VALUES_0[_S37]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[_S37]));
+        quantized_endpoints_1[i_12] = unscramble_quantized_0(_S46, clamp(uint(float(raw_endpoints_1[i_12]) * float(ENDPOINT_MAX_VALUES_0[_S46]) / 255.0 + 0.5), 0U, ENDPOINT_MAX_VALUES_0[_S46]));
         i_12 = i_12 + 1U;
     }
-    uint fwd_offset_0 = 0U;
-    write_bits_0(final_block_0, fwd_offset_0, block_mode_0, 11U, false);
-    write_bits_0(final_block_0, fwd_offset_0, 1U, 2U, false);
-    write_bits_0(final_block_0, fwd_offset_0, _S33, 10U, false);
-    write_bits_0(final_block_0, fwd_offset_0, 0U, 2U, false);
-    write_bits_0(final_block_0, fwd_offset_0, _S35, 4U, false);
-    encode_bise_0(final_block_0, fwd_offset_0, quantized_endpoints_0, _S37, _S36, false);
-    uint bwd_offset_0 = 0U;
-    encode_bise_0(final_block_0, bwd_offset_0, quantized_weights_0, _S32, 16U, true);
-    return final_block_0;
+    uint fwd_offset_1 = 0U;
+    write_bits_0(final_block_1, fwd_offset_1, block_mode_1, 11U, false);
+    write_bits_0(final_block_1, fwd_offset_1, 1U, 2U, false);
+    write_bits_0(final_block_1, fwd_offset_1, partition_seed_1, 10U, false);
+    write_bits_0(final_block_1, fwd_offset_1, 0U, 2U, false);
+    write_bits_0(final_block_1, fwd_offset_1, _S44, 4U, false);
+    encode_bise_1(final_block_1, fwd_offset_1, quantized_endpoints_1, _S46, _S45, false);
+    uint bwd_offset_1 = 0U;
+    encode_bise_1(final_block_1, bwd_offset_1, quantized_weights_1, quant_weight_mode_2, 16U, true);
+    return final_block_1;
+}
+
+bool Flags_try_2p_get_0(Flags_0 this_8)
+{
+    return bool(PackedArray_operatorx5Bx5D_get_0(this_8.flags_0, 1U));
+}
+
+void kmeans_0(out PackedArray_1 partition_map_3)
+{
+    f16vec3  centroids_0[2];
+    PackedArray_2 partition_counts_0;
+    uint k_0 = 0U;
+    for(;;)
+    {
+        if(k_0 < 2U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        centroids_0[k_0] = to_unorm_0(pixels_0[k_0 * 4U % 16U]);
+        k_0 = k_0 + 1U;
+    }
+    uint iter_1 = 0U;
+    for(;;)
+    {
+        if(iter_1 < 3U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        uint c_0 = 0U;
+        for(;;)
+        {
+            if(c_0 < 2U)
+            {
+            }
+            else
+            {
+                break;
+            }
+            uint bitOffset_1 = c_0 % 4U * 8U;
+            partition_counts_0.data_0[c_0 / 4U] = ((partition_counts_0.data_0[c_0 / 4U]) & (~(255U << bitOffset_1))) | (0U << bitOffset_1);
+            c_0 = c_0 + 1U;
+        }
+        uint centroid_2;
+        uint best_centroid_0;
+        uint i_13 = 0U;
+        for(;;)
+        {
+            if(i_13 < 16U)
+            {
+            }
+            else
+            {
+                break;
+            }
+            f16vec3 _S51 = to_unorm_0(pixels_0[i_13]);
+            float16_t best_dist_0 = 1000.0HF;
+            best_centroid_0 = 0U;
+            centroid_2 = 0U;
+            for(;;)
+            {
+                if(centroid_2 < 2U)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                f16vec3 delta_0 = _S51 - centroids_0[centroid_2];
+                float16_t d_1 = dot(delta_0, delta_0);
+                if(d_1 < best_dist_0)
+                {
+                    best_dist_0 = d_1;
+                    best_centroid_0 = centroid_2;
+                }
+                centroid_2 = centroid_2 + 1U;
+            }
+            uint bitOffset_2 = i_13 % 16U * 2U;
+            partition_map_3.data_0[i_13 / 16U] = ((partition_map_3.data_0[i_13 / 16U]) & (~(3U << bitOffset_2))) | ((best_centroid_0 & 3U) << bitOffset_2);
+            uint bitOffset_3 = best_centroid_0 % 4U * 8U;
+            partition_counts_0.data_0[best_centroid_0 / 4U] = ((partition_counts_0.data_0[best_centroid_0 / 4U]) & (~(255U << bitOffset_3))) | (((PackedArray_operatorx5Bx5D_get_2(partition_counts_0, best_centroid_0) + 1U) & 255U) << bitOffset_3);
+            i_13 = i_13 + 1U;
+        }
+        bool changed_map_0;
+        bool changed_map_1 = false;
+        best_centroid_0 = 0U;
+        for(;;)
+        {
+            if(best_centroid_0 < 2U)
+            {
+            }
+            else
+            {
+                break;
+            }
+            if((PackedArray_operatorx5Bx5D_get_2(partition_counts_0, best_centroid_0)) == 0U)
+            {
+                uint steal_idx_0 = (best_centroid_0 * 4U + 1U) % 16U;
+                uint victim_p_0 = PackedArray_operatorx5Bx5D_get_1(partition_map_3, steal_idx_0);
+                if((PackedArray_operatorx5Bx5D_get_2(partition_counts_0, victim_p_0)) > 1U)
+                {
+                    uint bitOffset_4 = steal_idx_0 % 16U * 2U;
+                    partition_map_3.data_0[steal_idx_0 / 16U] = ((partition_map_3.data_0[steal_idx_0 / 16U]) & (~(3U << bitOffset_4))) | ((best_centroid_0 & 3U) << bitOffset_4);
+                    uint bitOffset_5 = best_centroid_0 % 4U * 8U;
+                    partition_counts_0.data_0[best_centroid_0 / 4U] = ((partition_counts_0.data_0[best_centroid_0 / 4U]) & (~(255U << bitOffset_5))) | (((PackedArray_operatorx5Bx5D_get_2(partition_counts_0, best_centroid_0) + 1U) & 255U) << bitOffset_5);
+                    uint bitOffset_6 = victim_p_0 % 4U * 8U;
+                    partition_counts_0.data_0[victim_p_0 / 4U] = ((partition_counts_0.data_0[victim_p_0 / 4U]) & (~(255U << bitOffset_6))) | (((PackedArray_operatorx5Bx5D_get_2(partition_counts_0, victim_p_0) - 1U) & 255U) << bitOffset_6);
+                    changed_map_0 = true;
+                }
+                else
+                {
+                    changed_map_0 = changed_map_1;
+                }
+                changed_map_1 = changed_map_0;
+            }
+            best_centroid_0 = best_centroid_0 + 1U;
+        }
+        if(iter_1 < 2U)
+        {
+            changed_map_0 = true;
+        }
+        else
+        {
+            changed_map_0 = changed_map_1;
+        }
+        if(changed_map_0)
+        {
+            const f16vec3 _S52 = f16vec3(0.0HF);
+            f16vec3  new_sums_0[2];
+            new_sums_0[0] = _S52;
+            new_sums_0[1] = _S52;
+            uint i_14 = 0U;
+            for(;;)
+            {
+                if(i_14 < 16U)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                new_sums_0[PackedArray_operatorx5Bx5D_get_1(partition_map_3, i_14)] = new_sums_0[PackedArray_operatorx5Bx5D_get_1(partition_map_3, i_14)] + to_unorm_0(pixels_0[i_14]);
+                i_14 = i_14 + 1U;
+            }
+            centroid_2 = 0U;
+            for(;;)
+            {
+                if(centroid_2 < 2U)
+                {
+                }
+                else
+                {
+                    break;
+                }
+                uint count_3 = PackedArray_operatorx5Bx5D_get_2(partition_counts_0, centroid_2);
+                if(count_3 != 0U)
+                {
+                    centroids_0[centroid_2] = new_sums_0[centroid_2] / float16_t(count_3);
+                }
+                centroid_2 = centroid_2 + 1U;
+            }
+        }
+        iter_1 = iter_1 + 1U;
+    }
+    return;
+}
+
+uint lut2_key_0(uint x_2)
+{
+    uint result_0 = 0U;
+    int i_15 = 15;
+    [[unroll]]
+    for(;;)
+    {
+        if(i_15 >= 0)
+        {
+        }
+        else
+        {
+            break;
+        }
+        uint _S53 = result_0 * 2U + ((x_2 >> (i_15 * 2)) & 3U);
+        int _S54 = i_15 - 1;
+        result_0 = _S53;
+        i_15 = _S54;
+    }
+    return result_0;
+}
+
+uint permute_swap_0(uint x_3)
+{
+    return x_3 ^ ((~(x_3 >> 1)) & 1431655765U);
+}
+
+uint canonicalize_lut2_0(uint x_4)
+{
+    return min(lut2_key_0(x_4), lut2_key_0(permute_swap_0(x_4)));
+}
+
+uint get_closest_seed2_0(uint input_0, out uint final_pattern_0)
+{
+    uint key_0 = canonicalize_lut2_0(input_0);
+    uint seed_0 = ((astc_2p_lut_s2_0._data[uint(key_0 / 3U)]) >> (key_0 % 3U * 10U)) & 1023U;
+    final_pattern_0 = lut2_0._data[uint(seed_0)];
+    return seed_0;
+}
+
+void snap_0(inout PackedArray_1 partition_map_4, out uint astc_seed_0)
+{
+    uint final_mask_0;
+    uint _S55 = get_closest_seed2_0(partition_map_4.data_0[0], final_mask_0);
+    astc_seed_0 = _S55;
+    partition_map_4.data_0[0] = final_mask_0;
+    return;
+}
+
+void encode_block_2p_0(out uvec3 ep0_u8_1, out uvec3 ep1_u8_1, out uvec3 ep2_u8_0, out uvec3 ep3_u8_0, out uint  weights_7[16], out PackedArray_1 partition_map_5, out uint astc_seed_1)
+{
+    const f16vec3 _S56 = f16vec3(0.0HF);
+    f16vec3 ep0_7 = _S56;
+    f16vec3 ep1_7 = _S56;
+    f16vec3 ep2_0 = _S56;
+    f16vec3 ep3_0 = _S56;
+    kmeans_0(partition_map_5);
+    snap_0(partition_map_5, astc_seed_1);
+    find_best_eps_via_pca_0(partition_map_5, 0U, ep0_7, ep1_7);
+    find_best_eps_via_pca_0(partition_map_5, 1U, ep2_0, ep3_0);
+    if((ep1_7.x + ep1_7.y + ep1_7.z) < (ep0_7.x + ep0_7.y + ep0_7.z))
+    {
+        f16vec3 temp_2 = ep0_7;
+        ep0_7 = ep1_7;
+        ep1_7 = temp_2;
+    }
+    if((ep3_0.x + ep3_0.y + ep3_0.z) < (ep2_0.x + ep2_0.y + ep2_0.z))
+    {
+        f16vec3 temp_3 = ep2_0;
+        ep2_0 = ep3_0;
+        ep3_0 = temp_3;
+    }
+    ep0_u8_1 = uvec3(ep0_7 * 255.0HF);
+    ep1_u8_1 = uvec3(ep1_7 * 255.0HF);
+    ep2_u8_0 = uvec3(ep2_0 * 255.0HF);
+    ep3_u8_0 = uvec3(ep3_0 * 255.0HF);
+    solve_weights_0(partition_map_5, 0, ep0_7, ep1_7, weights_7);
+    solve_weights_0(partition_map_5, 1, ep2_0, ep3_0, weights_7);
+    return;
+}
+
+uint quantize_1(inout uvec3 ep0_8, inout uvec3 ep1_8, inout uvec3 ep2_1, inout uvec3 ep3_1, inout uint  weights_8[16])
+{
+    uint quant_ep_mode_3 = get_quant_ep_mode_0(4U, 16U, 12U, 2U);
+    quantize_u8_1(ep0_8, ENDPOINT_MAX_VALUES_0[quant_ep_mode_3]);
+    quantize_u8_1(ep1_8, ENDPOINT_MAX_VALUES_0[quant_ep_mode_3]);
+    quantize_u8_1(ep2_1, ENDPOINT_MAX_VALUES_0[quant_ep_mode_3]);
+    quantize_u8_1(ep3_1, ENDPOINT_MAX_VALUES_0[quant_ep_mode_3]);
+    if(will_blue_contract_0(ep0_8, ep1_8, quant_ep_mode_3))
+    {
+        swap_endpoints_0(ep0_8, ep1_8, weights_8);
+    }
+    if(will_blue_contract_0(ep2_1, ep3_1, quant_ep_mode_3))
+    {
+        swap_endpoints_0(ep2_1, ep3_1, weights_8);
+    }
+    quantize_u8_2(weights_8, 5U);
+    return 4U;
+}
+
+float reconstruct_2p_0(uvec3 ep0_9, uvec3 ep1_9, uvec3 ep2_2, uvec3 ep3_2, uint  weights_9[16], PackedArray_1 partition_map_6)
+{
+    uint i_16 = 0U;
+    float mse_2 = 0.0;
+    for(;;)
+    {
+        if(i_16 < 16U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        ivec3 _S57 = ivec3(pixels_0[i_16]);
+        float _S58 = float(weights_9[i_16]);
+        vec3 _S59 = vec3(ivec3(0));
+        vec3 _S60 = vec3(ivec3(255));
+        ivec3 _S61 = ivec3(clamp(mix(vec3(ep0_9), vec3(ep1_9), vec3(_S58 / 255.0)), _S59, _S60));
+        ivec3 reconstructed_0;
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_6, i_16)) == 1U)
+        {
+            reconstructed_0 = ivec3(clamp(mix(vec3(ep2_2), vec3(ep3_2), vec3(_S58 / 255.0)), _S59, _S60));
+        }
+        else
+        {
+            reconstructed_0 = _S61;
+        }
+        vec3 err_1 = vec3(_S57 - reconstructed_0) / 255.0;
+        float mse_3 = mse_2 + dot(err_1, err_1);
+        i_16 = i_16 + 1U;
+        mse_2 = mse_3;
+    }
+    return mse_2 / 3.0 / 16.0;
 }
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 void main()
 {
-    ivec2 _S42 = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tex_coord_0 = _S42 * 4;
+    ivec2 _S62 = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 tex_coord_0 = _S62 * 4;
     if((any(bvec2((greaterThanEqual(tex_coord_0,pushConstants_0.u_TextureDimensions_0))))))
     {
         return;
     }
-    buffer_index_0 = uint(_S42.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S42.x);
-    uint _S43 = uint(pushConstants_0.u_TextureDimensions_0.x);
+    buffer_index_0 = uint(_S62.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S62.x);
+    uint _S63 = uint(pushConstants_0.u_TextureDimensions_0.x);
     int y_0 = 0;
     for(;;)
     {
@@ -1016,27 +1405,84 @@ void main()
             {
                 break;
             }
-            uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S43 + uint(tex_coord_0.x + x_5))];
+            uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S63 + uint(tex_coord_0.x + x_5))];
             pixels_0[y_0 * 4 + x_5] = uvec3((tex_element_0 >> 0) & 255U, (tex_element_0 >> 8) & 255U, (tex_element_0 >> 16) & 255U);
             x_5 = x_5 + 1;
         }
         y_0 = y_0 + 1;
     }
-    uvec3 ep0_6;
-    uvec3 ep1_6;
-    uvec3 ep2_2;
-    uvec3 ep3_2;
-    uint  weights_4[16];
-    PackedArray_1 partition_map_5;
+    uvec3 ep0_10;
+    uvec3 ep1_10;
+    uvec3 ep2_3;
+    uvec3 ep3_3;
+    uint  weights_1p_0[16];
+    uint  weights_2p_0[16];
+    PackedArray_1 partition_map_7;
     uint astc_seed_2;
-    encode_block_2p_0(ep0_6, ep1_6, ep2_2, ep3_2, weights_4, partition_map_5, astc_seed_2);
-    uint quant_weight_mode_1 = quantize_0(ep0_6, ep1_6, ep2_2, ep3_2, weights_4);
-    uvec4  eps_0[4];
-    eps_0[0] = uvec4(ep0_6, 255U);
-    eps_0[1] = uvec4(ep1_6, 255U);
-    eps_0[2] = uvec4(ep2_2, 255U);
-    eps_0[3] = uvec4(ep3_2, 255U);
-    astc_blocks_0._data[uint(buffer_index_0)] = pack_astc_4x4_block_0(eps_0, weights_4, quant_weight_mode_1, astc_seed_2, false);
+    const uvec4 _S64 = uvec4(0U);
+    uvec4  eps_2[4];
+    eps_2[0] = _S64;
+    eps_2[1] = _S64;
+    eps_2[2] = _S64;
+    eps_2[3] = _S64;
+    float mse_1p_0;
+    uvec4 packed_1p_0;
+    if(!Flags_only_2p_get_0(pushConstants_0.u_Flags_0))
+    {
+        encode_block_0(ep0_10, ep1_10, weights_1p_0);
+        uint quant_weight_mode_1p_0 = quantize_0(ep0_10, ep1_10, weights_1p_0);
+        float _S65 = reconstruct_0(ep0_10, ep1_10, weights_1p_0);
+        eps_2[0] = uvec4(ep0_10, 255U);
+        eps_2[1] = uvec4(ep1_10, 255U);
+        uvec4 _S66 = pack_astc_4x4_block_0(eps_2, weights_1p_0, quant_weight_mode_1p_0, 0U, false);
+        mse_1p_0 = _S65;
+        packed_1p_0 = _S66;
+    }
+    else
+    {
+        mse_1p_0 = 1000.0;
+    }
+    bool _S67;
+    if(Flags_try_2p_get_0(pushConstants_0.u_Flags_0))
+    {
+        _S67 = true;
+    }
+    else
+    {
+        _S67 = Flags_only_2p_get_0(pushConstants_0.u_Flags_0);
+    }
+    float mse_2p_0;
+    uvec4 packed_2p_0;
+    if(_S67)
+    {
+        encode_block_2p_0(ep0_10, ep1_10, ep2_3, ep3_3, weights_2p_0, partition_map_7, astc_seed_2);
+        uint quant_weight_mode_2p_0 = quantize_1(ep0_10, ep1_10, ep2_3, ep3_3, weights_2p_0);
+        float _S68 = reconstruct_2p_0(ep0_10, ep1_10, ep2_3, ep3_3, weights_2p_0, partition_map_7);
+        uvec4 _S69 = uvec4(ep0_10, 255U);
+        uvec4 _S70 = uvec4(ep1_10, 255U);
+        uvec4 _S71 = uvec4(ep2_3, 255U);
+        uvec4 _S72 = uvec4(ep3_3, 255U);
+        uvec4  _S73[4] = { _S69, _S70, _S71, _S72 };
+        eps_2[0] = _S69;
+        eps_2[1] = _S70;
+        eps_2[2] = _S71;
+        eps_2[3] = _S72;
+        uvec4 _S74 = pack_astc_4x4_block_1(_S73, weights_2p_0, quant_weight_mode_2p_0, astc_seed_2, false);
+        mse_2p_0 = _S68;
+        packed_2p_0 = _S74;
+    }
+    else
+    {
+        mse_2p_0 = 1000.0;
+    }
+    if(mse_1p_0 < mse_2p_0)
+    {
+        astc_blocks_0._data[uint(buffer_index_0)] = packed_1p_0;
+    }
+    else
+    {
+        astc_blocks_0._data[uint(buffer_index_0)] = packed_2p_0;
+    }
     return;
 }
 

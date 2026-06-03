@@ -502,7 +502,7 @@ int main() {
     PushConstants constants{
         width,
         height,
-        0b00000, // FLAG - 0: normal, 1: NO ETC2, 2: NO 2-Means, 4 NO alpha, 8 USE sfloat16, 16 USE snorm
+        0b00010, // FLAG - 0: normal, 1: AABB, 2: 2-Partition, 4: only 2-Partition, 8 USE sfloat16, 16 USE snorm
     };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 

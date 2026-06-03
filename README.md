@@ -37,5 +37,5 @@ Total time: 0.09977 ms
 
 ![reconstructed_astc_2p.png](reconstructed_astc_2p.png)
 
-PSNR: 33.2644
-Total time: 0.00008 ms
+PSNR: 34.831
+Total time: 0.21391 ms
