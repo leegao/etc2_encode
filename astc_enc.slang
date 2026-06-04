@@ -148,9 +148,16 @@ void solve_weights(PartitionMap partition_map, int partition, half4 ep0,
 //   solve_weights(partition_map, 0, ep0, ep1, weights);
 // }
 
-void find_best_eps_via_pca(const PartitionMap partition_map, uint partition,
-                           out half4 ep0, out half4 ep1) {
+struct PrincipleComponent {
+  half4 centroid;
+  half4 axis;
+}
+
+PrincipleComponent find_best_eps_via_pca(const PartitionMap partition_map,
+                                         uint partition, out half4 ep0,
+                                         out half4 ep1) {
   half4 axis = half4(0.17h, 0.83h, 0.38h, 0.2h);
+  axis = normalize(axis);
   half4 centroid = half4(0);
   uint count = 0;
 
@@ -165,13 +172,13 @@ void find_best_eps_via_pca(const PartitionMap partition_map, uint partition,
   if (count == 0) {
     ep0 = half4(0.0h);
     ep1 = half4(0.0h);
-    return;
+    return { centroid, axis };
   }
 
   if (count == 1) {
     ep0 = saturate(centroid);
     ep1 = saturate(centroid);
-    return;
+    return { centroid, axis };
   }
 
   half4x4 C = (half4x4)0;
@@ -191,7 +198,7 @@ void find_best_eps_via_pca(const PartitionMap partition_map, uint partition,
   if (trace < 3e-4) {
     ep0 = saturate(centroid);
     ep1 = saturate(centroid);
-    return;
+    return { centroid, axis };
   }
 
   for (int iter = 0; iter < 4; iter++) {
@@ -206,8 +213,9 @@ void find_best_eps_via_pca(const PartitionMap partition_map, uint partition,
   // centroid is valid
   if (dot(axis, axis) < 1e-8) {
     ep0 = saturate(centroid);
-    ep1 = saturate(pixels[0].to_unorm());
-    return;
+    ep1 = saturate(centroid);
+    // ep1 = saturate(pixels[0].to_unorm());
+    return { centroid, axis };
   }
 
   axis = normalize(axis);
@@ -225,6 +233,7 @@ void find_best_eps_via_pca(const PartitionMap partition_map, uint partition,
 
   ep0 = saturate(centroid + axis * (min_t));
   ep1 = saturate(centroid + axis * (max_t));
+  return { centroid, axis };
 }
 
 void encode_block(out uint4 ep0_u8, out uint4 ep1_u8, out uint weights[16]) {
@@ -247,19 +256,15 @@ void encode_block(out uint4 ep0_u8, out uint4 ep1_u8, out uint weights[16]) {
 
 typedef PackedArray<2, 16> PartitionMap;
 
-void kmeans<let max_partitions : int>(out PartitionMap partition_map) {
-  half4 centroids[max_partitions];
-  PackedArray<8, max_partitions> partition_counts;
+void kmeans(out PartitionMap partition_map) {
+  half4 centroids[2];
+  PackedArray<8, 2> partition_counts;
+  centroids[0] = pixels[0].to_unorm();
+  centroids[1] = pixels[15].to_unorm();
 
-  for (uint k = 0; k < max_partitions; k++) {
-    centroids[k] = pixels[(k * 4) % 16].to_unorm();
-  }
-
-  for (uint iter = 0; iter < 3; iter++) {
-    // Reset counts
-    for (uint c = 0; c < max_partitions; c++)
-      partition_counts[c] = 0;
-
+  const static int max_iterations = 3;
+  for (uint iter = 0; iter < max_iterations; iter++) {
+    partition_counts.data[0] = 0;
     for (uint i = 0; i < 16; i++) {
       var p = pixels[i].to_unorm();
 
@@ -267,7 +272,7 @@ void kmeans<let max_partitions : int>(out PartitionMap partition_map) {
       uint best_centroid = 0;
 
       // Nearest centroid through projection
-      for (uint centroid = 0; centroid < max_partitions; centroid++) {
+      for (uint centroid = 0; centroid < 2; centroid++) {
         var delta = p - centroids[centroid];
         var d = dot(delta, delta);
         if (d < best_dist) {
@@ -280,35 +285,42 @@ void kmeans<let max_partitions : int>(out PartitionMap partition_map) {
       partition_counts[best_centroid]++;
     }
 
-    var changed_map = false;
-    for (uint p = 0; p < max_partitions; p++) {
-      if (partition_counts[p] == 0) {
-        // Steal a pixel from another partition to restart this one
-        uint steal_idx = (p * 4 + 1) % 16;
-        uint victim_p = partition_map[steal_idx];
-        if (partition_counts[victim_p] > 1) {
-          partition_map[steal_idx] = p;
-          partition_counts[p]++;
-          partition_counts[victim_p]--;
-          changed_map = true;
-        }
-      }
-    }
-
     // Update centroids
-    if (iter < 2 || changed_map) {
-      half4 new_sums[max_partitions] = {};
+    if (iter < max_iterations - 1) {
+      half4 new_sums[2] = {};
       for (uint i = 0; i < 16; i++) {
         var p = pixels[i].to_unorm();
         var idx = partition_map[i];
         new_sums[idx] += p;
       }
-      for (uint centroid = 0; centroid < max_partitions; centroid++) {
+      for (uint centroid = 0; centroid < 2; centroid++) {
         var count = partition_counts[centroid];
         if (count != 0) {
           centroids[centroid] = new_sums[centroid] / half(count);
         }
       }
+    }
+  }
+}
+
+extension half4 {
+  half4 mean(half4 ep0, half4 ep1) { return half4(this) / 255.0h; }
+}
+
+void cluster_lines(inout PartitionMap partition_map, PrincipleComponent l0,
+                   PrincipleComponent l1) {
+  for (int i = 0; i < 16; i++) {
+    var d0 = pixels[i].to_unorm() - l0.centroid;
+    var proj0 = d0 - dot(d0, l0.axis) * l0.axis;
+    var err0 = dot(proj0, proj0);
+
+    var d1 = pixels[i].to_unorm() - l1.centroid;
+    var proj1 = d1 - dot(d1, l1.axis) * l1.axis;
+    var err1 = dot(proj1, proj1);
+    if (err0 < err1) {
+      partition_map[i] = 0;
+    } else {
+      partition_map[i] = 1;
     }
   }
 }
@@ -333,12 +345,21 @@ void snap(inout PartitionMap partition_map, out uint astc_seed) {
 void encode_block_2p(out uint4 ep0_u8, out uint4 ep1_u8, out uint4 ep2_u8,
                      out uint4 ep3_u8, out uint weights[16],
                      out PartitionMap partition_map, out uint astc_seed) {
-  half4 ep0 = half4(0.0h);
-  half4 ep1 = half4(0.0h);
-  half4 ep2 = half4(0.0h);
-  half4 ep3 = half4(0.0h);
+  half4 ep0 = 0.0h, ep1 = 0.0h, ep2 = 0.0h, ep3 = 0.0h;
 
-  kmeans<2>(partition_map);
+  // Line-clustering E-M updates
+  // partition_map = PartitionMap( { 1, 1, 1, 1, 1, 1, 1, 1 });
+  // var l0 = find_best_eps_via_pca(partition_map, 0, ep0, ep1);
+  // var l1 = find_best_eps_via_pca(partition_map, 1, ep2, ep3);
+  // cluster_lines(partition_map, l0, l1);
+  // l0 = find_best_eps_via_pca(partition_map, 0, ep0, ep1);
+  // l1 = find_best_eps_via_pca(partition_map, 1, ep2, ep3);
+  // cluster_lines(partition_map, l0, l1);
+  // l0 = find_best_eps_via_pca(partition_map, 0, ep0, ep1);
+  // l1 = find_best_eps_via_pca(partition_map, 1, ep2, ep3);
+  // cluster_lines(partition_map, l0, l1);
+
+  kmeans(partition_map);
   snap(partition_map, astc_seed);
   find_best_eps_via_pca(partition_map, 0, ep0, ep1);
   find_best_eps_via_pca(partition_map, 1, ep2, ep3);
@@ -373,10 +394,12 @@ void swap_endpoints(inout uint4 ep0, inout uint4 ep1, inout uint weights[16]) {
   }
 }
 
-uint quantize(inout uint4 ep0, inout uint4 ep1, inout uint weights[16]) {
+uint quantize(inout uint4 ep0, inout uint4 ep1, inout uint weights[16],
+              bool use_alpha) {
   // TODO: find an optimal quant mode
   var quant_weight_mode = 8u;
-  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 6, 1);
+  var quant_ep_mode =
+      get_quant_ep_mode(quant_weight_mode, 16, use_alpha ? 8 : 6, 1);
   quantize_u8(ep0, ENDPOINT_MAX_VALUES[quant_ep_mode]);
   quantize_u8(ep1, ENDPOINT_MAX_VALUES[quant_ep_mode]);
   if (will_blue_contract(ep0.xyz, ep1.xyz, quant_ep_mode))
@@ -386,10 +409,11 @@ uint quantize(inout uint4 ep0, inout uint4 ep1, inout uint weights[16]) {
 }
 
 uint quantize(inout uint4 ep0, inout uint4 ep1, inout uint4 ep2,
-              inout uint4 ep3, inout uint weights[16]) {
+              inout uint4 ep3, inout uint weights[16], bool use_alpha) {
   // TODO: find an optimal quant mode
   var quant_weight_mode = 4u;
-  var quant_ep_mode = get_quant_ep_mode(quant_weight_mode, 16, 12, 2);
+  var quant_ep_mode =
+      get_quant_ep_mode(quant_weight_mode, 16, use_alpha ? 16 : 12, 2);
   quantize_u8(ep0, ENDPOINT_MAX_VALUES[quant_ep_mode]);
   quantize_u8(ep1, ENDPOINT_MAX_VALUES[quant_ep_mode]);
   quantize_u8(ep2, ENDPOINT_MAX_VALUES[quant_ep_mode]);
@@ -449,7 +473,7 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
   if (!pushConstants.u_Flags.only_2p) {
     encode_block(ep0, ep1, weights_1p);
-    quant_weight_mode_1p = quantize(ep0, ep1, weights_1p);
+    quant_weight_mode_1p = quantize(ep0, ep1, weights_1p, use_alpha);
     mse_1p = reconstruct(ep0, ep1, weights_1p);
     eps[0] = uint4(ep0);
     eps[1] = uint4(ep1);
@@ -459,7 +483,7 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
   if (pushConstants.u_Flags.try_2p || pushConstants.u_Flags.only_2p) {
     encode_block_2p(ep0, ep1, ep2, ep3, weights_2p, partition_map, astc_seed);
-    quant_weight_mode_2p = quantize(ep0, ep1, ep2, ep3, weights_2p);
+    quant_weight_mode_2p = quantize(ep0, ep1, ep2, ep3, weights_2p, use_alpha);
     mse_2p = reconstruct_2p(ep0, ep1, ep2, ep3, weights_2p, partition_map);
     eps = { uint4(ep0), uint4(ep1), uint4(ep2), uint4(ep3) };
     packed_2p = pack_astc_4x4_block<2>(eps, weights_2p, quant_weight_mode_2p,
