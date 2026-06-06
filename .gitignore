@@ -72,3 +72,4 @@ output.*
 *.spv
 compress.inc
 *.old
+dumps/

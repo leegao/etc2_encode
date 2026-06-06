@@ -195,7 +195,7 @@ std::vector<uint8_t> LoadRawData(const std::string& filename, int expectedSize) 
 int main() {
     int width, height, channels;
 
-    auto pixelData = stbi_load("test.png", &width, &height, &channels, STBI_rgb_alpha);
+    auto pixelData = stbi_load("dumps/00440_fmt_37_512x512.png", &width, &height, &channels, STBI_rgb_alpha);
     if (!pixelData) {
         std::cerr << "test.png does not exist" << std::endl;
         return -1;
@@ -502,7 +502,7 @@ int main() {
     PushConstants constants{
         width,
         height,
-        0b00010, // FLAG - 0: normal, 1: AABB, 2: 2-Partition, 4: only 2-Partition, 8 USE sfloat16, 16 USE snorm
+        0b00000, // FLAG - 0: normal, 1: AABB, 2: 2-Partition, 4: only 2-Partition, 8 USE sfloat16, 16 USE snorm
     };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 
@@ -589,7 +589,14 @@ int main() {
 
     WriteASTCToKTX("astc.ktx", width, height, encodedBlocks);
 
-    // WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
+    WriteASTCToKTX("astc4x42.ktx", 16, 4, {
+        {0xa7cd0242, 0xc9ad9b4, 0xdbb53dbf, 0x15103b50},
+        {0x6a150242, 0x1d82fd00, 0x1aa0fe64, 0x86214ac4},
+        {0xdbb10242, 0x36d4f124, 0xc5a88c08, 0xfff91ffe},
+        {0xea910242, 0x1d883b8c, 0x46b904b9, 0xea1f26d9},
+    });
+
+    WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
     // std::cout << "block 0: " << std::hex << encodedBlocks[0].x << ", " << encodedBlocks[0].y << ", " << encodedBlocks[0].z << ", " << encodedBlocks[0].w << std::endl;
     // std::cout << "params 0: ep0="
     //           << std::hex << (int)profiler[0].params.ep0[0] << " " << (int)profiler[0].params.ep0[1] << " " << (int)profiler[0].params.ep0[2] << " " << (int)profiler[0].params.ep0[3]

@@ -1395,8 +1395,9 @@
        %7177 = OpAccessChain %_ptr_Function_v4uint %pixels %7176
        %7178 = OpCompositeConstruct %v4uint %r %g %b %a
                OpStore %7177 %7178
+       %7180 = OpULessThan %bool %a %uint_255
                OpSelectionMerge %90 None
-               OpBranchConditional %false %89 %90
+               OpBranchConditional %7180 %89 %90
          %89 = OpLabel
                OpStore %use_alpha_0 %true
                OpBranch %90

@@ -1379,7 +1379,7 @@ void main()
             uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S69 + uint(tex_coord_0.x + x_5))];
             uint a_0 = (tex_element_0 >> 24) & 255U;
             pixels_0[y_0 * 4 + x_5] = uvec4((tex_element_0 >> 0) & 255U, (tex_element_0 >> 8) & 255U, (tex_element_0 >> 16) & 255U, a_0);
-            if(a_0 < 0U)
+            if(a_0 < 255U)
             {
                 use_alpha_4 = true;
             }
