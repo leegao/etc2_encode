@@ -458,19 +458,19 @@ int main() {
         .range = compressedBufferSize,
     };
 
-    VkDescriptorBufferInfo bufferDescInfo2{
+    VkDescriptorBufferInfo bufferDescInfo4{
         .buffer = profileBuffer,
         .offset = 0,
         .range = profileBufferSize,
     };
 
-    VkDescriptorBufferInfo bufferDescInfo3{
+    VkDescriptorBufferInfo bufferDescInfo2{
         .buffer = lutUniformBuffer,
         .offset = 0,
         .range = VK_WHOLE_SIZE,
     };
 
-    VkDescriptorBufferInfo bufferDescInfo4{
+    VkDescriptorBufferInfo bufferDescInfo3{
         .buffer = partitionLutBuffer,
         .offset = 0,
         .range = VK_WHOLE_SIZE,
@@ -589,14 +589,14 @@ int main() {
 
     WriteASTCToKTX("astc.ktx", width, height, encodedBlocks);
 
-    WriteASTCToKTX("astc4x42.ktx", 16, 4, {
-        {0xa7cd0242, 0xc9ad9b4, 0xdbb53dbf, 0x15103b50},
-        {0x6a150242, 0x1d82fd00, 0x1aa0fe64, 0x86214ac4},
-        {0xdbb10242, 0x36d4f124, 0xc5a88c08, 0xfff91ffe},
-        {0xea910242, 0x1d883b8c, 0x46b904b9, 0xea1f26d9},
-    });
+    // WriteASTCToKTX("astc4x42.ktx", 16, 4, {
+    //     {0xa7cd0242, 0xc9ad9b4, 0xdbb53dbf, 0x15103b50},
+    //     {0x6a150242, 0x1d82fd00, 0x1aa0fe64, 0x86214ac4},
+    //     {0xdbb10242, 0x36d4f124, 0xc5a88c08, 0xfff91ffe},
+    //     {0xea910242, 0x1d883b8c, 0x46b904b9, 0xea1f26d9},
+    // });
 
-    WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
+    // WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
     // std::cout << "block 0: " << std::hex << encodedBlocks[0].x << ", " << encodedBlocks[0].y << ", " << encodedBlocks[0].z << ", " << encodedBlocks[0].w << std::endl;
     // std::cout << "params 0: ep0="
     //           << std::hex << (int)profiler[0].params.ep0[0] << " " << (int)profiler[0].params.ep0[1] << " " << (int)profiler[0].params.ep0[2] << " " << (int)profiler[0].params.ep0[3]

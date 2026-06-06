@@ -1,3 +1,6 @@
+// MIT License
+// Copyright (c) 2026 Lee Gao
+
 import astc_pack;
 import encoder_utils;
 
@@ -29,14 +32,14 @@ struct Diagnostics {
   ASTCParameters params;
 };
 
-[[vk::binding(2, 0)]]
+[[vk::binding(4, 0)]]
 RWStructuredBuffer<Diagnostics> diagnostics;
 #endif
 
-[[vk::binding(3, 0)]]
+[[vk::binding(2, 0)]]
 StructuredBuffer<uint> lut2;
 
-[[vk::binding(4, 0)]]
+[[vk::binding(3, 0)]]
 StructuredBuffer<uint> astc_2p_lut_s2;
 
 float reconstruct(uint4 ep0, uint4 ep1, uint weights[16]) {

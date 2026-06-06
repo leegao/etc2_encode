@@ -116,15 +116,15 @@
                OpDecorate %_runtimearr_Diagnostics_std430 ArrayStride 112
                OpDecorate %RWStructuredBuffer BufferBlock
                OpMemberDecorate %RWStructuredBuffer 0 Offset 0
-               OpDecorate %diagnostics Binding 2
+               OpDecorate %diagnostics Binding 4
                OpDecorate %diagnostics DescriptorSet 0
                OpDecorate %_runtimearr_uint ArrayStride 4
                OpDecorate %StructuredBuffer BufferBlock
                OpMemberDecorate %StructuredBuffer 0 Offset 0
-               OpDecorate %astc_2p_lut_s2 Binding 4
+               OpDecorate %astc_2p_lut_s2 Binding 3
                OpDecorate %astc_2p_lut_s2 DescriptorSet 0
                OpDecorate %astc_2p_lut_s2 NonWritable
-               OpDecorate %lut2 Binding 3
+               OpDecorate %lut2 Binding 2
                OpDecorate %lut2 DescriptorSet 0
                OpDecorate %lut2 NonWritable
                OpDecorate %_runtimearr_v4uint ArrayStride 16
