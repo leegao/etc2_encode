@@ -3,10 +3,14 @@ run-name: ${{ github.actor }} is building astc_enc.slang
 
 on:
     push:
-        branches: ["**"]
+        branches-ignore: ["ci-images-dump"]
         tags: ["*"]
     pull_request:
-        branches: ["**"]
+        branches-ignore: ["ci-images-dump"]
+
+permissions:
+    contents: write
+    pages: write
 
 jobs:
     build:
@@ -67,8 +71,8 @@ jobs:
 
             - name: Original image
               run: |
-                  echo "## Original" >> $GITHUB_STEP_SUMMARY
-                  echo "![Generated Image](https://githubusercontent.com{owner}/{repo}/{branch}/test.png)" >> $GITHUB_STEP_SUMMARY
+                  echo "## Original:" >> $GITHUB_STEP_SUMMARY
+                  echo "![Original Image](https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/test.png)" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
 
             - name: Run astc_enc.out
@@ -78,10 +82,19 @@ jobs:
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
                   cat astc_enc_output.txt >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+                  mkdir -p staging_dir
+                  cp ./reconstructed_astc.png staging_dir/run-${{ github.run_id }}.png
+                  cp ./reconstructed_astc.png staging_dir/latest.png
+
+            - name: Deploy Image to GitHub Assets Branch
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: staging_dir
+                  branch: ci-images-dump
+                  single-commit: false
 
             - name: Reconstructed image
               run: |
-                  IMAGE_URL=$(curl -F "file=@reconstructed_astc.png" https://0x0.st)
-                  echo "## Reconstructed" >> $GITHUB_STEP_SUMMARY
-                  echo "![Generated Texture]($IMAGE_URL)" >> $GITHUB_STEP_SUMMARY
+                  echo "## Reconstructed (run-${{ github.run_id }}.png)" >> $GITHUB_STEP_SUMMARY
+                  echo "![Generated Texture](https://raw.githubusercontent.com/${{ github.repository }}/ci-images-dump/run-${{ github.run_id }}.png)" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
