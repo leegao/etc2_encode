@@ -1,0 +1,76 @@
+name: Build ASTC Encoder Shader
+run-name: ${{ github.actor }} is building astc_enc.slang
+
+on:
+    push:
+        branches: ["**"]
+        tags: ["*"]
+    pull_request:
+        branches: ["**"]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Install System Dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y --no-install-recommends \
+                    glslang-tools \
+                    glslc \
+                    xxd \
+                    libvulkan-dev \
+                    glibc-source \
+                    mesa-vulkan-drivers
+
+            - name: Install Slang Compiler
+              run: |
+                  curl -L https://github.com/shader-slang/slang/releases/download/v2026.10.2/slang-2026.10.2-linux-x86_64.tar.gz -o slang.tar.gz
+                  mkdir -p slang_extracted
+                  tar -xzf slang.tar.gz -C slang_extracted
+                  sudo cp slang_extracted/bin/slangc /usr/local/bin/
+                  sudo cp slang_extracted/lib/*.so* /usr/local/lib/
+                  sudo ldconfig /usr/local/lib
+                  rm -rf slang.tar.gz slang_extracted
+
+            - name: Install Mali Offline Compiler
+              run: |
+                  curl -L https://github.com/leegao/bcn_layer/releases/download/MOC/moc.zip -o moc.zip
+                  sudo mkdir -p /opt/moc
+                  sudo unzip moc.zip -d /opt/moc
+                  ls /opt/moc
+
+            # - name: Install Android NDK Minimal
+            #   run: |
+            #       curl -L https://dl.google.com/android/repository/android-ndk-r26b-linux.zip -o ndk.zip
+            #       unzip -q ndk.zip -d /opt
+            #       rm ndk.zip
+            #       echo "ANDROID_NDK_HOME=/opt/android-ndk-r26b" >> "$GITHUB_ENV"
+
+            - name: Checkout source code
+              uses: actions/checkout@v6
+
+            - name: Build astc_enc.comp
+              run: |
+                  slangc astc_enc.slang -target glsl -line-directive-mode none -D DISABLE_RECONSTRUCTION > astc_enc.comp
+                  glslc -c astc_enc.comp -o astc_enc.spv
+                  xxd -i astc_enc.spv > astc_enc.h
+                  g++ astc_enc.cpp -lvulkan -I include -L lib -l ktx -o astc_enc.out
+
+            - name: Run malioc on astc_encoder.spv
+              run: |
+                  /opt/moc/mali_offline_compiler/malioc -c Mali-G615 -d --vulkan astc_enc.spv | tee malioc_output.txt
+                  echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
+                  cat malioc_output.txt >> $GITHUB_STEP_SUMMARY
+                  echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+            - name: Run astc_enc.out
+              run: |
+                  echo "Running astc_enc.out ..." >> $GITHUB_STEP_SUMMARY
+                  LD_LIBRARY_PATH=lib:$LD_LIBRARY_PATH ./astc_enc.out 2>&1 | tee astc_enc_output.txt
+                  echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
+                  cat astc_enc_output.txt >> $GITHUB_STEP_SUMMARY
+                  echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+                  pwd >> $GITHUB_STEP_SUMMARY
+                  ls ./ >> $GITHUB_STEP_SUMMARY

@@ -195,7 +195,7 @@ std::vector<uint8_t> LoadRawData(const std::string& filename, int expectedSize) 
 int main() {
     int width, height, channels;
 
-    auto pixelData = stbi_load("dumps/00440_fmt_37_512x512.png", &width, &height, &channels, STBI_rgb_alpha);
+    auto pixelData = stbi_load("./test.png", &width, &height, &channels, STBI_rgb_alpha);
     if (!pixelData) {
         std::cerr << "test.png does not exist" << std::endl;
         return -1;
