@@ -80,16 +80,6 @@ jobs:
               run: |
                   frida -f /opt/moc/mali_offline_compiler/malioc -l hook.js -- -c Mali-G615 --vulkan astc_enc.comp || true
 
-            - name: Upload Images
-              uses: actions/upload-artifact@v6
-              with:
-                  name: output
-                  path: |
-                      reconstructed_astc.png
-                      output.astc
-                      output.ktx
-                  retention-days: 14
-
             - name: Original image
               run: |
                   echo "## Original:" >> $GITHUB_STEP_SUMMARY
@@ -131,3 +121,13 @@ jobs:
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
                   cat astc_encoder_MBS2.c >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+            - name: Upload Images
+              uses: actions/upload-artifact@v6
+              with:
+                  name: output
+                  path: |
+                      reconstructed_astc.png
+                      output.astc
+                      output.ktx
+                  retention-days: 14
