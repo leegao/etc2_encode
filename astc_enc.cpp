@@ -540,7 +540,11 @@ int main() {
         if (clock.start > last_start) last_start = clock.start;
         mse += double(clock.mse);
     }
-    std::cout << "Total time: " << (double)(last_start - first_start) / 100000.0 << " ms" << std::endl;
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+    float timestampPeriod = deviceProperties.limits.timestampPeriod;
+
+    std::cout << "Total time: " << (double)(last_start - first_start) / (1000000.0 / timestampPeriod) << " ms (granularity = " << timestampPeriod << "ns)" << std::endl;
     std::cout << "  MSE: " << mse / profiler.size() << ", PSNR: " << -10 * log10(mse / profiler.size()) << std::endl;
 
     // profiler.reconstructed contains a 4x4 block of reconstructed rgba8 pixels, going left to right and top to down
