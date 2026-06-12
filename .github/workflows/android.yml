@@ -41,36 +41,47 @@ jobs:
                   sudo unzip moc.zip -d /opt/moc
                   ls /opt/moc
 
-            # - name: Install Android NDK Minimal
-            #   run: |
-            #       curl -L https://dl.google.com/android/repository/android-ndk-r26b-linux.zip -o ndk.zip
-            #       unzip -q ndk.zip -d /opt
-            #       rm ndk.zip
-            #       echo "ANDROID_NDK_HOME=/opt/android-ndk-r26b" >> "$GITHUB_ENV"
-
             - name: Checkout source code
               uses: actions/checkout@v6
 
             - name: Build astc_enc.comp
               run: |
                   slangc astc_enc.slang -target glsl -line-directive-mode none -D DISABLE_RECONSTRUCTION > astc_enc.comp
-                  glslc -c astc_enc.comp -o astc_enc.spv
+                  slangc astc_enc.slang -profile glsl_450 -target spirv -o astc_enc.spv -D ENABLE_DIAGNOSTICS -D DISABLE_RECONSTRUCTION1 -entry main
                   xxd -i astc_enc.spv > astc_enc.h
                   g++ astc_enc.cpp -lvulkan -I include -L lib -l ktx -o astc_enc.out
 
-            - name: Run malioc on astc_encoder.spv
+            - name: Run malioc on astc_encoder.comp
               run: |
-                  /opt/moc/mali_offline_compiler/malioc -c Mali-G615 -d --vulkan astc_enc.spv | tee malioc_output.txt
+                  /opt/moc/mali_offline_compiler/malioc -c Mali-G615 -d --vulkan astc_enc.comp | tee malioc_output.txt
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
                   cat malioc_output.txt >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
+            - name: Upload Original
+              uses: actions/upload-artifact@v6
+              with:
+                  name: original-image
+                  path: test.png
+                  retention-days: 5
+
+            - name: Original image
+              run: |
+                  echo "## Original" >> $GITHUB_STEP_SUMMARY
+                  echo "![Generated Image](https://githubusercontent.com{owner}/{repo}/{branch}/test.png)" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+
             - name: Run astc_enc.out
               run: |
-                  echo "Running astc_enc.out ..." >> $GITHUB_STEP_SUMMARY
+                  echo "## Running astc_enc.out ..." >> $GITHUB_STEP_SUMMARY
                   LD_LIBRARY_PATH=lib:$LD_LIBRARY_PATH ./astc_enc.out 2>&1 | tee astc_enc_output.txt
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
                   cat astc_enc_output.txt >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-                  pwd >> $GITHUB_STEP_SUMMARY
-                  ls ./ >> $GITHUB_STEP_SUMMARY
+
+            - name: Reconstructed image
+              run: |
+                  IMAGE_URL=$(curl -F "file=@reconstructed_astc.png" https://0x0.st)
+                  echo "## Reconstructed" >> $GITHUB_STEP_SUMMARY
+                  echo "![Generated Texture]($IMAGE_URL)" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
