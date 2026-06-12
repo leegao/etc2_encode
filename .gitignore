@@ -73,3 +73,5 @@ output.*
 compress.inc
 *.old
 dumps/
+*.mbs2
+*_MBS2.c

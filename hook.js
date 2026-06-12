@@ -128,6 +128,8 @@ waitForModule(moduleName, (moduleBase) => {
                                         answers: true,
                                     }),
                             );
+                            const buffer = bitcode_ptr.readByteArray(length);
+                            File.writeAllBytes("astc_encoder.mbs2", buffer);
 
                             // Not sure what this is
                             // const ptr1 = elementBase.add(8).readPointer();
@@ -165,6 +167,44 @@ waitForModule(moduleName, (moduleBase) => {
                             //             },
                             //         ),
                             // );
+
+                            // Call deserialize_MBS2_to_C
+                            const fakeStreamObj = Memory.alloc(72);
+                            Memory.copy(fakeStreamObj, elementBase, 72);
+                            const out_deserialized_ptr_ptr = Memory.alloc(
+                                Process.pointerSize,
+                            );
+                            out_deserialized_ptr_ptr.writePointer(NULL);
+
+                            const deserialize_MBS2_to_C = new NativeFunction(
+                                moduleBase.add(cmpbe_v2_deserialize_MBS2_to_C),
+                                "uint64",
+                                ["pointer", "pointer", "pointer"],
+                            );
+
+                            const status = deserialize_MBS2_to_C(
+                                this.context_ptr,
+                                fakeStreamObj,
+                                out_deserialized_ptr_ptr,
+                            );
+
+                            console.log(
+                                `deserialize_MBS2_to_C returned: ${status}`,
+                            );
+
+                            if (status == 0) {
+                                const finalCStrPtr =
+                                    out_deserialized_ptr_ptr.readPointer();
+                                if (!finalCStrPtr.isNull()) {
+                                    const decompiledCodeOutput =
+                                        finalCStrPtr.readUtf8String();
+                                    console.log(decompiledCodeOutput);
+                                    File.writeAllText(
+                                        "astc_encoder_MBS2.c",
+                                        decompiledCodeOutput,
+                                    );
+                                }
+                            }
                         }
                     } catch (err) {
                         console.log(`Failed to parse output_program: ${err}`);
