@@ -1,3 +1,4 @@
+#include "cmpbe_chunks.h"
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
