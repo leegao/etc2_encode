@@ -100,15 +100,21 @@ extension uint4 {
   half4 to_unorm() { return half4(this) / 255.0h; }
 }
 
-typedef PackedArray<2, 16> PartitionMap;
-
-void solve_weights(PartitionMap partition_map, int partition, half4 ep0,
-                   half4 ep1, out PackedArray<8, 16> weights) {
+void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
   let L = ep1 - ep0;
   let invLenSq = 1.0h / (dot(L, L) + 0.000001h);
   for (int i = 0; i < 16; i++) {
-    if (partition_map[i] != partition)
+#ifndef UNROLL_SOLVE_WEIGHTS
+    // 3x + 1 mod 3 is always 1, but our compilers aren't smart enough to figure
+    // this out yet
+    // This acts as an optimization barrier to keep the mali compiler from
+    // unrolling this loop, which blows up our register file and forces a stack
+    // spill
+    let always_true = bool(((pushConstants.u_TextureDimensions.x * 3) + 1) % 3);
+    if (!always_true) {
       continue;
+    }
+#endif
     let C = pixels[i].to_unorm();
     let pDotL = dot(C - ep0, L);
     let w = pDotL * invLenSq;
@@ -140,12 +146,7 @@ void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
   endpoint_end = uint4(max_r, max_g, max_b, max_a);
   var ep0 = half4(endpoint_start) / 255.0h;
   var ep1 = half4(endpoint_end) / 255.0h;
-  PartitionMap partition_map = PartitionMap( {});
-  solve_weights(partition_map, 0, ep0, ep1, weights);
-}
-
-extension half4 {
-  half4 mean(half4 ep0, half4 ep1) { return half4(this) / 255.0h; }
+  solve_weights(ep0, ep1, weights);
 }
 
 [shader("compute")]
