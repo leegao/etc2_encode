@@ -79,6 +79,9 @@ jobs:
             - name: Extract MBS2
               run: |
                   frida -f /opt/moc/mali_offline_compiler/malioc -l hook.js -- -c Mali-G615 --vulkan astc_enc.comp || true
+                  gcc disassemble_astc_enc.c disassemble.c -o disassemble_astc_enc.out
+                  echo "Disassembling astc_enc_mbs2_shader..."
+                  ./disassemble_astc_enc.out | tee disassembled_astc_enc.txt
 
             - name: Original image
               run: |
@@ -102,6 +105,8 @@ jobs:
                   cp ./astc.ktx staging_dir/astc-latest.ktx
                   cp ./astc_enc_mbs2_shader.h staging_dir/astc_enc_mbs2_shader-${{ github.run_id }}.h
                   cp ./astc_enc_mbs2_shader.h staging_dir/astc_enc_mbs2_shader-latest.h
+                  cp ./disassembled_astc_enc.txt staging_dir/disassembled_astc_enc-${{ github.run_id }}.txt
+                  cp ./disassembled_astc_enc.txt staging_dir/disassembled_astc_enc-latest.txt
 
             - name: Deploy Image to GitHub Assets Branch
               uses: JamesIves/github-pages-deploy-action@v4
@@ -115,9 +120,9 @@ jobs:
                   echo "## Reconstructed (run-${{ github.run_id }}.png)" >> $GITHUB_STEP_SUMMARY
                   echo "![Generated Texture](https://raw.githubusercontent.com/${{ github.repository }}/ci-images-dump/run-${{ github.run_id }}.png)" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "## Mali MBS2 bitcode (astc_encoder_MBS2.c)" >> $GITHUB_STEP_SUMMARY
+                  echo "## Mali MBS2 bitcode (disassembled_astc_enc.txt)" >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
-                  cat astc_enc_mbs2_shader.h >> $GITHUB_STEP_SUMMARY
+                  cat disassembled_astc_enc.txt >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
             - name: Upload Images

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include "disassemble.h"
 #include "cmpbe_chunks.h"
 
