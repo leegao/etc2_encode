@@ -6,7 +6,7 @@ slangc astc_enc.slang -profile glsl_450 -target spirv -o astc_enc.spv -D ENABLE_
 spirv-dis astc_enc.spv > astc_enc.spvasm
 
 echo "Compiling astc_enc.comp to SPIR-V"
-# glslangValidator -V compress.comp -x -o compress.inc
+glslc -c astc_enc.comp -o astc_enc.raw.spv
 xxd -i astc_enc.spv > astc_enc.h
 
 echo "Building..."
