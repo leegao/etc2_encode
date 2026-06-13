@@ -100,10 +100,15 @@ extension uint4 {
   half4 to_unorm() { return half4(this) / 255.0h; }
 }
 
-void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
+typedef PackedArray<2, 16> PartitionMap;
+
+void solve_weights(PartitionMap partition_map, int partition, half4 ep0,
+                   half4 ep1, out PackedArray<8, 16> weights) {
   let L = ep1 - ep0;
   let invLenSq = 1.0h / (dot(L, L) + 0.000001h);
   for (int i = 0; i < 16; i++) {
+    if (partition_map[i] != partition)
+      continue;
     let C = pixels[i].to_unorm();
     let pDotL = dot(C - ep0, L);
     let w = pDotL * invLenSq;
@@ -135,7 +140,8 @@ void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
   endpoint_end = uint4(max_r, max_g, max_b, max_a);
   var ep0 = half4(endpoint_start) / 255.0h;
   var ep1 = half4(endpoint_end) / 255.0h;
-  solve_weights(ep0, ep1, weights);
+  PartitionMap partition_map = PartitionMap( {});
+  solve_weights(partition_map, 0, ep0, ep1, weights);
 }
 
 extension half4 {

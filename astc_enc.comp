@@ -43,17 +43,17 @@ uint PackedArray_operatorx5Bx5D_get_0(PackedArray_0 this_0, uint n_0)
 
 struct PackedArray_1
 {
-    uint  data_0[4];
+    uint  data_0[1];
 };
 
 uint PackedArray_operatorx5Bx5D_get_1(PackedArray_1 this_1, uint n_1)
 {
-    return ((this_1.data_0[n_1 / 4U]) >> (n_1 % 4U * 8U)) & 255U;
+    return ((this_1.data_0[n_1 / 16U]) >> (n_1 % 16U * 2U)) & 3U;
 }
 
 struct PackedArray_2
 {
-    uint  data_0[2];
+    uint  data_0[4];
 };
 
 uint PackedArray_operatorx5Bx5D_get_2(PackedArray_2 this_2, uint n_2)
@@ -71,9 +71,19 @@ uint PackedArray_operatorx5Bx5D_get_3(PackedArray_3 this_3, uint n_3)
     return ((this_3.data_0[n_3 / 4U]) >> (n_3 % 4U * 8U)) & 255U;
 }
 
-bool Flags_use_sfloat16_get_0(Flags_0 this_4)
+struct PackedArray_4
 {
-    return bool(PackedArray_operatorx5Bx5D_get_0(this_4.flags_0, 3U));
+    uint  data_0[2];
+};
+
+uint PackedArray_operatorx5Bx5D_get_4(PackedArray_4 this_4, uint n_4)
+{
+    return ((this_4.data_0[n_4 / 4U]) >> (n_4 % 4U * 8U)) & 255U;
+}
+
+bool Flags_use_sfloat16_get_0(Flags_0 this_5)
+{
+    return bool(PackedArray_operatorx5Bx5D_get_0(this_5.flags_0, 3U));
 }
 
 uint sfloat16_to_uint8_0(uint val_0)
@@ -81,9 +91,9 @@ uint sfloat16_to_uint8_0(uint val_0)
     return clamp(uint(round((unpackHalf2x16((val_0 & 65535U)).x) * 255.0)), 0U, 255U);
 }
 
-bool Flags_use_snorm8_get_0(Flags_0 this_5)
+bool Flags_use_snorm8_get_0(Flags_0 this_6)
 {
-    return bool(PackedArray_operatorx5Bx5D_get_0(this_5.flags_0, 4U));
+    return bool(PackedArray_operatorx5Bx5D_get_0(this_6.flags_0, 4U));
 }
 
 void unpack_snorm_to_unorm_float_0(uint packed_val_0, out uint r_0, out uint g_0, out uint b_0, out uint a_0)
@@ -98,9 +108,31 @@ void unpack_snorm_to_unorm_float_0(uint packed_val_0, out uint r_0, out uint g_0
 
 uvec4  pixels_0[16];
 
-f16vec4 to_unorm_0(uvec4 this_6)
+PackedArray_1 PackedArray_x24init_0(uint  initialValues_0[16])
 {
-    return f16vec4(this_6) / 255.0HF;
+    PackedArray_1 _S1;
+    _S1.data_0[0] = 0U;
+    int n_5 = 0;
+    for(;;)
+    {
+        uint _S2 = uint(n_5);
+        if(_S2 < 16U)
+        {
+        }
+        else
+        {
+            break;
+        }
+        uint bitOffset_0 = _S2 % 16U * 2U;
+        _S1.data_0[_S2 / 16U] = ((_S1.data_0[_S2 / 16U]) & (~(3U << bitOffset_0))) | (((initialValues_0[n_5]) & 3U) << bitOffset_0);
+        n_5 = n_5 + 1;
+    }
+    return _S1;
+}
+
+f16vec4 to_unorm_0(uvec4 this_7)
+{
+    return f16vec4(this_7) / 255.0HF;
 }
 
 float16_t saturate_0(float16_t x_0)
@@ -108,10 +140,10 @@ float16_t saturate_0(float16_t x_0)
     return clamp(x_0, 0.0HF, 1.0HF);
 }
 
-void solve_weights_0(f16vec4 ep0_0, f16vec4 ep1_0, out PackedArray_1 weights_0)
+void solve_weights_0(PackedArray_1 partition_map_0, int partition_0, f16vec4 ep0_0, f16vec4 ep1_0, out PackedArray_2 weights_0)
 {
-    f16vec4 _S1 = ep1_0 - ep0_0;
-    float16_t _S2 = 1.0HF / (dot(_S1, _S1) + 1.01327896118164062e-06HF);
+    f16vec4 _S3 = ep1_0 - ep0_0;
+    float16_t _S4 = 1.0HF / (dot(_S3, _S3) + 1.01327896118164062e-06HF);
     int i_0 = 0;
     for(;;)
     {
@@ -122,15 +154,20 @@ void solve_weights_0(f16vec4 ep0_0, f16vec4 ep1_0, out PackedArray_1 weights_0)
         {
             break;
         }
-        uint _S3 = uint(i_0);
-        uint bitOffset_0 = _S3 % 4U * 8U;
-        weights_0.data_0[_S3 / 4U] = ((weights_0.data_0[_S3 / 4U]) & (~(255U << bitOffset_0))) | ((uint(saturate_0(dot(to_unorm_0(pixels_0[i_0]) - ep0_0, _S1) * _S2) * 255.0HF) & 255U) << bitOffset_0);
+        uint _S5 = uint(i_0);
+        if((PackedArray_operatorx5Bx5D_get_1(partition_map_0, _S5)) != uint(partition_0))
+        {
+            i_0 = i_0 + 1;
+            continue;
+        }
+        uint bitOffset_1 = _S5 % 4U * 8U;
+        weights_0.data_0[_S5 / 4U] = ((weights_0.data_0[_S5 / 4U]) & (~(255U << bitOffset_1))) | ((uint(saturate_0(dot(to_unorm_0(pixels_0[i_0]) - ep0_0, _S3) * _S4) * 255.0HF) & 255U) << bitOffset_1);
         i_0 = i_0 + 1;
     }
     return;
 }
 
-void encode_block_AABB_0(out uvec4 endpoint_start_0, out uvec4 endpoint_end_0, out PackedArray_1 weights_1)
+void encode_block_AABB_0(out uvec4 endpoint_start_0, out uvec4 endpoint_end_0, out PackedArray_2 weights_1)
 {
     uint min_r_0 = 255U;
     uint min_g_0 = 255U;
@@ -150,45 +187,46 @@ void encode_block_AABB_0(out uvec4 endpoint_start_0, out uvec4 endpoint_end_0, o
         {
             break;
         }
-        uint _S4 = min(min_r_0, pixels_0[i_1].x);
-        uint _S5 = min(min_g_0, pixels_0[i_1].y);
-        uint _S6 = min(min_b_0, pixels_0[i_1].z);
-        uint _S7 = min(min_a_0, pixels_0[i_1].w);
-        uint _S8 = max(max_r_0, pixels_0[i_1].x);
-        uint _S9 = max(max_g_0, pixels_0[i_1].y);
-        uint _S10 = max(max_b_0, pixels_0[i_1].z);
-        uint _S11 = max(max_a_0, pixels_0[i_1].w);
+        uint _S6 = min(min_r_0, pixels_0[i_1].x);
+        uint _S7 = min(min_g_0, pixels_0[i_1].y);
+        uint _S8 = min(min_b_0, pixels_0[i_1].z);
+        uint _S9 = min(min_a_0, pixels_0[i_1].w);
+        uint _S10 = max(max_r_0, pixels_0[i_1].x);
+        uint _S11 = max(max_g_0, pixels_0[i_1].y);
+        uint _S12 = max(max_b_0, pixels_0[i_1].z);
+        uint _S13 = max(max_a_0, pixels_0[i_1].w);
         int i_2 = i_1 + 1;
-        min_r_0 = _S4;
-        min_g_0 = _S5;
-        min_b_0 = _S6;
-        min_a_0 = _S7;
-        max_r_0 = _S8;
-        max_g_0 = _S9;
-        max_b_0 = _S10;
-        max_a_0 = _S11;
+        min_r_0 = _S6;
+        min_g_0 = _S7;
+        min_b_0 = _S8;
+        min_a_0 = _S9;
+        max_r_0 = _S10;
+        max_g_0 = _S11;
+        max_b_0 = _S12;
+        max_a_0 = _S13;
         i_1 = i_2;
     }
     endpoint_start_0 = uvec4(min_r_0, min_g_0, min_b_0, min_a_0);
-    uvec4 _S12 = uvec4(max_r_0, max_g_0, max_b_0, max_a_0);
-    endpoint_end_0 = _S12;
-    solve_weights_0(f16vec4(endpoint_start_0) / 255.0HF, f16vec4(_S12) / 255.0HF, weights_1);
+    uvec4 _S14 = uvec4(max_r_0, max_g_0, max_b_0, max_a_0);
+    endpoint_end_0 = _S14;
+    const uint  _S15[16] = { 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U };
+    solve_weights_0(PackedArray_x24init_0(_S15), 0, f16vec4(endpoint_start_0) / 255.0HF, f16vec4(_S14) / 255.0HF, weights_1);
     return;
 }
 
 uint unscramble_quantized_0(uint quant_mode_0, uint q_val_0)
 {
-    uint _S13;
+    uint _S16;
     if(quant_mode_0 == 19U)
     {
-        _S13 = 48U;
+        _S16 = 48U;
     }
     else
     {
-        _S13 = 0U;
+        _S16 = 0U;
     }
-    uint _S14 = q_val_0 + _S13;
-    return ((packed_unscrambler_data_0[_S14 >> 2]) >> ((_S14 & 3U) << 3)) & 255U;
+    uint _S17 = q_val_0 + _S16;
+    return ((packed_unscrambler_data_0[_S17 >> 2]) >> ((_S17 & 3U) << 3)) & 255U;
 }
 
 uint get_integer_from_trits_0(uint index_0)
@@ -227,7 +265,7 @@ void write_bits_fwd_0(inout uint block_x_0, inout uint block_y_0, inout uint bit
     return;
 }
 
-void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_offset_1, PackedArray_2 numbers_0, uint bits_0, uint count_1)
+void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_offset_1, PackedArray_3 numbers_0, uint bits_0, uint count_1)
 {
     uint i_3 = 0U;
     for(;;)
@@ -239,7 +277,7 @@ void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_o
         {
             break;
         }
-        PackedArray_3 group_0;
+        PackedArray_4 group_0;
         group_0.data_0[0] = 0U;
         group_0.data_0[1] = 0U;
         uint j_0 = 0U;
@@ -252,16 +290,16 @@ void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_o
             {
                 break;
             }
-            uint _S15 = i_3 + j_0;
-            if(_S15 < count_1)
+            uint _S18 = i_3 + j_0;
+            if(_S18 < count_1)
             {
-                uint bitOffset_1 = j_0 % 4U * 8U;
-                group_0.data_0[j_0 / 4U] = ((group_0.data_0[j_0 / 4U]) & (~(255U << bitOffset_1))) | (((PackedArray_operatorx5Bx5D_get_2(numbers_0, _S15)) & 255U) << bitOffset_1);
+                uint bitOffset_2 = j_0 % 4U * 8U;
+                group_0.data_0[j_0 / 4U] = ((group_0.data_0[j_0 / 4U]) & (~(255U << bitOffset_2))) | (((PackedArray_operatorx5Bx5D_get_3(numbers_0, _S18)) & 255U) << bitOffset_2);
             }
             j_0 = j_0 + 1U;
         }
-        PackedArray_3 m_0;
-        PackedArray_3 t_0;
+        PackedArray_4 m_0;
+        PackedArray_4 t_0;
         uint j_1 = 0U;
         for(;;)
         {
@@ -272,48 +310,48 @@ void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_o
             {
                 break;
             }
-            uint bitOffset_2 = j_1 % 4U * 8U;
-            uint clearMask_0 = ~(255U << bitOffset_2);
-            m_0.data_0[j_1 / 4U] = ((m_0.data_0[j_1 / 4U]) & clearMask_0) | ((((PackedArray_operatorx5Bx5D_get_3(group_0, j_1)) & uint((1 << bits_0) - 1)) & 255U) << bitOffset_2);
-            t_0.data_0[j_1 / 4U] = ((t_0.data_0[j_1 / 4U]) & clearMask_0) | ((((PackedArray_operatorx5Bx5D_get_3(group_0, j_1)) >> bits_0) & 255U) << bitOffset_2);
+            uint bitOffset_3 = j_1 % 4U * 8U;
+            uint clearMask_0 = ~(255U << bitOffset_3);
+            m_0.data_0[j_1 / 4U] = ((m_0.data_0[j_1 / 4U]) & clearMask_0) | ((((PackedArray_operatorx5Bx5D_get_4(group_0, j_1)) & uint((1 << bits_0) - 1)) & 255U) << bitOffset_3);
+            t_0.data_0[j_1 / 4U] = ((t_0.data_0[j_1 / 4U]) & clearMask_0) | ((((PackedArray_operatorx5Bx5D_get_4(group_0, j_1)) >> bits_0) & 255U) << bitOffset_3);
             j_1 = j_1 + 1U;
         }
-        uint packhigh_0 = get_integer_from_trits_0(PackedArray_operatorx5Bx5D_get_3(t_0, 4U) * 81U + PackedArray_operatorx5Bx5D_get_3(t_0, 3U) * 27U + PackedArray_operatorx5Bx5D_get_3(t_0, 2U) * 9U + PackedArray_operatorx5Bx5D_get_3(t_0, 1U) * 3U + PackedArray_operatorx5Bx5D_get_3(t_0, 0U));
-        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_3(m_0, 0U), bits_0);
+        uint packhigh_0 = get_integer_from_trits_0(PackedArray_operatorx5Bx5D_get_4(t_0, 4U) * 81U + PackedArray_operatorx5Bx5D_get_4(t_0, 3U) * 27U + PackedArray_operatorx5Bx5D_get_4(t_0, 2U) * 9U + PackedArray_operatorx5Bx5D_get_4(t_0, 1U) * 3U + PackedArray_operatorx5Bx5D_get_4(t_0, 0U));
+        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_4(m_0, 0U), bits_0);
         write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, packhigh_0 & 3U, 2U);
-        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_3(m_0, 1U), bits_0);
+        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_4(m_0, 1U), bits_0);
         write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, (packhigh_0 >> 2) & 3U, 2U);
-        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_3(m_0, 2U), bits_0);
+        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_4(m_0, 2U), bits_0);
         write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, (packhigh_0 >> 4) & 1U, 1U);
-        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_3(m_0, 3U), bits_0);
+        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_4(m_0, 3U), bits_0);
         write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, (packhigh_0 >> 5) & 3U, 2U);
-        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_3(m_0, 4U), bits_0);
+        write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, PackedArray_operatorx5Bx5D_get_4(m_0, 4U), bits_0);
         write_bits_fwd_0(block_x_1, block_y_1, bit_offset_1, (packhigh_0 >> 7) & 1U, 1U);
         i_3 = i_3 + 5U;
     }
     return;
 }
 
-uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_alpha_0)
+uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_2 weights_2, bool use_alpha_0)
 {
     uvec4 final_block_0 = uvec4(0U, 0U, 0U, 0U);
-    uint _S16;
+    uint _S19;
     if(use_alpha_0)
     {
-        _S16 = 8U;
+        _S19 = 8U;
     }
     else
     {
-        _S16 = 6U;
+        _S19 = 6U;
     }
-    uint _S17;
+    uint _S20;
     if(use_alpha_0)
     {
-        _S17 = 13U;
+        _S20 = 13U;
     }
     else
     {
-        _S17 = 19U;
+        _S20 = 19U;
     }
     uint i_4;
     if(use_alpha_0)
@@ -324,14 +362,14 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
     {
         i_4 = 8U;
     }
-    uint _S18;
+    uint _S21;
     if(use_alpha_0)
     {
-        _S18 = 4U;
+        _S21 = 4U;
     }
     else
     {
-        _S18 = 6U;
+        _S21 = 6U;
     }
     final_block_0[0] = 578U | ((i_4 & 15U) << 13U);
     uint fwd_offset_0 = 17U;
@@ -346,7 +384,7 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
         {
             break;
         }
-        uint rev4_0 = (bitfieldReverse(clamp(uint(float(PackedArray_operatorx5Bx5D_get_1(weights_2, i_4)) * 15.0 / 255.0 + 0.5), 0U, 15U))) >> 28U;
+        uint rev4_0 = (bitfieldReverse(clamp(uint(float(PackedArray_operatorx5Bx5D_get_2(weights_2, i_4)) * 15.0 / 255.0 + 0.5), 0U, 15U))) >> 28U;
         if(i_4 < 8U)
         {
             final_block_0[3] = (final_block_0[3]) | (rev4_0 << (28U - 4U * i_4));
@@ -365,40 +403,40 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
     {
         i_4 = 191U;
     }
-    PackedArray_2 raw_endpoints_0;
+    PackedArray_3 raw_endpoints_0;
     raw_endpoints_0.data_0[0U] = ((((((((raw_endpoints_0.data_0[0U]) & 4294967040U) | (((eps_0[0U].x) & 255U) << 0U)) & 4294902015U) | (((eps_0[1U].x) & 255U) << 8U)) & 4278255615U) | (((eps_0[0U].y) & 255U) << 16U)) & 16777215U) | (((eps_0[1U].y) & 255U) << 24U);
     raw_endpoints_0.data_0[1U] = ((((((((raw_endpoints_0.data_0[1U]) & 4294967040U) | (((eps_0[0U].z) & 255U) << 0U)) & 4294902015U) | (((eps_0[1U].z) & 255U) << 8U)) & 4278255615U) | (((eps_0[0U].w) & 255U) << 16U)) & 16777215U) | (((eps_0[1U].w) & 255U) << 24U);
-    PackedArray_2 quantized_endpoints_0;
+    PackedArray_3 quantized_endpoints_0;
     uint i_5 = 0U;
     [[unroll]]
     for(;;)
     {
-        if(i_5 < _S16)
+        if(i_5 < _S19)
         {
         }
         else
         {
             break;
         }
-        uint bitOffset_3 = i_5 % 4U * 8U;
-        quantized_endpoints_0.data_0[i_5 / 4U] = ((quantized_endpoints_0.data_0[i_5 / 4U]) & (~(255U << bitOffset_3))) | (((unscramble_quantized_0(_S17, clamp(uint(float(PackedArray_operatorx5Bx5D_get_2(raw_endpoints_0, i_5)) * float(i_4) / 255.0 + 0.5), 0U, i_4))) & 255U) << bitOffset_3);
+        uint bitOffset_4 = i_5 % 4U * 8U;
+        quantized_endpoints_0.data_0[i_5 / 4U] = ((quantized_endpoints_0.data_0[i_5 / 4U]) & (~(255U << bitOffset_4))) | (((unscramble_quantized_0(_S20, clamp(uint(float(PackedArray_operatorx5Bx5D_get_3(raw_endpoints_0, i_5)) * float(i_4) / 255.0 + 0.5), 0U, i_4))) & 255U) << bitOffset_4);
         i_5 = i_5 + 1U;
     }
-    encode_trits_0(final_block_0[0], final_block_0[1], fwd_offset_0, quantized_endpoints_0, _S18, _S16);
+    encode_trits_0(final_block_0[0], final_block_0[1], fwd_offset_0, quantized_endpoints_0, _S21, _S19);
     return final_block_0;
 }
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 void main()
 {
-    ivec2 _S19 = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tex_coord_0 = _S19 * 4;
+    ivec2 _S22 = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 tex_coord_0 = _S22 * 4;
     if((any(bvec2((greaterThanEqual(tex_coord_0,pushConstants_0.u_TextureDimensions_0))))))
     {
         return;
     }
-    buffer_index_0 = uint(_S19.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S19.x);
-    uint _S20 = uint(pushConstants_0.u_TextureDimensions_0.x);
+    buffer_index_0 = uint(_S22.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S22.x);
+    uint _S23 = uint(pushConstants_0.u_TextureDimensions_0.x);
     bool use_alpha_1 = false;
     int y_0 = 0;
     for(;;)
@@ -427,7 +465,7 @@ void main()
             uint a_1;
             if(Flags_use_sfloat16_get_0(pushConstants_0.u_Flags_0))
             {
-                uint tex_coord_1 = (uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1)) * 2U;
+                uint tex_coord_1 = (uint(tex_coord_0.y + y_0) * _S23 + uint(tex_coord_0.x + x_1)) * 2U;
                 uint hi_0 = input_rgba8_buffer_0._data[uint(tex_coord_1)];
                 r_1 = sfloat16_to_uint8_0((hi_0 >> 0) & 65535U);
                 g_1 = sfloat16_to_uint8_0((hi_0 >> 16) & 65535U);
@@ -439,11 +477,11 @@ void main()
             {
                 if(Flags_use_snorm8_get_0(pushConstants_0.u_Flags_0))
                 {
-                    unpack_snorm_to_unorm_float_0(input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1))], r_1, g_1, b_1, a_1);
+                    unpack_snorm_to_unorm_float_0(input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S23 + uint(tex_coord_0.x + x_1))], r_1, g_1, b_1, a_1);
                 }
                 else
                 {
-                    uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1))];
+                    uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S23 + uint(tex_coord_0.x + x_1))];
                     a_1 = (tex_element_0 >> 24) & 255U;
                     b_1 = (tex_element_0 >> 16) & 255U;
                     g_1 = (tex_element_0 >> 8) & 255U;
@@ -457,17 +495,17 @@ void main()
             }
             x_1 = x_1 + 1;
         }
-        int _S21 = y_0 + 1;
+        int _S24 = y_0 + 1;
         use_alpha_1 = use_alpha_2;
-        y_0 = _S21;
+        y_0 = _S24;
     }
-    const uvec4 _S22 = uvec4(0U);
+    const uvec4 _S25 = uvec4(0U);
     uvec4  eps_1[2];
-    eps_1[0] = _S22;
-    eps_1[1] = _S22;
+    eps_1[0] = _S25;
+    eps_1[1] = _S25;
     uvec4 ep0_1;
     uvec4 ep1_1;
-    PackedArray_1 weights_1p_0;
+    PackedArray_2 weights_1p_0;
     encode_block_AABB_0(ep0_1, ep1_1, weights_1p_0);
     eps_1[0] = ep0_1;
     eps_1[1] = ep1_1;
