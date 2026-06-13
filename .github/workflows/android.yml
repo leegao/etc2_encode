@@ -100,10 +100,8 @@ jobs:
                   cp ./reconstructed_astc.png staging_dir/latest.png
                   cp ./output.astc staging_dir/output-latest.astc
                   cp ./astc.ktx staging_dir/astc-latest.ktx
-                  cp ./astc_encoder.mbs2 staging_dir/astc_encoder-${{ github.run_id }}.mbs2
-                  cp ./astc_encoder.mbs2 staging_dir/astc_encoder-latest.mbs2
-                  cp ./astc_encoder_MBS2.c staging_dir/astc_encoder_MBS2-${{ github.run_id }}.c
-                  cp ./astc_encoder_MBS2.c staging_dir/astc_encoder_MBS2-latest.c
+                  cp ./astc_enc_mbs2_shader.h staging_dir/astc_enc_mbs2_shader-${{ github.run_id }}.h
+                  cp ./astc_enc_mbs2_shader.h staging_dir/astc_enc_mbs2_shader-latest.h
 
             - name: Deploy Image to GitHub Assets Branch
               uses: JamesIves/github-pages-deploy-action@v4
@@ -119,7 +117,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
                   echo "## Mali MBS2 bitcode (astc_encoder_MBS2.c)" >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`text" >> $GITHUB_STEP_SUMMARY
-                  cat astc_encoder_MBS2.c >> $GITHUB_STEP_SUMMARY
+                  cat astc_enc_mbs2_shader.h >> $GITHUB_STEP_SUMMARY
                   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
             - name: Upload Images

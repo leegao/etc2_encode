@@ -75,3 +75,10 @@ compress.inc
 dumps/
 *.mbs2
 *_MBS2.c
+astc_enc_mbs2_shader.h
+astc_1p_ex_malioc.txt
+astc4x4.ktx
+astc4x42.ktx
+astc_1p_malioc.txt
+astc_2p_malioc.txt
+astc_hybrid_malioc.txt
