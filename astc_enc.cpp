@@ -502,7 +502,7 @@ int main() {
     PushConstants constants{
         width,
         height,
-        0b00000, // FLAG - 0: normal, 1: AABB, 2: 2-Partition, 4: only 2-Partition, 8 USE sfloat16, 16 USE snorm
+        0b00001, // FLAG - 0: normal, 1: AABB, 2: 2-Partition, 4: only 2-Partition, 8 USE sfloat16, 16 USE snorm
     };
     vkCmdPushConstants(cmd, pipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(PushConstants), &constants);
 
@@ -601,14 +601,15 @@ int main() {
     // });
 
     // WriteASTCToKTX("astc4x4.ktx", 4, 4, {encodedBlocks[0]});
-    // std::cout << "block 0: " << std::hex << encodedBlocks[0].x << ", " << encodedBlocks[0].y << ", " << encodedBlocks[0].z << ", " << encodedBlocks[0].w << std::endl;
-    // std::cout << "params 0: ep0="
-    //           << std::hex << (int)profiler[0].params.ep0[0] << " " << (int)profiler[0].params.ep0[1] << " " << (int)profiler[0].params.ep0[2] << " " << (int)profiler[0].params.ep0[3]
-    //           << " ep1=" << (int)profiler[0].params.ep1[0] << " " << (int)profiler[0].params.ep1[1] << " " << (int)profiler[0].params.ep1[2] << " " << (int)profiler[0].params.ep1[3]
-    //           << " weights=" << std::endl;
-    // for (int i = 0; i < 16; ++i) {
-    //     std::cout << (int)profiler[0].params.weights[i] << " ";
-    // }
+    uint idx = 1022;
+    std::cout << "block 0: " << std::hex << encodedBlocks[idx].x << ", " << encodedBlocks[idx].y << ", " << encodedBlocks[idx].z << ", " << encodedBlocks[idx].w << std::endl;
+    std::cout << "params 0: ep0="
+              << std::hex << (int)profiler[idx].params.ep0[0] << " " << (int)profiler[idx].params.ep0[1] << " " << (int)profiler[idx].params.ep0[2] << " " << (int)profiler[idx].params.ep0[3]
+              << " ep1=" << (int)profiler[idx].params.ep1[0] << " " << (int)profiler[idx].params.ep1[1] << " " << (int)profiler[idx].params.ep1[2] << " " << (int)profiler[idx].params.ep1[3]
+              << " weights=" << std::endl;
+    for (int i = 0; i < 16; ++i) {
+        std::cout << (int)profiler[idx].params.weights[i] << " ";
+    }
     // std::cout << std::endl;
     // std::cout << "astc_seed = " << (int)profiler[0].params.astc_seed << std::endl;
     // for (int i = 0; i < 20; ++i) {

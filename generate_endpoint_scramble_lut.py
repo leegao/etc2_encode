@@ -14,10 +14,11 @@ def generate_packed_astc_endpoint_lut():
     }
 
     packed_lut = []
+    indices = []
 
     # Only process the non-pure modes, since pure modes
     # are not scrambled and can be handled directly
-    for mode in [4, 6, 7, 9, 10, 12, 13, 15, 16, 18, 19]:
+    for mode in [13, 19]:
         m_type, num_bits, C, B_pattern = modes_config[mode]
         max_D = 3 if m_type == "t" else 5
         max_m = 1 << num_bits
@@ -47,13 +48,16 @@ def generate_packed_astc_endpoint_lut():
                 pairs.append((T, packed_symbol))
 
         pairs.sort(key=lambda x: x[0])
+        indices.append(len(packed_lut))
         packed_lut.extend([p[1] for p in pairs])
 
-    return packed_lut
+    return packed_lut, indices
 
 
 if __name__ == "__main__":
-    packed_data = generate_packed_astc_endpoint_lut()
+    packed_data, indices = generate_packed_astc_endpoint_lut()
+    print(indices)
+    print("size = ", len(packed_data))
     for i in range(0, len(packed_data), 16):
         chunk = packed_data[i : i + 16]
         print("    " + ", ".join(str(x) for x in chunk) + ",")
