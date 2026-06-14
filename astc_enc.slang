@@ -10,8 +10,9 @@ StructuredBuffer<uint> input_rgba8_buffer;
 [[vk::binding(1, 0)]]
 RWStructuredBuffer<uint4> astc_blocks;
 
-typedef uint8_t4[16] Reconstruction;
 #ifdef ENABLE_DIAGNOSTICS
+typedef uint8_t4[16] Reconstruction;
+
 struct ASTCParameters {
   uint32_t ep0;
   uint32_t ep1;
@@ -24,23 +25,12 @@ struct Diagnostics {
   uint2 start_time;
   float mse;
   uint unused;
-#ifndef DISABLE_RECONSTRUCTION
   Reconstruction reconstructed;
-#else
-  uint reconstructed[16];
-#endif
   ASTCParameters params;
 };
 
 [[vk::binding(4, 0)]]
 RWStructuredBuffer<Diagnostics> diagnostics;
-#endif
-
-[[vk::binding(2, 0)]]
-StructuredBuffer<uint> lut2;
-
-[[vk::binding(3, 0)]]
-StructuredBuffer<uint> astc_2p_lut_s2;
 
 float reconstruct(uint4 ep0, uint4 ep1, PackedArray<8, 16> weights) {
   float mse = 0.0;
@@ -48,19 +38,16 @@ float reconstruct(uint4 ep0, uint4 ep1, PackedArray<8, 16> weights) {
     int4 C = pixels[i];
     int4 reconstructed =
         int4(clamp(lerp(ep0, ep1, float(weights[i]) / 255.0), 0, 255));
-#ifdef ENABLE_DIAGNOSTICS
 #ifndef DISABLE_RECONSTRUCTION
     diagnostics[buffer_index].reconstructed[i] = uint8_t4(reconstructed);
-#endif
 #endif
     var err = (C - reconstructed) / 255.0;
     mse += dot(err, err);
   }
-#ifdef ENABLE_DIAGNOSTICS
   diagnostics[buffer_index].mse = mse / 3.0 / 16.0;
-#endif
   return mse / 3.0 / 16.0;
 }
+#endif
 
 struct Flags {
   PackedArray<1, 32> flags;
@@ -217,8 +204,6 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 #ifdef ENABLE_DIAGNOSTICS
   reconstruct(ep0, ep1, weights_1p);
   diagnostics[buffer_index].start_time = startTime;
-  // diagnostics[buffer_index].mse =
-  //     get_quant_ep_mode(quant_weight_mode_1p, 16, 8, 1u);
 
   diagnostics[buffer_index].params.ep0 = ep0.x | (ep0.y << 8) | (ep0.z << 16);
   diagnostics[buffer_index].params.ep1 = ep1.x | (ep1.y << 8) | (ep1.z << 16);
