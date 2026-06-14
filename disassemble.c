@@ -13038,6 +13038,45 @@ va_disasm_instr(FILE *fp, uint64_t instr, const cmpbe_chunk_CMMN *ctx, unsigned 
 
       break;
    }
+   case 0x11a:
+   {
+
+
+      if (!fp && program_ctx) {
+         AnalyzedInstruction *ai = &program_ctx[instr_idx];
+            if (((instr >> 6) & 3) <= 1) {
+               uint32_t r = (instr >> 0) & 0x3f;
+               if (r < 64) {
+                     ai->gen_mask |= BIT(r);
+               }
+            }
+
+
+            if (((instr >> 46) & 3) != 0xC0) {
+               uint32_t r = (instr >> 40) & 0x3f;
+               if (r < 64) {
+                     ai->def_mask |= BIT(r);
+               }
+            }
+
+         return;
+      }
+
+
+      fputs("UNK_IMM_11A", fp);
+      fprintf(fp, "%s ", valhall_flow[(instr >> 59) & 0xf]);
+
+      va_print_dest(fp, (instr >> 46) & 0x3, (instr >> 40) & 0x3f, 32, instr_idx, first_def_idx);
+      fputs(", ", fp);
+
+      va_print_src(fp, (instr >> 6) & 3, (instr >> 0) & 0x3f,
+                   32, (instr >> 57) & 0x3, ctx, instr_idx, first_def_idx);
+
+      fprintf(fp, ", #0x%X", (uint32_t)  ((instr >> 8) & MASK(32)) );
+
+
+      break;
+   }
    case 0x69:
    {
 
