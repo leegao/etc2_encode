@@ -41,7 +41,7 @@ struct Diagnostics {
 [[vk::binding(4, 0)]]
 RWStructuredBuffer<Diagnostics> diagnostics;
 
-float reconstruct(uint4 ep0, uint4 ep1, PackedArray<8, 16> weights) {
+float reconstruct(uint4 ep0, uint4 ep1, uint8_t weights[16]) {
   float mse = 0.0;
   for (uint i = 0; i < 16; i++) {
     int4 C = pixels[i];
@@ -90,13 +90,13 @@ struct PushConstants {
 PushConstants pushConstants;
 
 static uint buffer_index;
-static uint4 pixels[16];
+static uint8_t4 pixels[16];
 
-extension uint4 {
+extension uint8_t4 {
   half4 to_unorm() { return half4(this) / 255.0h; }
 }
 
-void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
+void solve_weights(half4 ep0, half4 ep1, out uint8_t weights[16]) {
   let L = ep1 - ep0;
   let invLenSq = 1.0h / (dot(L, L) + 0.000001h);
   // Start of solve weights loop
@@ -116,15 +116,15 @@ void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
     let C = pixels[i].to_unorm();
     let pDotL = dot(C - ep0, L);
     let w = pDotL * invLenSq;
-    weights[i] = uint(saturate(w) * 255);
+    weights[i] = uint8_t(saturate(w) * 255u);
   }
   BLOCK(13);
 }
 
-void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
-                       out PackedArray<8, 16> weights) {
-  endpoint_start = 255;
-  endpoint_end = 0;
+void encode_block_AABB(out uint8_t4 endpoint_start, out uint8_t4 endpoint_end,
+                       out uint8_t weights[16]) {
+  endpoint_start = uint8_t4(255u);
+  endpoint_end = uint8_t4(0u);
   for (int i = 0; i < 16; i += 1) {
 #ifndef UNROLL_ENCODE_AABB
     let always_true = bool(((pushConstants.u_TextureDimensions.x * 3) + 1) % 3);
@@ -191,7 +191,8 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
         r = (tex_element >> 0) & 0xFFu;
       }
 
-      pixels[y * 4 + x] = uint4(r, g, b, a);
+      pixels[y * 4 + x] =
+          uint8_t4(uint8_t(r), uint8_t(g), uint8_t(b), uint8_t(a));
       if (a < 255)
         use_alpha = true;
     }
@@ -199,10 +200,10 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
   // After pixels are read
   BLOCK(10);
-  uint4 ep0, ep1;
-  PackedArray<8, 16> weights_1p;
+  uint8_t4 ep0, ep1;
+  uint8_t weights_1p[16];
   uint quant_weight_mode_1p;
-  uint4 eps[2] = {};
+  uint8_t4 eps[2] = {};
   uint4 packed_1p;
 
   // TODO(leegao): look for bit tricks for the 1-partition AABB case
@@ -210,8 +211,8 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   // After encode_block_AABB
   BLOCK(20);
   quant_weight_mode_1p = 8u; // get_quant_ep_mode is 19 for rgb, 13 for rgba
-  eps[0] = uint4(ep0);
-  eps[1] = uint4(ep1);
+  eps[0] = uint8_t4(ep0);
+  eps[1] = uint8_t4(ep1);
   // TODO(leegao): this is the bottleneck
   packed_1p = pack_astc_4x4_block(eps, weights_1p, use_alpha);
   // After pack_astc_4x4_block
@@ -222,8 +223,10 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
   reconstruct(ep0, ep1, weights_1p);
   diagnostics[buffer_index].start_time = startTime;
 
-  diagnostics[buffer_index].params.ep0 = ep0.x | (ep0.y << 8) | (ep0.z << 16);
-  diagnostics[buffer_index].params.ep1 = ep1.x | (ep1.y << 8) | (ep1.z << 16);
+  diagnostics[buffer_index].params.ep0 =
+      uint(ep0.x) | (uint(ep0.y) << 8) | (uint(ep0.z) << 16);
+  diagnostics[buffer_index].params.ep1 =
+      uint(ep1.x) | (uint(ep1.y) << 8) | (uint(ep1.z) << 16);
   for (int i = 0; i < 16; i++) {
     diagnostics[buffer_index].params.weights[i] =
         uint8_t(weights_1p[i] & 0xFFu);

@@ -88,22 +88,20 @@ void write_bits_fwd(inout uint block_x, inout uint block_y,
 #ifdef TEMPLATED_ENCODE_TRITS
 void encode_trits<let bits : uint>(inout uint block_x, inout uint block_y,
                                    inout uint bit_offset,
-                                   const PackedArray<8, 8> numbers,
-                                   uint count) {
+                                   const uint8_t numbers[8], uint count) {
 #else
 void encode_trits(inout uint block_x, inout uint block_y, inout uint bit_offset,
-                  const PackedArray<8, 8> numbers, uint bits, uint count) {
+                  const uint8_t numbers[8], uint bits, uint count) {
 #endif
   for (uint i = 0; i < count; i += 5) {
-    PackedArray<8, 5> group;
-    group.data = {};
+    uint8_t group[5] = {};
     for (uint j = 0; j < 5; ++j) {
       if (i + j < count)
         group[j] = numbers[i + j];
     }
-    PackedArray<8, 5> m, t;
+    uint8_t m[5], t[5];
     for (uint j = 0; j < 5; ++j) {
-      m[j] = group[j] & ((1 << bits) - 1);
+      m[j] = uint8_t(group[j] & ((1 << bits) - 1));
       t[j] = group[j] >> bits;
     }
 
@@ -122,7 +120,7 @@ void encode_trits(inout uint block_x, inout uint block_y, inout uint bit_offset,
   }
 }
 
-uint4 pack_astc_4x4_block(const uint4 eps[2], const PackedArray<8, 16> weights,
+uint4 pack_astc_4x4_block(const uint8_t4 eps[2], const uint8_t weights[16],
                           bool use_alpha) {
   uint4 final_block = uint4(0, 0, 0, 0);
 
@@ -169,29 +167,17 @@ uint4 pack_astc_4x4_block(const uint4 eps[2], const PackedArray<8, 16> weights,
   // Endpoints - C.2.13
   let ep_max = use_alpha ? ENDPOINT_MAX_VALUES[13u] : ENDPOINT_MAX_VALUES[19u];
   let ep_max_scaled = ((ep_max << 16u) + 127u) / 255u;
-  const uint unscrambler_offset = use_alpha ? 0u : 48u;
-  PackedArray<8, 8> raw_endpoints;
-  uint ep_idx = 0;
-  // Interleave endpoints
-  let ep0 = eps[0u];
-  let ep1 = eps[1u];
-  raw_endpoints[ep_idx++] = ep0.x;
-  raw_endpoints[ep_idx++] = ep1.x;
-  raw_endpoints[ep_idx++] = ep0.y;
-  raw_endpoints[ep_idx++] = ep1.y;
-  raw_endpoints[ep_idx++] = ep0.z;
-  raw_endpoints[ep_idx++] = ep1.z;
-  raw_endpoints[ep_idx++] = ep0.w;
-  raw_endpoints[ep_idx++] = ep1.w;
+  let unscrambler_offset = use_alpha ? 0u : 48u;
 
-  PackedArray<8, 8> quantized_endpoints;
+  uint8_t quantized_endpoints[8];
   BLOCK(23);
   [[unroll]]
   for (uint i = 0; i < num_endpoints; ++i) {
-    // q_ep = uint((float(raw_endpoints[i]) * float(ep_max)) / 255.0f + 0.5f);
-    uint q_ep = (uint(raw_endpoints[i]) * ep_max_scaled + 32768u) >> 16u;
+    uint8_t raw_endpoint = eps[i & 1u][i >> 1u];
+    uint q_ep = (uint(raw_endpoint) * ep_max_scaled + 32768u) >> 16u;
     q_ep = clamp(q_ep, 0u, ep_max);
-    quantized_endpoints[i] = unscramble_quantized(q_ep + unscrambler_offset);
+    quantized_endpoints[i] =
+        uint8_t(unscramble_quantized(q_ep + unscrambler_offset));
   }
 
   BLOCK(24);
