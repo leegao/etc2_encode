@@ -10,6 +10,9 @@ import encoder_utils;
 #define BLOCK(i)
 #endif
 
+// #define UNROLL_SOLVE_WEIGHTS
+#define UNROLL_ENCODE_AABB
+
 [[vk::binding(0, 0)]]
 StructuredBuffer<uint> input_rgba8_buffer;
 
@@ -120,28 +123,21 @@ void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
 
 void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
                        out PackedArray<8, 16> weights) {
-  uint min_r = 255, min_g = 255, min_b = 255, min_a = 255;
-  uint max_r = 0, max_g = 0, max_b = 0, max_a = 0;
-  // [00]  01   02  [03]
-  //  04   05  [06]  07
-  //  08  [09]  10   11
-  // [12]  13   14  [15]
-  // TODO(leega0): not the bottleneck
+  endpoint_start = 255;
+  endpoint_end = 0;
   for (int i = 0; i < 16; i += 1) {
-    min_r = min(min_r, pixels[i].x);
-    min_g = min(min_g, pixels[i].y);
-    min_b = min(min_b, pixels[i].z);
-    min_a = min(min_a, pixels[i].w);
-    max_r = max(max_r, pixels[i].x);
-    max_g = max(max_g, pixels[i].y);
-    max_b = max(max_b, pixels[i].z);
-    max_a = max(max_a, pixels[i].w);
+#ifndef UNROLL_ENCODE_AABB
+    let always_true = bool(((pushConstants.u_TextureDimensions.x * 3) + 1) % 3);
+    if (!always_true) {
+      continue;
+    }
+#endif
+    endpoint_start = min(endpoint_start, pixels[i]);
+    endpoint_end = max(endpoint_end, pixels[i]);
   }
 
   // After the block of max/min reductions
   BLOCK(11);
-  endpoint_start = uint4(min_r, min_g, min_b, min_a);
-  endpoint_end = uint4(max_r, max_g, max_b, max_a);
   var ep0 = half4(endpoint_start) / 255.0h;
   var ep1 = half4(endpoint_end) / 255.0h;
   solve_weights(ep0, ep1, weights);

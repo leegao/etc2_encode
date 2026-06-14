@@ -85,8 +85,15 @@ void write_bits_fwd(inout uint block_x, inout uint block_y,
   bit_offset += count;
 }
 
+#ifdef TEMPLATED_ENCODE_TRITS
+void encode_trits<let bits : uint>(inout uint block_x, inout uint block_y,
+                                   inout uint bit_offset,
+                                   const PackedArray<8, 8> numbers,
+                                   uint count) {
+#else
 void encode_trits(inout uint block_x, inout uint block_y, inout uint bit_offset,
                   const PackedArray<8, 8> numbers, uint bits, uint count) {
+#endif
   for (uint i = 0; i < count; i += 5) {
     PackedArray<8, 5> group;
     group.data = {};
@@ -188,9 +195,20 @@ uint4 pack_astc_4x4_block(const uint4 eps[2], const PackedArray<8, 16> weights,
   }
 
   BLOCK(24);
+
+#ifdef TEMPLATED_ENCODE_TRITS
+  if (use_alpha) {
+    encode_trits<4>(final_block.x, final_block.y, fwd_offset,
+                    quantized_endpoints, 8u);
+  } else {
+    encode_trits<6>(final_block.x, final_block.y, fwd_offset,
+                    quantized_endpoints, 6u);
+  }
+#else
   encode_trits(final_block.x, final_block.y, fwd_offset, quantized_endpoints,
                ep_bits, num_endpoints);
-  BLOCK(25);
+#endif
 
+  BLOCK(25);
   return final_block;
 }
