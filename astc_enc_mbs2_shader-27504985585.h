@@ -360,7 +360,7 @@ static const cmpbe_chunk_SYMB SYMB_27 =
 	NULL,
 	NULL,
 };
-static const uint8_t b_35[] = "_1365_input_rgba8_buffer_0";
+static const uint8_t b_35[] = "_1298_input_rgba8_buffer_0";
 static const cmpbe_chunk_STRI STRI_35 = { 26, (uint8_t*)b_35 };
 static const uint8_t b_36[] = "_data";
 static const cmpbe_chunk_STRI STRI_36 = { 5, (uint8_t*)b_36 };
@@ -461,7 +461,7 @@ static const cmpbe_chunk_SYMB SYMB_35 =
 	NULL,
 	NULL,
 };
-static const uint8_t b_43[] = "_1522_astc_blocks_0";
+static const uint8_t b_43[] = "_1455_astc_blocks_0";
 static const cmpbe_chunk_STRI STRI_43 = { 19, (uint8_t*)b_43 };
 static const uint8_t b_44[] = "_data";
 static const cmpbe_chunk_STRI STRI_44 = { 5, (uint8_t*)b_44 };

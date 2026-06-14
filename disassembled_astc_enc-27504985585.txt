@@ -42,7 +42,7 @@
 // live-out: r0-r6,r60 (8 vregs)
 
 // live: r0-r6,r60 (8 vregs)
-  14 [0x0070] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  14 [0x0070] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r60 (9 vregs)
   15 [0x0078] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r60 (8 vregs)
@@ -67,13 +67,13 @@
 // live-in: r0-r6,r60 (8 vregs)
   23 [0x00B8] 00B4C1011DC0C441   LSHIFT_OR.i32 r1, r1^, 0x1000000.b33, 0x0
 // live: r0-r6,r60 (8 vregs)
-  24 [0x00C0] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  24 [0x00C0] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0-r6,r8-r9,r60 (10 vregs)
   25 [0x00C8] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r60 (9 vregs)
   26 [0x00D0] 00A0C1001C00C441   IADD.u32 r1, r1^, 0x1000000.b3
 // live: r0-r7,r60 (9 vregs)
-  27 [0x00D8] 01A3FE0024270082   SHADDX.u64 [r62:r63] /* clobbers gl_GlobalInvocationID.z */, u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  27 [0x00D8] 01A3FE0024270082   SHADDX.u64 [r62:r63] /* clobbers gl_GlobalInvocationID.z */, u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r60,r62-r63 (10 vregs)
   28 [0x00E0] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r60 (9 vregs)
@@ -171,7 +171,7 @@
 // live: r0-r6,r11,r60 (9 vregs)
   71 [0x0238] 00A0C1001C00C441   IADD.u32 r1, r1^, 0x1000000.b3
 // live: r0-r6,r11,r60 (9 vregs)
-  72 [0x0240] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  72 [0x0240] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r60 (10 vregs)
   73 [0x0248] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r60 (9 vregs)
@@ -200,13 +200,13 @@
 // live: r0-r6,r11,r60 (9 vregs)
   83 [0x0298] 00A0C7001C00C801   IADD.u32 r7, r1, 0x3020100.b3
 // live: r0-r7,r11,r60 (10 vregs)
-  84 [0x02A0] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+  84 [0x02A0] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r60 (11 vregs)
   85 [0x02A8] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r60 (10 vregs)
   86 [0x02B0] 00A0C1001800C841   IADD.u32 r1, r1^, 0x3020100.b2
 // live: r0-r7,r11,r60 (10 vregs)
-  87 [0x02B8] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  87 [0x02B8] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r60,r62-r63 (11 vregs)
   88 [0x02C0] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r60 (10 vregs)
@@ -306,7 +306,7 @@
 // live: r0-r6,r11,r15,r60 (10 vregs)
  132 [0x0420] 00A0C1001800C841   IADD.u32 r1, r1^, 0x3020100.b2
 // live: r0-r6,r11,r15,r60 (10 vregs)
- 133 [0x0428] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 133 [0x0428] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r15,r60 (11 vregs)
  134 [0x0430] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r15,r60 (10 vregs)
@@ -335,13 +335,13 @@
 // live: r0-r6,r11,r15,r60 (10 vregs)
  144 [0x0480] 00A0C7001400C901   IADD.u32 r7, r1, 0x7060504.b1
 // live: r0-r7,r11,r15,r60 (11 vregs)
- 145 [0x0488] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+ 145 [0x0488] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r15,r60 (12 vregs)
  146 [0x0490] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r15,r60 (11 vregs)
  147 [0x0498] 00A0C1001000C941   IADD.u32 r1, r1^, 0x7060504.b0
 // live: r0-r7,r11,r15,r60 (11 vregs)
- 148 [0x04A0] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 148 [0x04A0] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r15,r60,r62-r63 (12 vregs)
  149 [0x04A8] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r15,r60 (11 vregs)
@@ -441,7 +441,7 @@
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
  193 [0x0608] 00A0C1001C00C841   IADD.u32 r1, r1^, 0x3020100.b3
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
- 194 [0x0610] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 194 [0x0610] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r15,r51,r60 (12 vregs)
  195 [0x0618] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
@@ -470,13 +470,13 @@
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
  205 [0x0668] 00A0C7001C00C901   IADD.u32 r7, r1, 0x7060504.b3
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
- 206 [0x0670] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+ 206 [0x0670] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1298_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r15,r51,r60 (13 vregs)
  207 [0x0678] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
  208 [0x0680] 00A0C1001800C941   IADD.u32 r1, r1^, 0x7060504.b2
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
- 209 [0x0688] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 209 [0x0688] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1298_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r15,r51,r60,r62-r63 (13 vregs)
  210 [0x0690] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
@@ -2624,7 +2624,7 @@
 // live: r0,r4-r7 (5 vregs)
 1193 [0x2548] 0069400018007880   >>> DEBUG_INFO: block 30 <<<
 // live: r0,r4-r7 (5 vregs)
-1194 [0x2550] 09A3C00020474084   SHADDX.u64.wait0 [r0:r1], u2 /* @_1522_astc_blocks_0 */, [r0^:r1^].w0, shift:0x4
+1194 [0x2550] 09A3C00020474084   SHADDX.u64.wait0 [r0:r1], u2 /* @_1455_astc_blocks_0 */, [r0^:r1^].w0, shift:0x4
 // live: r0-r1,r4-r7 (6 vregs)
 1195 [0x2558] 5061440838000040   STORE.i128.slot0.reconverge @r4:r5:r6:r7, [r0^:r1^], offset:0
 // live-out: none (0 vregs) */
