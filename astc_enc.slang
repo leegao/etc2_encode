@@ -4,14 +4,10 @@
 import astc_pack;
 import encoder_utils;
 
-#pragma warning(disable: 20101)
 #ifdef ENABLE_DEBUG_LINE_INFO // DO NOT ENABLE IN PROD
-RWStructuredBuffer<uint> __DEBUG_LINE_BUFFER__;
-#define BLOCK(i)                                                               \
-  InterlockedAdd(__DEBUG_LINE_BUFFER__[i], 1);                                 \
-  if (true)
+#define BLOCK(i) InterlockedAdd(__DEBUG_LINE_BUFFER__[i], 1);
 #else
-#define BLOCK(i) if (false)
+#define BLOCK(i)
 #endif
 
 [[vk::binding(0, 0)]]
