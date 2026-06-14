@@ -2,10 +2,10 @@
 ; VALHALL MBS2 SHADER (Dis)ASM
 ; Entry: main
 ; Vregs: 32 / 64 (32 = max occupancy)
-; Size: 9960 bytes, 272 bytes of scratch alloca
+; Size: 10088 bytes, 272 bytes of scratch alloca
 ; ======================================
 
-.text: // 1173 instructions
+.text: // 1197 instructions
 // live: r60-r61 (2 vregs)
    0 [0x0000] 00B4C20119C0C83D   LSHIFT_OR.i32 r2, r61 /* gl_GlobalInvocationID.y */, 0x3020100.b22, 0x0
 // live: r2,r60-r61 (3 vregs)
@@ -15,7 +15,7 @@
 // live: r0,r2-r3,r60-r61 (5 vregs)
    3 [0x0018] 00F8C00280408903   ICMP_OR.s32.ge.m1 r0, r3, u4.w1 /* pushConstants_0.u_TextureDimensions_0 */, r0^
 // live: r0,r2-r3,r60-r61 (5 vregs)
-   4 [0x0020] 001FC00000048F40   BRANCHZ r0^, offset:1167 /* jumps to 0x24A0 (instruction #1172) */
+   4 [0x0020] 001FC0000004A740   BRANCHZ r0^, offset:1191 /* jumps to 0x2560 (instruction #1196) */
 // live-out: r2-r3,r60-r61 (4 vregs)
 
 // live: r2-r3,r60-r61 (4 vregs)
@@ -42,7 +42,7 @@
 // live-out: r0-r6,r60 (8 vregs)
 
 // live: r0-r6,r60 (8 vregs)
-  14 [0x0070] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  14 [0x0070] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r60 (9 vregs)
   15 [0x0078] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r60 (8 vregs)
@@ -67,13 +67,13 @@
 // live-in: r0-r6,r60 (8 vregs)
   23 [0x00B8] 00B4C1011DC0C441   LSHIFT_OR.i32 r1, r1^, 0x1000000.b33, 0x0
 // live: r0-r6,r60 (8 vregs)
-  24 [0x00C0] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  24 [0x00C0] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0-r6,r8-r9,r60 (10 vregs)
   25 [0x00C8] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r60 (9 vregs)
   26 [0x00D0] 00A0C1001C00C441   IADD.u32 r1, r1^, 0x1000000.b3
 // live: r0-r7,r60 (9 vregs)
-  27 [0x00D8] 01A3FE0024270082   SHADDX.u64 [r62:r63] /* clobbers gl_GlobalInvocationID.z */, u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  27 [0x00D8] 01A3FE0024270082   SHADDX.u64 [r62:r63] /* clobbers gl_GlobalInvocationID.z */, u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r60,r62-r63 (10 vregs)
   28 [0x00E0] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r60 (9 vregs)
@@ -171,7 +171,7 @@
 // live: r0-r6,r11,r60 (9 vregs)
   71 [0x0238] 00A0C1001C00C441   IADD.u32 r1, r1^, 0x1000000.b3
 // live: r0-r6,r11,r60 (9 vregs)
-  72 [0x0240] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  72 [0x0240] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r60 (10 vregs)
   73 [0x0248] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r60 (9 vregs)
@@ -200,13 +200,13 @@
 // live: r0-r6,r11,r60 (9 vregs)
   83 [0x0298] 00A0C7001C00C801   IADD.u32 r7, r1, 0x3020100.b3
 // live: r0-r7,r11,r60 (10 vregs)
-  84 [0x02A0] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+  84 [0x02A0] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r60 (11 vregs)
   85 [0x02A8] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r60 (10 vregs)
   86 [0x02B0] 00A0C1001800C841   IADD.u32 r1, r1^, 0x3020100.b2
 // live: r0-r7,r11,r60 (10 vregs)
-  87 [0x02B8] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+  87 [0x02B8] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r60,r62-r63 (11 vregs)
   88 [0x02C0] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r60 (10 vregs)
@@ -306,7 +306,7 @@
 // live: r0-r6,r11,r15,r60 (10 vregs)
  132 [0x0420] 00A0C1001800C841   IADD.u32 r1, r1^, 0x3020100.b2
 // live: r0-r6,r11,r15,r60 (10 vregs)
- 133 [0x0428] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 133 [0x0428] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r15,r60 (11 vregs)
  134 [0x0430] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r15,r60 (10 vregs)
@@ -335,13 +335,13 @@
 // live: r0-r6,r11,r15,r60 (10 vregs)
  144 [0x0480] 00A0C7001400C901   IADD.u32 r7, r1, 0x7060504.b1
 // live: r0-r7,r11,r15,r60 (11 vregs)
- 145 [0x0488] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+ 145 [0x0488] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r15,r60 (12 vregs)
  146 [0x0490] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r15,r60 (11 vregs)
  147 [0x0498] 00A0C1001000C941   IADD.u32 r1, r1^, 0x7060504.b0
 // live: r0-r7,r11,r15,r60 (11 vregs)
- 148 [0x04A0] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 148 [0x04A0] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r15,r60,r62-r63 (12 vregs)
  149 [0x04A8] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r15,r60 (11 vregs)
@@ -441,7 +441,7 @@
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
  193 [0x0608] 00A0C1001C00C841   IADD.u32 r1, r1^, 0x3020100.b3
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
- 194 [0x0610] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 194 [0x0610] 01A3C80024270082   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r6,r8-r9,r11,r15,r51,r60 (12 vregs)
  195 [0x0618] 0060818218000048   LOAD.i32.unsigned.slot0 @r1, [r8^:r9^], offset:0
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
@@ -470,13 +470,13 @@
 // live: r0-r6,r11,r15,r51,r60 (11 vregs)
  205 [0x0668] 00A0C7001C00C901   IADD.u32 r7, r1, 0x7060504.b3
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
- 206 [0x0670] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1357_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
+ 206 [0x0670] 01A3C80024270682   SHADDX.u64 [r8:r9], u1 /* @_1365_input_rgba8_buffer_0 */, [r6:r7].reserved, shift:0x2
 // live: r0-r6,r8-r9,r11,r15,r51,r60 (13 vregs)
  207 [0x0678] 0060878218000048   LOAD.i32.unsigned.slot0 @r7, [r8^:r9^], offset:0
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
  208 [0x0680] 00A0C1001800C941   IADD.u32 r1, r1^, 0x7060504.b2
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
- 209 [0x0688] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1357_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
+ 209 [0x0688] 01A3FE0024270082   SHADDX.u64 [r62:r63], u1 /* @_1365_input_rgba8_buffer_0 */, [r0:r1].reserved, shift:0x2
 // live: r0,r2-r7,r11,r15,r51,r60,r62-r63 (13 vregs)
  210 [0x0690] 086081825800007E   LOAD.i32.unsigned.slot1.wait0 @r1, [r62^:r63^], offset:0
 // live: r0-r7,r11,r15,r51,r60 (12 vregs)
@@ -1471,1158 +1471,1202 @@
 // live: r0-r1,r3-r11,r13,r48-r49,r60 (15 vregs)
  699 [0x15D8] 0068420218803480   >>> DEBUG_INFO: block 13 <<<
 // live: r0-r1,r3-r11,r13,r48-r49,r60 (15 vregs)
- 700 [0x15E0] 0090CF4C00190030   U32_TO_F32 r15, r48.b0
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 701 [0x15E8] 00B2CF0002DA954F   FMA.f32 r15, r15^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 702 [0x15F0] 0090CF0CC01C004F   F32_TO_U32.rtz r15, r15^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 703 [0x15F8] 0150CF04964F964F   CSEL.u32.lt r15, r15^, u11.w0 /* 15 (0xF) */, r15^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 704 [0x1600] 0091CF00000D004F   BITREV.i32 r15, r15^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 705 [0x1608] 0090F25C00190030   U32_TO_F32 r50, r48.b1
-// live: r0-r1,r3-r11,r13,r15,r48-r50,r60 (17 vregs)
- 706 [0x1610] 00B2F20002DA9572   FMA.f32 r50, r50^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r48-r50,r60 (17 vregs)
- 707 [0x1618] 0090F20CC01C0072   F32_TO_U32.rtz r50, r50^
-// live: r0-r1,r3-r11,r13,r15,r48-r50,r60 (17 vregs)
- 708 [0x1620] 0150F20496729672   CSEL.u32.lt r50, r50^, u11.w0 /* 15 (0xF) */, r50^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r48-r50,r60 (17 vregs)
- 709 [0x1628] 0091F200000D0072   BITREV.i32 r50, r50^
-// live: r0-r1,r3-r11,r13,r15,r48-r50,r60 (17 vregs)
- 710 [0x1630] 00B4CF00114FC972   RSHIFT_OR.i32 r15, r50^, 0x7060504.b00, r15^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 711 [0x1638] 0090F36C00190030   U32_TO_F32 r51, r48.b2
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r51,r60 (17 vregs)
- 712 [0x1640] 00B2F30002DA9573   FMA.f32 r51, r51^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r51,r60 (17 vregs)
- 713 [0x1648] 0090F30CC01C0073   F32_TO_U32.rtz r51, r51^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r51,r60 (17 vregs)
- 714 [0x1650] 0150F30496739673   CSEL.u32.lt r51, r51^, u11.w0 /* 15 (0xF) */, r51^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r51,r60 (17 vregs)
- 715 [0x1658] 0091F300000D0073   BITREV.i32 r51, r51^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r51,r60 (17 vregs)
- 716 [0x1660] 00B4CF00114FCA73   RSHIFT_OR.i32 r15, r51^, 0xB0A0908.b00, r15^
-// live: r0-r1,r3-r11,r13,r15,r48-r49,r60 (16 vregs)
- 717 [0x1668] 0090F47C00190070   U32_TO_F32 r52, r48^.b3
-// live: r0-r1,r3-r11,r13,r15,r49,r52,r60 (16 vregs)
- 718 [0x1670] 00B2F40002DA9574   FMA.f32 r52, r52^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r49,r52,r60 (16 vregs)
- 719 [0x1678] 0090F40CC01C0074   F32_TO_U32.rtz r52, r52^
-// live: r0-r1,r3-r11,r13,r15,r49,r52,r60 (16 vregs)
- 720 [0x1680] 0150F40496749674   CSEL.u32.lt r52, r52^, u11.w0 /* 15 (0xF) */, r52^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r49,r52,r60 (16 vregs)
- 721 [0x1688] 0091F400000D0074   BITREV.i32 r52, r52^
-// live: r0-r1,r3-r11,r13,r15,r49,r52,r60 (16 vregs)
- 722 [0x1690] 00B4CF00114FCB74   RSHIFT_OR.i32 r15, r52^, 0xF0E0D0C.b00, r15^
-// live: r0-r1,r3-r11,r13,r15,r49,r60 (15 vregs)
- 723 [0x1698] 0090F54C0019000B   U32_TO_F32 r53, r11.b0
-// live: r0-r1,r3-r11,r13,r15,r49,r53,r60 (16 vregs)
- 724 [0x16A0] 00B2F50002DA9575   FMA.f32 r53, r53^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r49,r53,r60 (16 vregs)
- 725 [0x16A8] 0090F50CC01C0075   F32_TO_U32.rtz r53, r53^
-// live: r0-r1,r3-r11,r13,r15,r49,r53,r60 (16 vregs)
- 726 [0x16B0] 0150F50496759675   CSEL.u32.lt r53, r53^, u11.w0 /* 15 (0xF) */, r53^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r49,r53,r60 (16 vregs)
- 727 [0x16B8] 0091F500000D0075   BITREV.i32 r53, r53^
-// live: r0-r1,r3-r11,r13,r15,r49,r53,r60 (16 vregs)
- 728 [0x16C0] 00B4CF00114FCC75   RSHIFT_OR.i32 r15, r53^, 0x13121110.b00, r15^
-// live: r0-r1,r3-r11,r13,r15,r49,r60 (15 vregs)
- 729 [0x16C8] 0090F65C0019000B   U32_TO_F32 r54, r11.b1
-// live: r0-r1,r3-r11,r13,r15,r49,r54,r60 (16 vregs)
- 730 [0x16D0] 00B2F60002DA9576   FMA.f32 r54, r54^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r11,r13,r15,r49,r54,r60 (16 vregs)
- 731 [0x16D8] 0090F60CC01C0076   F32_TO_U32.rtz r54, r54^
-// live: r0-r1,r3-r11,r13,r15,r49,r54,r60 (16 vregs)
- 732 [0x16E0] 0150F60496769676   CSEL.u32.lt r54, r54^, u11.w0 /* 15 (0xF) */, r54^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r11,r13,r15,r49,r54,r60 (16 vregs)
- 733 [0x16E8] 0091F600000D0076   BITREV.i32 r54, r54^
-// live: r0-r1,r3-r11,r13,r15,r49,r54,r60 (16 vregs)
- 734 [0x16F0] 00B4CF00114FCD76   RSHIFT_OR.i32 r15, r54^, 0x17161514.b00, r15^
-// live: r0-r1,r3-r11,r13,r15,r49,r60 (15 vregs)
- 735 [0x16F8] 00B4CA011091CA4A   LSHIFT_AND.i32 r10, r10^, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
-// live: r0-r1,r3-r11,r13,r15,r49,r60 (15 vregs)
- 736 [0x1700] 00A0C84000004A48   IADD.u32 r8, r8^.b0, r10^
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r60 (14 vregs)
- 737 [0x1708] 0090F76C0019000B   U32_TO_F32 r55, r11.b2
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r55,r60 (15 vregs)
- 738 [0x1710] 00B2F70002DA9577   FMA.f32 r55, r55^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r55,r60 (15 vregs)
- 739 [0x1718] 0090F70CC01C0077   F32_TO_U32.rtz r55, r55^
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r55,r60 (15 vregs)
- 740 [0x1720] 0150F70496779677   CSEL.u32.lt r55, r55^, u11.w0 /* 15 (0xF) */, r55^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r55,r60 (15 vregs)
- 741 [0x1728] 0091F700000D0077   BITREV.i32 r55, r55^
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r55,r60 (15 vregs)
- 742 [0x1730] 00B4CF00114FCE77   RSHIFT_OR.i32 r15, r55^, 0x1B1A1918.b00, r15^
-// live: r0-r1,r3-r9,r11,r13,r15,r49,r60 (14 vregs)
- 743 [0x1738] 00B4FF011092CC49   LSHIFT_AND.i32 r63, r9^, 0x13121110.b00, u9.w0 /* 16711680 (0xFF0000) */
-// live: r0-r1,r3-r8,r11,r13,r15,r49,r60,r63 (14 vregs)
- 744 [0x1740] 00A0FF0000007F48   IADD.u32 r63, r8^, r63^
-// live: r0-r1,r3-r7,r11,r13,r15,r49,r60,r63 (13 vregs)
- 745 [0x1748] 00B4CE011091CA46   LSHIFT_AND.i32 r14, r6^, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
-// live: r0-r1,r3-r5,r7,r11,r13-r15,r49,r60,r63 (13 vregs)
- 746 [0x1750] 00A0C44000004E44   IADD.u32 r4, r4^.b0, r14^
-// live: r0-r1,r3-r5,r7,r11,r13,r15,r49,r60,r63 (12 vregs)
- 747 [0x1758] 0090F87C0019004B   U32_TO_F32 r56, r11^.b3
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 748 [0x1760] 00B2F80002DA9578   FMA.f32 r56, r56^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 749 [0x1768] 0090F80CC01C0078   F32_TO_U32.rtz r56, r56^
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 750 [0x1770] 0150F80496789678   CSEL.u32.lt r56, r56^, u11.w0 /* 15 (0xF) */, r56^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 751 [0x1778] 0091F800000D0078   BITREV.i32 r56, r56^
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 752 [0x1780] 00B4C70111C0CE47   LSHIFT_OR.i32 r7, r7^, 0x1B1A1918.b00, 0x0
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60,r63 (12 vregs)
- 753 [0x1788] 00A0C7000000477F   IADD.u32 r7, r63^, r7^
-// live: r0-r1,r3-r5,r7,r13,r15,r49,r56,r60 (11 vregs)
- 754 [0x1790] 00B4CC011092CC45   LSHIFT_AND.i32 r12, r5^, 0x13121110.b00, u9.w0 /* 16711680 (0xFF0000) */
-// live: r0-r1,r3-r4,r7,r12-r13,r15,r49,r56,r60 (11 vregs)
- 755 [0x1798] 00A0CC0000004C44   IADD.u32 r12, r4^, r12^
-// live: r0-r1,r3,r7,r12-r13,r15,r49,r56,r60 (10 vregs)
- 756 [0x17A0] 00B4C30111C0CE43   LSHIFT_OR.i32 r3, r3^, 0x1B1A1918.b00, 0x0
-// live: r0-r1,r3,r7,r12-r13,r15,r49,r56,r60 (10 vregs)
- 757 [0x17A8] 00A0C6000000434C   IADD.u32 r6, r12^, r3^
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r60 (9 vregs)
- 758 [0x17B0] 0090FB7C0019000D   U32_TO_F32 r59, r13.b3
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r59-r60 (10 vregs)
- 759 [0x17B8] 00B2FB0002DA957B   FMA.f32 r59, r59^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r59-r60 (10 vregs)
- 760 [0x17C0] 0090FB0CC01C007B   F32_TO_U32.rtz r59, r59^
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r59-r60 (10 vregs)
- 761 [0x17C8] 0150FB04967B967B   CSEL.u32.lt r59, r59^, u11.w0 /* 15 (0xF) */, r59^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r59-r60 (10 vregs)
- 762 [0x17D0] 0091FB00000D007B   BITREV.i32 r59, r59^
-// live: r0-r1,r6-r7,r13,r15,r49,r56,r59-r60 (10 vregs)
- 763 [0x17D8] 00B4CA0011C0CB7B   RSHIFT_OR.i32 r10, r59^, 0xF0E0D0C.b00, 0x0
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60 (10 vregs)
- 764 [0x17E0] 0090FD5C00190031   U32_TO_F32 r61, r49.b1
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r61 (11 vregs)
- 765 [0x17E8] 00B2FD0002DA957D   FMA.f32 r61, r61^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r61 (11 vregs)
- 766 [0x17F0] 0090FD0CC01C007D   F32_TO_U32.rtz r61, r61^
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r61 (11 vregs)
- 767 [0x17F8] 0150FD04967D967D   CSEL.u32.lt r61, r61^, u11.w0 /* 15 (0xF) */, r61^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r61 (11 vregs)
- 768 [0x1800] 0091FD00000D007D   BITREV.i32 r61, r61^
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r61 (11 vregs)
- 769 [0x1808] 0090FE6C0019000D   U32_TO_F32 r62, r13.b2
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r62 (12 vregs)
- 770 [0x1810] 00B2FE0002DA957E   FMA.f32 r62, r62^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r62 (12 vregs)
- 771 [0x1818] 0090FE0CC01C007E   F32_TO_U32.rtz r62, r62^
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r62 (12 vregs)
- 772 [0x1820] 0150FE04967E967E   CSEL.u32.lt r62, r62^, u11.w0 /* 15 (0xF) */, r62^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r62 (12 vregs)
- 773 [0x1828] 0091FE00000D007E   BITREV.i32 r62, r62^
-// live: r0-r1,r6-r7,r10,r13,r15,r49,r56,r60-r62 (12 vregs)
- 774 [0x1830] 00B4CB0011C0CA7E   RSHIFT_OR.i32 r11, r62^, 0xB0A0908.b00, 0x0
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61 (12 vregs)
- 775 [0x1838] 0090FF5C0019000D   U32_TO_F32 r63, r13.b1
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61,r63 (13 vregs)
- 776 [0x1840] 00B2FF0002DA957F   FMA.f32 r63, r63^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61,r63 (13 vregs)
- 777 [0x1848] 0090FF0CC01C007F   F32_TO_U32.rtz r63, r63^
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61,r63 (13 vregs)
- 778 [0x1850] 0150FF04967F967F   CSEL.u32.lt r63, r63^, u11.w0 /* 15 (0xF) */, r63^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61,r63 (13 vregs)
- 779 [0x1858] 0091FF00000D007F   BITREV.i32 r63, r63^
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r60-r61,r63 (13 vregs)
- 780 [0x1860] 0090FA4C00190031   U32_TO_F32 r58, r49.b0
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r58,r60-r61,r63 (14 vregs)
- 781 [0x1868] 00B2FA0002DA957A   FMA.f32 r58, r58^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r58,r60-r61,r63 (14 vregs)
- 782 [0x1870] 0090FA0CC01C007A   F32_TO_U32.rtz r58, r58^
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r58,r60-r61,r63 (14 vregs)
- 783 [0x1878] 0150FA04967A967A   CSEL.u32.lt r58, r58^, u11.w0 /* 15 (0xF) */, r58^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r7,r10-r11,r13,r15,r49,r56,r58,r60-r61,r63 (14 vregs)
- 784 [0x1880] 0091C800000D007A   BITREV.i32 r8, r58^
-// live: r0-r1,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (14 vregs)
- 785 [0x1888] 0090C36C00190031   U32_TO_F32 r3, r49.b2
-// live: r0-r1,r3,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (15 vregs)
- 786 [0x1890] 00B2C30002DA9543   FMA.f32 r3, r3^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r3,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (15 vregs)
- 787 [0x1898] 0090C30CC01C0043   F32_TO_U32.rtz r3, r3^
-// live: r0-r1,r3,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (15 vregs)
- 788 [0x18A0] 0150C30496439643   CSEL.u32.lt r3, r3^, u11.w0 /* 15 (0xF) */, r3^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r3,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (15 vregs)
- 789 [0x18A8] 0091C300000D0043   BITREV.i32 r3, r3^
-// live: r0-r1,r6-r8,r10-r11,r13,r15,r49,r56,r60-r61,r63 (14 vregs)
- 790 [0x18B0] 0090F94C0019004D   U32_TO_F32 r57, r13^.b0
-// live: r0-r1,r6-r8,r10-r11,r15,r49,r56-r57,r60-r61,r63 (14 vregs)
- 791 [0x18B8] 00B2F90002DA9579   FMA.f32 r57, r57^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0-r1,r6-r8,r10-r11,r15,r49,r56-r57,r60-r61,r63 (14 vregs)
- 792 [0x18C0] 0090F90CC01C0079   F32_TO_U32.rtz r57, r57^
-// live: r0-r1,r6-r8,r10-r11,r15,r49,r56-r57,r60-r61,r63 (14 vregs)
- 793 [0x18C8] 0150CC0496799679   CSEL.u32.lt r12, r57^, u11.w0 /* 15 (0xF) */, r57^, u11.w0 /* 15 (0xF) */
-// live: r0-r1,r6-r8,r10-r12,r15,r49,r56-r57,r60-r61,r63 (15 vregs)
- 794 [0x18D0] 00F8C42380C0C001   ICMP_OR.s32.ne.m1 r4, r1.h0, 0x0, 0x0
-// live: r0,r4,r6-r8,r10-r12,r15,r49,r56-r57,r60-r61,r63 (15 vregs)
- 795 [0x18D8] 0151C90397C0C004   CSEL.v2u16.ne r9, r4, 0x0, 0x0, u11.w1 /* 48 (0x30) */
-// live: r0,r4,r6-r12,r15,r49,r56-r57,r60-r61,r63 (16 vregs)
- 796 [0x18E0] 0110CE00000006C0   IADD_IMM.i32 r14, 0x0, #0x6
-// live: r0,r4,r6-r12,r14-r15,r49,r56-r57,r60-r61,r63 (17 vregs)
- 797 [0x18E8] 0151CE034E93C004   CSEL.v2u16.ne r14, r4, 0x0, u9.w1 /* 8 (0x8) */, r14^
-// live: r0,r4,r6-r12,r14-r15,r49,r56-r57,r60-r61,r63 (17 vregs)
- 798 [0x18F0] 00B4CD0011C0C97F   RSHIFT_OR.i32 r13, r63^, 0x7060504.b00, 0x0
-// live: r0,r4,r6-r15,r49,r56-r57,r60-r61 (17 vregs)
- 799 [0x18F8] 0110C500000000C0   IADD_IMM.i32 r5, 0x0, #0x0
-// live: r0,r4-r15,r49,r56-r57,r60-r61 (18 vregs)
- 800 [0x1900] 0091F300000000C0   MOV.i32 r51, 0x0
-// live: r0,r4-r15,r49,r56-r57,r60-r61 (18 vregs)
- 801 [0x1908] 0110F200000100C0   IADD_IMM.i32 r50, 0x0, #0x100
-// live: r0,r4-r15,r49-r50,r56-r57,r60-r61 (19 vregs)
- 802 [0x1910] 0091F500000000C0   MOV.i32 r53, 0x0
-// live: r0,r4-r15,r49-r50,r56-r57,r60-r61 (19 vregs)
- 803 [0x1918] 0910F400000108C0   IADD_IMM.i32.wait0 r52, 0x0, #0x108
-// live: r0,r4-r15,r49-r50,r52,r56-r57,r60-r61 (20 vregs)
- 804 [0x1920] 0868420218804C80   >>> DEBUG_INFO: block 19 <<<
-// live: r0,r4-r15,r49-r50,r52,r56-r57,r60-r61 (20 vregs)
- 805 [0x1928] 0869400018005080   >>> DEBUG_INFO: block 20 <<<
-// live: r0,r4-r15,r49-r50,r52,r56-r57,r60-r61 (20 vregs)
- 806 [0x1930] 02614604AB0100E2   STORE.i64.force.slot2 @r6:r7, thread_local_pointer.w0, offset:256
-// live: r0,r4-r5,r8-r15,r49-r50,r52,r56-r57,r60-r61 (18 vregs)
- 807 [0x1938] 0090C27C00190071   U32_TO_F32 r2, r49^.b3
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 808 [0x1940] 00B2C20002DA9542   FMA.f32 r2, r2^, u10.w1 /* 0.0588235f */, 0x38000000.h1
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 809 [0x1948] 0090C20CC01C0042   F32_TO_U32.rtz r2, r2^
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 810 [0x1950] 0150C20496429642   CSEL.u32.lt r2, r2^, u11.w0 /* 15 (0xF) */, r2^, u11.w0 /* 15 (0xF) */
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 811 [0x1958] 0091C200000D0042   BITREV.i32 r2, r2^
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 812 [0x1960] 00B4C20011C0CF42   RSHIFT_OR.i32 r2, r2^, 0x1F1E1D1C.b00, 0x0
-// live: r0,r2,r4-r5,r8-r15,r50,r52,r56-r57,r60-r61 (18 vregs)
- 813 [0x1968] 0110F100000000C0   IADD_IMM.i32 r49, 0x0, #0x0
-// live: r0,r2,r4-r5,r8-r15,r49-r50,r52,r56-r57,r60-r61 (19 vregs)
- 814 [0x1970] 00B4C600114FCF78   RSHIFT_OR.i32 r6, r56^, 0x1F1E1D1C.b00, r15^
-// live: r0,r2,r4-r6,r8-r14,r49-r50,r52,r56-r57,r60-r61 (19 vregs)
- 815 [0x1978] 0110CF0000002FC0   IADD_IMM.i32 r15, 0x0, #0x2F
-// live: r0,r2,r4-r6,r8-r15,r49-r50,r52,r56-r57,r60-r61 (20 vregs)
- 816 [0x1980] 0151CF03984FC004   CSEL.v2u16.ne r15, r4, 0x0, r15^, u12.w0 /* 191 (0xBF) */
-// live: r0,r2,r4-r6,r8-r15,r49-r50,r52,r56-r57,r60-r61 (20 vregs)
- 817 [0x1988] 0090F00C0019000F   U32_TO_F32 r48, r15
-// live: r0,r2,r4-r6,r8-r15,r48-r50,r52,r56-r57,r60-r61 (21 vregs)
- 818 [0x1990] 50B4C70011C0CD7D   RSHIFT_OR.i32.reconverge r7, r61^, 0x17161514.b00, 0x0
-// live-out: r0,r2,r4-r15,r48-r50,r52,r56-r57,r60 (21 vregs)
+ 700 [0x15E0] 00B4CA011091CA4A   LSHIFT_AND.i32 r10, r10^, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
+// live: r0-r1,r3-r11,r13,r48-r49,r60 (15 vregs)
+ 701 [0x15E8] 00A0C84000004A48   IADD.u32 r8, r8^.b0, r10^
+// live: r0-r1,r3-r9,r11,r13,r48-r49,r60 (14 vregs)
+ 702 [0x15F0] 00B4C6011091CA46   LSHIFT_AND.i32 r6, r6^, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
+// live: r0-r1,r3-r9,r11,r13,r48-r49,r60 (14 vregs)
+ 703 [0x15F8] 00A0C44000004644   IADD.u32 r4, r4^.b0, r6^
+// live: r0-r1,r3-r5,r7-r9,r11,r13,r48-r49,r60 (13 vregs)
+ 704 [0x1600] 00B4C9011092CC49   LSHIFT_AND.i32 r9, r9^, 0x13121110.b00, u9.w0 /* 16711680 (0xFF0000) */
+// live: r0-r1,r3-r5,r7-r9,r11,r13,r48-r49,r60 (13 vregs)
+ 705 [0x1608] 00A0C80000004948   IADD.u32 r8, r8^, r9^
+// live: r0-r1,r3-r5,r7-r8,r11,r13,r48-r49,r60 (12 vregs)
+ 706 [0x1610] 00B4C5011092CC45   LSHIFT_AND.i32 r5, r5^, 0x13121110.b00, u9.w0 /* 16711680 (0xFF0000) */
+// live: r0-r1,r3-r5,r7-r8,r11,r13,r48-r49,r60 (12 vregs)
+ 707 [0x1618] 00A0C40000004544   IADD.u32 r4, r4^, r5^
+// live: r0-r1,r3-r4,r7-r8,r11,r13,r48-r49,r60 (11 vregs)
+ 708 [0x1620] 00A0CC40000A9530   IMUL.i32 r12, r48.b0, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3-r4,r7-r8,r11-r13,r48-r49,r60 (12 vregs)
+ 709 [0x1628] 00A0CC000C00C54C   IADD.u32 r12, r12^, 0x80002000.h1
+// live: r0-r1,r3-r4,r7-r8,r11-r13,r48-r49,r60 (12 vregs)
+ 710 [0x1630] 00B4CC0011C0CC4C   RSHIFT_OR.i32 r12, r12^, 0x13121110.b00, 0x0
+// live: r0-r1,r3-r4,r7-r8,r11-r13,r48-r49,r60 (12 vregs)
+ 711 [0x1638] 01514C04964C964C   CSEL.v2u16.lt r12.h0, r12^, u11.w0 /* 15 (0xF) */, r12^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3-r4,r7-r8,r11-r13,r48-r49,r60 (12 vregs)
+ 712 [0x1640] 00A0CE50000A9530   IMUL.i32 r14, r48.b1, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3-r4,r7-r8,r11-r14,r48-r49,r60 (13 vregs)
+ 713 [0x1648] 00A0CE000C00C54E   IADD.u32 r14, r14^, 0x80002000.h1
+// live: r0-r1,r3-r4,r7-r8,r11-r14,r48-r49,r60 (13 vregs)
+ 714 [0x1650] 00B4CE0011C0CC4E   RSHIFT_OR.i32 r14, r14^, 0x13121110.b00, 0x0
+// live: r0-r1,r3-r4,r7-r8,r11-r14,r48-r49,r60 (13 vregs)
+ 715 [0x1658] 01514E04964E964E   CSEL.v2u16.lt r14.h0, r14^, u11.w0 /* 15 (0xF) */, r14^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3-r4,r7-r8,r11-r14,r48-r49,r60 (13 vregs)
+ 716 [0x1660] 00B4C70111C0CE47   LSHIFT_OR.i32 r7, r7^, 0x1B1A1918.b00, 0x0
+// live: r0-r1,r3-r4,r7-r8,r11-r14,r48-r49,r60 (13 vregs)
+ 717 [0x1668] 00A0C70000004748   IADD.u32 r7, r8^, r7^
+// live: r0-r1,r3-r4,r7,r11-r14,r48-r49,r60 (12 vregs)
+ 718 [0x1670] 00B4C30111C0CE43   LSHIFT_OR.i32 r3, r3^, 0x1B1A1918.b00, 0x0
+// live: r0-r1,r3-r4,r7,r11-r14,r48-r49,r60 (12 vregs)
+ 719 [0x1678] 00A0C60000004344   IADD.u32 r6, r4^, r3^
+// live: r0-r1,r6-r7,r11-r14,r48-r49,r60 (11 vregs)
+ 720 [0x1680] 00A0CF60000A9530   IMUL.i32 r15, r48.b2, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r6-r7,r11-r15,r48-r49,r60 (12 vregs)
+ 721 [0x1688] 00A0CF000C00C54F   IADD.u32 r15, r15^, 0x80002000.h1
+// live: r0-r1,r6-r7,r11-r15,r48-r49,r60 (12 vregs)
+ 722 [0x1690] 00B4CF0011C0CC4F   RSHIFT_OR.i32 r15, r15^, 0x13121110.b00, 0x0
+// live: r0-r1,r6-r7,r11-r15,r48-r49,r60 (12 vregs)
+ 723 [0x1698] 01514F04964F964F   CSEL.v2u16.lt r15.h0, r15^, u11.w0 /* 15 (0xF) */, r15^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r6-r7,r11-r15,r48-r49,r60 (12 vregs)
+ 724 [0x16A0] 0090C3000014004E   U16_TO_U32 r3, r14^.h0
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r48-r49,r60 (12 vregs)
+ 725 [0x16A8] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r48-r49,r60 (12 vregs)
+ 726 [0x16B0] 00A0F270000A9570   IMUL.i32 r50, r48^.b3, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r50,r60 (12 vregs)
+ 727 [0x16B8] 00A0F2000C00C572   IADD.u32 r50, r50^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r50,r60 (12 vregs)
+ 728 [0x16C0] 00B4F20011C0CC72   RSHIFT_OR.i32 r50, r50^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r50,r60 (12 vregs)
+ 729 [0x16C8] 0151720496729672   CSEL.v2u16.lt r50.h0, r50^, u11.w0 /* 15 (0xF) */, r50^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r50,r60 (12 vregs)
+ 730 [0x16D0] 00A0F340000A950B   IMUL.i32 r51, r11.b0, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r51,r60 (13 vregs)
+ 731 [0x16D8] 00A0F3000C00C573   IADD.u32 r51, r51^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r51,r60 (13 vregs)
+ 732 [0x16E0] 00B4F30011C0CC73   RSHIFT_OR.i32 r51, r51^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r51,r60 (13 vregs)
+ 733 [0x16E8] 0151730496739673   CSEL.v2u16.lt r51.h0, r51^, u11.w0 /* 15 (0xF) */, r51^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r51,r60 (13 vregs)
+ 734 [0x16F0] 00A0F450000A950B   IMUL.i32 r52, r11.b1, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r52,r60 (14 vregs)
+ 735 [0x16F8] 00A0F4000C00C574   IADD.u32 r52, r52^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r52,r60 (14 vregs)
+ 736 [0x1700] 00B4F40011C0CC74   RSHIFT_OR.i32 r52, r52^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r52,r60 (14 vregs)
+ 737 [0x1708] 0151740496749674   CSEL.v2u16.lt r52.h0, r52^, u11.w0 /* 15 (0xF) */, r52^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r52,r60 (14 vregs)
+ 738 [0x1710] 00A0F560000A950B   IMUL.i32 r53, r11.b2, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r53,r60 (15 vregs)
+ 739 [0x1718] 00A0F5000C00C575   IADD.u32 r53, r53^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r53,r60 (15 vregs)
+ 740 [0x1720] 00B4F50011C0CC75   RSHIFT_OR.i32 r53, r53^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r53,r60 (15 vregs)
+ 741 [0x1728] 0151750496759675   CSEL.v2u16.lt r53.h0, r53^, u11.w0 /* 15 (0xF) */, r53^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r11-r13,r15,r49-r53,r60 (15 vregs)
+ 742 [0x1730] 00A0F670000A954B   IMUL.i32 r54, r11^.b3, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r60 (15 vregs)
+ 743 [0x1738] 00A0F6000C00C576   IADD.u32 r54, r54^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r60 (15 vregs)
+ 744 [0x1740] 00B4F60011C0CC76   RSHIFT_OR.i32 r54, r54^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r60 (15 vregs)
+ 745 [0x1748] 0151760496769676   CSEL.v2u16.lt r54.h0, r54^, u11.w0 /* 15 (0xF) */, r54^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r60 (15 vregs)
+ 746 [0x1750] 00A0F970000A950D   IMUL.i32 r57, r13.b3, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57,r60 (16 vregs)
+ 747 [0x1758] 00A0F9000C00C579   IADD.u32 r57, r57^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57,r60 (16 vregs)
+ 748 [0x1760] 00B4F90011C0CC79   RSHIFT_OR.i32 r57, r57^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57,r60 (16 vregs)
+ 749 [0x1768] 0151790496799679   CSEL.v2u16.lt r57.h0, r57^, u11.w0 /* 15 (0xF) */, r57^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57,r60 (16 vregs)
+ 750 [0x1770] 00A0FA60000A9531   IMUL.i32 r58, r49.b2, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r58,r60 (17 vregs)
+ 751 [0x1778] 00A0FA000C00C57A   IADD.u32 r58, r58^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r58,r60 (17 vregs)
+ 752 [0x1780] 00B4FA0011C0CC7A   RSHIFT_OR.i32 r58, r58^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r58,r60 (17 vregs)
+ 753 [0x1788] 01517A04967A967A   CSEL.v2u16.lt r58.h0, r58^, u11.w0 /* 15 (0xF) */, r58^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r58,r60 (17 vregs)
+ 754 [0x1790] 00A0FB50000A9531   IMUL.i32 r59, r49.b1, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r60 (18 vregs)
+ 755 [0x1798] 00A0FB000C00C57B   IADD.u32 r59, r59^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r60 (18 vregs)
+ 756 [0x17A0] 00B4FB0011C0CC7B   RSHIFT_OR.i32 r59, r59^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r60 (18 vregs)
+ 757 [0x17A8] 00A0FD60000A950D   IMUL.i32 r61, r13.b2, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r61 (19 vregs)
+ 758 [0x17B0] 00A0FD000C00C57D   IADD.u32 r61, r61^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r61 (19 vregs)
+ 759 [0x17B8] 00B4FD0011C0CC7D   RSHIFT_OR.i32 r61, r61^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r61 (19 vregs)
+ 760 [0x17C0] 01517D04967D967D   CSEL.v2u16.lt r61.h0, r61^, u11.w0 /* 15 (0xF) */, r61^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r61 (19 vregs)
+ 761 [0x17C8] 00A0FE50000A950D   IMUL.i32 r62, r13.b1, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r62 (20 vregs)
+ 762 [0x17D0] 00A0FE000C00C57E   IADD.u32 r62, r62^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r62 (20 vregs)
+ 763 [0x17D8] 00B4FE0011C0CC7E   RSHIFT_OR.i32 r62, r62^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r62 (20 vregs)
+ 764 [0x17E0] 01517E04967E967E   CSEL.v2u16.lt r62.h0, r62^, u11.w0 /* 15 (0xF) */, r62^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r54,r57-r62 (20 vregs)
+ 765 [0x17E8] 00A0F740000A9531   IMUL.i32 r55, r49.b0, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r55,r57-r62 (21 vregs)
+ 766 [0x17F0] 00A0F7000C00C577   IADD.u32 r55, r55^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r55,r57-r62 (21 vregs)
+ 767 [0x17F8] 00B4F70011C0CC77   RSHIFT_OR.i32 r55, r55^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r55,r57-r62 (21 vregs)
+ 768 [0x1800] 0151770496779677   CSEL.v2u16.lt r55.h0, r55^, u11.w0 /* 15 (0xF) */, r55^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r49-r55,r57-r62 (21 vregs)
+ 769 [0x1808] 00A0F870000A9571   IMUL.i32 r56, r49^.b3, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r50-r62 (21 vregs)
+ 770 [0x1810] 00A0F8000C00C578   IADD.u32 r56, r56^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r50-r62 (21 vregs)
+ 771 [0x1818] 00B4F80011C0CC78   RSHIFT_OR.i32 r56, r56^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r50-r62 (21 vregs)
+ 772 [0x1820] 0151780496789678   CSEL.v2u16.lt r56.h0, r56^, u11.w0 /* 15 (0xF) */, r56^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12-r13,r15,r50-r62 (21 vregs)
+ 773 [0x1828] 00A0FF40000A954D   IMUL.i32 r63, r13^.b0, u10.w1 /* 3855 (0xF0F) */
+// live: r0-r1,r3,r6-r7,r12,r15,r50-r63 (21 vregs)
+ 774 [0x1830] 00A0FF000C00C57F   IADD.u32 r63, r63^, 0x80002000.h1
+// live: r0-r1,r3,r6-r7,r12,r15,r50-r63 (21 vregs)
+ 775 [0x1838] 00B4FF0011C0CC7F   RSHIFT_OR.i32 r63, r63^, 0x13121110.b00, 0x0
+// live: r0-r1,r3,r6-r7,r12,r15,r50-r63 (21 vregs)
+ 776 [0x1840] 01517F04967F967F   CSEL.v2u16.lt r63.h0, r63^, u11.w0 /* 15 (0xF) */, r63^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r6-r7,r12,r15,r50-r63 (21 vregs)
+ 777 [0x1848] 0090CE000014007F   U16_TO_U32 r14, r63^.h0
+// live: r0-r1,r3,r6-r7,r12,r14-r15,r50-r62 (21 vregs)
+ 778 [0x1850] 0110CA00000006C0   IADD_IMM.i32 r10, 0x0, #0x6
+// live: r0-r1,r3,r6-r7,r10,r12,r14-r15,r50-r62 (22 vregs)
+ 779 [0x1858] 0910C500000000C0   IADD_IMM.i32.wait0 r5, 0x0, #0x0
+// live: r0-r1,r3,r5-r7,r10,r12,r14-r15,r50-r62 (23 vregs)
+ 780 [0x1860] 0868420218804C80   >>> DEBUG_INFO: block 19 <<<
+// live: r0-r1,r3,r5-r7,r10,r12,r14-r15,r50-r62 (23 vregs)
+ 781 [0x1868] 0869400018005080   >>> DEBUG_INFO: block 20 <<<
+// live: r0-r1,r3,r5-r7,r10,r12,r14-r15,r50-r62 (23 vregs)
+ 782 [0x1870] 0868420218805480   >>> DEBUG_INFO: block 21 <<<
+// live: r0-r1,r3,r5-r7,r10,r12,r14-r15,r50-r62 (23 vregs)
+ 783 [0x1878] 0869400018005880   >>> DEBUG_INFO: block 22 <<<
+// live: r0-r1,r3,r5-r7,r10,r12,r14-r15,r50-r62 (23 vregs)
+ 784 [0x1880] 0A6146042B0100E2   STORE.i64.force.slot0.wait0 @r6:r7, thread_local_pointer.w0, offset:256
+// live: r0-r1,r3,r5,r10,r12,r14-r15,r50-r62 (21 vregs)
+ 785 [0x1888] 0068420298805C80   >>> DEBUG_INFO: block 23 <<<
+// live: r0-r1,r3,r5,r10,r12,r14-r15,r50-r62 (21 vregs)
+ 786 [0x1890] 0090C2000014004C   U16_TO_U32 r2, r12^.h0
+// live: r0-r3,r5,r10,r14-r15,r50-r62 (21 vregs)
+ 787 [0x1898] 0091C200000D0042   BITREV.i32 r2, r2^
+// live: r0-r3,r5,r10,r14-r15,r50-r62 (21 vregs)
+ 788 [0x18A0] 00B4C2001142C943   RSHIFT_OR.i32 r2, r3^, 0x7060504.b00, r2^
+// live: r0-r2,r5,r10,r14-r15,r50-r62 (20 vregs)
+ 789 [0x18A8] 0090C3000014004F   U16_TO_U32 r3, r15^.h0
+// live: r0-r3,r5,r10,r14,r50-r62 (20 vregs)
+ 790 [0x18B0] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r50-r62 (20 vregs)
+ 791 [0x18B8] 00B4C2001142CA43   RSHIFT_OR.i32 r2, r3^, 0xB0A0908.b00, r2^
+// live: r0-r2,r5,r10,r14,r50-r62 (19 vregs)
+ 792 [0x18C0] 0090C30000140072   U16_TO_U32 r3, r50^.h0
+// live: r0-r3,r5,r10,r14,r51-r62 (19 vregs)
+ 793 [0x18C8] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r51-r62 (19 vregs)
+ 794 [0x18D0] 00B4C2001142CB43   RSHIFT_OR.i32 r2, r3^, 0xF0E0D0C.b00, r2^
+// live: r0-r2,r5,r10,r14,r51-r62 (18 vregs)
+ 795 [0x18D8] 0090C30000140073   U16_TO_U32 r3, r51^.h0
+// live: r0-r3,r5,r10,r14,r52-r62 (18 vregs)
+ 796 [0x18E0] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r52-r62 (18 vregs)
+ 797 [0x18E8] 00B4C2001142CC43   RSHIFT_OR.i32 r2, r3^, 0x13121110.b00, r2^
+// live: r0-r2,r5,r10,r14,r52-r62 (17 vregs)
+ 798 [0x18F0] 0090C30000140074   U16_TO_U32 r3, r52^.h0
+// live: r0-r3,r5,r10,r14,r53-r62 (17 vregs)
+ 799 [0x18F8] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r53-r62 (17 vregs)
+ 800 [0x1900] 00B4C2001142CD43   RSHIFT_OR.i32 r2, r3^, 0x17161514.b00, r2^
+// live: r0-r2,r5,r10,r14,r53-r62 (16 vregs)
+ 801 [0x1908] 0090C30000140035   U16_TO_U32 r3, r53.h0
+// live: r0-r3,r5,r10,r14,r54-r62 (16 vregs)
+ 802 [0x1910] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r54-r62 (16 vregs)
+ 803 [0x1918] 00B4C2001142CE43   RSHIFT_OR.i32 r2, r3^, 0x1B1A1918.b00, r2^
+// live: r0-r2,r5,r10,r14,r54-r62 (15 vregs)
+ 804 [0x1920] 0090C30000140076   U16_TO_U32 r3, r54^.h0
+// live: r0-r3,r5,r10,r14,r55-r62 (15 vregs)
+ 805 [0x1928] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r3,r5,r10,r14,r55-r62 (15 vregs)
+ 806 [0x1930] 0110CF0000002FC0   IADD_IMM.i32 r15, 0x0, #0x2F
+// live: r0-r3,r5,r10,r14-r15,r55-r62 (16 vregs)
+ 807 [0x1938] 0091F300000000C0   MOV.i32 r51, 0x0
+// live: r0-r3,r5,r10,r14-r15,r55-r62 (16 vregs)
+ 808 [0x1940] 0110F200000100C0   IADD_IMM.i32 r50, 0x0, #0x100
+// live: r0-r3,r5,r10,r14-r15,r50,r55-r62 (17 vregs)
+ 809 [0x1948] 0710F400000C30FE   IADD_IMM.i32 r52, program_counter.w0, #0xC30
+// live: r0-r3,r5,r10,r14-r15,r50,r52,r55-r62 (18 vregs)
+ 810 [0x1950] 00B4C6001142CF43   RSHIFT_OR.i32 r6, r3^, 0x1F1E1D1C.b00, r2^
+// live: r0-r1,r5-r6,r10,r14-r15,r50,r52,r55-r62 (17 vregs)
+ 811 [0x1958] 0090C30000140079   U16_TO_U32 r3, r57^.h0
+// live: r0-r1,r3,r5-r6,r10,r14-r15,r50,r52,r55-r56,r58-r62 (17 vregs)
+ 812 [0x1960] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r1,r3,r5-r6,r10,r14-r15,r50,r52,r55-r56,r58-r62 (17 vregs)
+ 813 [0x1968] 00B4C90011C0CB43   RSHIFT_OR.i32 r9, r3^, 0xF0E0D0C.b00, 0x0
+// live: r0-r1,r5-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (17 vregs)
+ 814 [0x1970] 0090C3000014007A   U16_TO_U32 r3, r58^.h0
+// live: r0-r1,r3,r5-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (18 vregs)
+ 815 [0x1978] 0091C300000D0043   BITREV.i32 r3, r3^
+// live: r0-r1,r5-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (17 vregs)
+ 816 [0x1980] 01514304967B967B   CSEL.v2u16.lt r3.h0, r59^, u11.w0 /* 15 (0xF) */, r59^, u11.w0 /* 15 (0xF) */
+// live: r0-r1,r3,r5-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (18 vregs)
+ 817 [0x1988] 0090C40000140003   U16_TO_U32 r4, r3.h0
+// live: r0-r1,r4-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (18 vregs)
+ 818 [0x1990] 0091C400000D0044   BITREV.i32 r4, r4^
+// live: r0-r1,r4-r6,r9-r10,r14-r15,r50,r52,r55-r56,r58-r62 (18 vregs)
+ 819 [0x1998] 0090C20000140077   U16_TO_U32 r2, r55^.h0
+// live: r0-r2,r4-r6,r9-r10,r14-r15,r50,r52,r56,r58-r62 (18 vregs)
+ 820 [0x19A0] 0091C800000D0042   BITREV.i32 r8, r2^
+// live: r0-r1,r4-r6,r8-r10,r14-r15,r50,r52,r56,r58-r62 (18 vregs)
+ 821 [0x19A8] 0090C20000140078   U16_TO_U32 r2, r56^.h0
+// live: r0-r2,r4-r6,r8-r10,r14-r15,r50,r52,r58-r62 (18 vregs)
+ 822 [0x19B0] 0091C200000D0042   BITREV.i32 r2, r2^
+// live: r0-r2,r4-r6,r8-r10,r14-r15,r50,r52,r58-r62 (18 vregs)
+ 823 [0x19B8] 00B4C20011C0CF42   RSHIFT_OR.i32 r2, r2^, 0x1F1E1D1C.b00, 0x0
+// live: r0-r2,r4-r6,r8-r10,r14-r15,r50,r52,r58-r62 (18 vregs)
+ 824 [0x19C0] 0091F700000000C0   MOV.i32 r55, 0x0
+// live: r0-r2,r4-r6,r8-r10,r14-r15,r50,r52,r58-r62 (18 vregs)
+ 825 [0x19C8] 0110F600000108C0   IADD_IMM.i32 r54, 0x0, #0x108
+// live: r0-r2,r4-r6,r8-r10,r14-r15,r50,r52,r54,r58-r62 (19 vregs)
+ 826 [0x19D0] 00B4C70011C0CD44   RSHIFT_OR.i32 r7, r4^, 0x17161514.b00, 0x0
+// live: r0-r2,r5-r10,r14-r15,r50,r52,r54,r58-r62 (19 vregs)
+ 827 [0x19D8] 0090C4000014007D   U16_TO_U32 r4, r61^.h0
+// live: r0-r2,r4-r10,r14-r15,r50,r52,r54,r58-r60,r62 (19 vregs)
+ 828 [0x19E0] 0091C400000D0044   BITREV.i32 r4, r4^
+// live: r0-r2,r4-r10,r14-r15,r50,r52,r54,r58-r60,r62 (19 vregs)
+ 829 [0x19E8] 00B4CB0011C0CA44   RSHIFT_OR.i32 r11, r4^, 0xB0A0908.b00, 0x0
+// live: r0-r2,r5-r11,r14-r15,r50,r52,r54,r58-r60,r62 (19 vregs)
+ 830 [0x19F0] 0090C4000014007E   U16_TO_U32 r4, r62^.h0
+// live: r0-r2,r4-r11,r14-r15,r50,r52,r54,r58-r60 (19 vregs)
+ 831 [0x19F8] 0091C400000D0044   BITREV.i32 r4, r4^
+// live: r0-r2,r4-r11,r14-r15,r50,r52,r54,r58-r60 (19 vregs)
+ 832 [0x1A00] 00B4CC0011C0C944   RSHIFT_OR.i32 r12, r4^, 0x7060504.b00, 0x0
+// live: r0-r2,r5-r12,r14-r15,r50,r52,r54,r58-r60 (19 vregs)
+ 833 [0x1A08] 00F8C42380C0C001   ICMP_OR.s32.ne.m1 r4, r1.h0, 0x0, 0x0
+// live: r0,r2,r4-r12,r14-r15,r50,r52,r54,r58-r60 (19 vregs)
+ 834 [0x1A10] 0151CF03984FC004   CSEL.v2u16.ne r15, r4, 0x0, r15^, u12.w0 /* 191 (0xBF) */
+// live: r0,r2,r4-r12,r14-r15,r50,r52,r54,r58-r60 (19 vregs)
+ 835 [0x1A18] 00B4FE0111C0CC0F   LSHIFT_OR.i32 r62, r15, 0x13121110.b00, 0x0
+// live: r0,r2,r4-r12,r14-r15,r50,r52,r54,r58-r60,r62 (20 vregs)
+ 836 [0x1A20] 00A0FE001800D67E   IADD.u32 r62, r62^, 0x477FFF00.b2
+// live: r0,r2,r4-r12,r14-r15,r50,r52,r54,r58-r60,r62 (20 vregs)
+ 837 [0x1A28] 01A3F080200A9A7E   IMULD.u64 [r48:r49], [r62^:r63^].w0, u13 /* 2155905153 (0x80808081) */.w0
+// live: r0,r2,r4-r12,r14-r15,r49-r50,r52,r54,r58-r60 (20 vregs)
+ 838 [0x1A30] 0151CA034A93C004   CSEL.v2u16.ne r10, r4, 0x0, u9.w1 /* 8 (0x8) */, r10^
+// live: r0,r2,r4-r12,r14-r15,r49-r50,r52,r54,r58-r60 (20 vregs)
+ 839 [0x1A38] 0151CD0397C0C004   CSEL.v2u16.ne r13, r4, 0x0, 0x0, u11.w1 /* 48 (0x30) */
+// live: r0,r2,r4-r15,r49-r50,r52,r54,r58-r60 (21 vregs)
+ 840 [0x1A40] 00B4F0001DC0C971   RSHIFT_OR.i32 r48, r49^, 0x7060504.b33, 0x0
+// live: r0,r2,r4-r15,r48,r50,r52,r54,r58-r60 (21 vregs)
+ 841 [0x1A48] 5110F100000000C0   IADD_IMM.i32.reconverge r49, 0x0, #0x0
+// live-out: r0,r2,r4-r15,r48-r50,r52,r54,r58-r60 (22 vregs)
 
-/* Jump target from: 0x1A78 */
-// live-in: r0,r2,r4-r15,r48-r50,r52,r56-r57,r60 (21 vregs)
- 819 [0x1998] 0118F87FFFFFFC31   
-// live: r0,r2,r4-r15,r48-r50,r52,r56-r57,r60 (21 vregs)
- 820 [0x19A0] 01A3F60020003832   IADD.u64 [r54:r55], [r50:r51], [r56:r57].w0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r56-r57,r60 (22 vregs)
- 821 [0x19A8] 01A3FE0020007834   IADD.u64 [r62:r63], [r52:r53], [r56^:r57^].w0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57,r60,r62 (22 vregs)
- 822 [0x19B0] 23A3F600000076E2   IADD.u64.wait2 [r54:r55], thread_local_pointer.w0, [r54^:r55^]
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r55,r57,r60,r62 (23 vregs)
- 823 [0x19B8] 0060B68218000076   LOAD.i32.unsigned.slot0 @r54, [r54^:r55^], offset:0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57,r60,r62 (22 vregs)
- 824 [0x19C0] 00B4FA411005C0CE   LSHIFT_AND.i32 r58, 0x1B1A1918.b0, 0x0.b00, r5
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 825 [0x19C8] 00A0F1001C00C471   IADD.u32 r49, r49^, 0x1000000.b3
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 826 [0x19D0] 00A0C5001000CA45   IADD.u32 r5, r5^, 0xB0A0908.b0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 827 [0x19D8] 0E91F700000000FF   MOV.i32.wait0 r55, program_counter.w1
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 828 [0x19E0] 00B4F60011C03A76   RSHIFT_OR.i32 r54, r54^, r58.b00, 0x0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 829 [0x19E8] 0090F64C00190076   U32_TO_F32 r54, r54^.b0
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 830 [0x19F0] 00B2F60400C03076   FMA.f32 r54, r54^, r48, 0x0.neg
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 831 [0x19F8] 00B2F60002DA9976   FMA.f32 r54, r54^, u12.w1 /* 0.00392157f */, 0x38000000.h1
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 832 [0x1A00] 0090F60CC01C0076   F32_TO_U32.rtz r54, r54^
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 833 [0x1A08] 0150F6040F760F76   CSEL.u32.lt r54, r54^, r15, r54^, r15
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r58,r60,r62 (23 vregs)
- 834 [0x1A10] 00A0FB0000000976   IADD.u32 r59, r54^, r9
-// live: r0,r2,r4-r15,r48-r50,r52,r57-r60,r62 (23 vregs)
- 835 [0x1A18] 0118F9000001FC3B   
-// live: r0,r2,r4-r15,r48-r50,r52,r57-r60,r62 (23 vregs)
- 836 [0x1A20] 0710F600000AD8FE   IADD_IMM.i32 r54, program_counter.w0, #0xAD8
-// live: r0,r2,r4-r15,r48-r50,r52,r54,r57-r60,r62 (24 vregs)
- 837 [0x1A28] 01A3F60024007876   IADD.u64 [r54:r55], [r54^:r55^], [r56^:r57^].reserved
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r55,r57-r60,r62 (25 vregs)
- 838 [0x1A30] 0060BD8258000076   LOAD.i32.unsigned.slot1 @r61, [r54^:r55^], offset:0
-// live: r0,r2,r4-r15,r48-r50,r52,r57-r62 (24 vregs)
- 839 [0x1A38] 03A3F60000007EE2   IADD.u64 [r54:r55], thread_local_pointer.w0, [r62^:r63^]
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r55,r57-r62 (26 vregs)
- 840 [0x1A40] 0060B88218000036   LOAD.i32.unsigned.slot0 @r56, [r54:r55], offset:0
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r62 (27 vregs)
- 841 [0x1A48] 10B4FF011C94C87B   LSHIFT_AND.i32.wait1 r63, r59^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r58,r60-r63 (27 vregs)
- 842 [0x1A50] 08B4FF0011C07F7D   RSHIFT_OR.i32.wait0 r63, r61^, r63^.b00, 0x0
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r58,r60,r62-r63 (26 vregs)
- 843 [0x1A58] 00B4F85951783AD6   LSHIFT_OR.i32.not_result r56, 0x477FFF00.b1, r58.b00, r56^.not
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r58,r60,r62-r63 (26 vregs)
- 844 [0x1A60] 00B4F84111787A7F   LSHIFT_OR.i32 r56, r63^.b0, r58^.b00, r56^
-// live: r0,r2,r4-r15,r48-r50,r52,r54-r57,r60,r62 (24 vregs)
- 845 [0x1A68] 006178029B000076   STORE.i32.force.slot2 @r56, [r54^:r55^], offset:0
-// live: r0,r2,r4-r15,r48-r50,r52,r56-r57,r60,r62 (22 vregs)
- 846 [0x1A70] 00F0F60080C00E31   ICMP_OR.u32.eq.m1 r54, r49, r14, 0x0
-// live-in: r0,r2,r4-r15,r48-r50,r52,r54,r56-r57,r60,r62 (23 vregs)
- 847 [0x1A78] 001FC017FFFFE376   BRANCHZ.eq r54^, offset:-29 /* jumps to 0x1998 (instruction #819) */
-// live-out: r0,r2,r4-r15,r48-r50,r52,r56-r57,r60,r62 (22 vregs)
+/* Jump target from: 0x1B20 */
+// live-in: r0,r2,r4-r15,r48-r50,r52,r54,r58-r60 (22 vregs)
+ 842 [0x1A50] 0118FA7FFFFFFC31   
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r60 (22 vregs)
+ 843 [0x1A58] 01A3F80020003A32   IADD.u64 [r56:r57], [r50:r51], [r58:r59].w0
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r56,r58-r60 (23 vregs)
+ 844 [0x1A60] 23A3F800000078E2   IADD.u64.wait2 [r56:r57], thread_local_pointer.w0, [r56^:r57^]
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r56-r60 (24 vregs)
+ 845 [0x1A68] 0060B58218000078   LOAD.i32.unsigned.slot0 @r53, [r56^:r57^], offset:0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r60 (23 vregs)
+ 846 [0x1A70] 00B4FD411005C0CE   LSHIFT_AND.i32 r61, 0x1B1A1918.b0, 0x0.b00, r5
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 847 [0x1A78] 00A0F1001C00C471   IADD.u32 r49, r49^, 0x1000000.b3
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 848 [0x1A80] 08A0C5001000CA45   IADD.u32.wait0 r5, r5^, 0xB0A0908.b0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 849 [0x1A88] 00B4F50011C03D75   RSHIFT_OR.i32 r53, r53^, r61.b00, 0x0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 850 [0x1A90] 00A0F540000A3075   IMUL.i32 r53, r53^.b0, r48
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 851 [0x1A98] 00A0F5000C00C575   IADD.u32 r53, r53^, 0x80002000.h1
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 852 [0x1AA0] 00B4F50011C0CC75   RSHIFT_OR.i32 r53, r53^, 0x13121110.b00, 0x0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 853 [0x1AA8] 0150F5010F75750F   CSEL.u32.gt r53, r15, r53^, r53^, r15
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61 (24 vregs)
+ 854 [0x1AB0] 00A0FE0000000D75   IADD.u32 r62, r53^, r13
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r62 (24 vregs)
+ 855 [0x1AB8] 0118FB000001FC3E   
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r62 (24 vregs)
+ 856 [0x1AC0] 00B4FF011C94C87E   LSHIFT_AND.i32 r63, r62^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r61,r63 (24 vregs)
+ 857 [0x1AC8] 0691F500000000FF   MOV.i32 r53, program_counter.w1
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r61,r63 (24 vregs)
+ 858 [0x1AD0] 01A3F80024003A34   IADD.u64 [r56:r57], [r52:r53], [r58:r59].reserved
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r56-r58,r60-r61,r63 (25 vregs)
+ 859 [0x1AD8] 0060B58258000078   LOAD.i32.unsigned.slot1 @r53, [r56^:r57^], offset:0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58,r60-r61,r63 (24 vregs)
+ 860 [0x1AE0] 01A3FA0020007A36   IADD.u64 [r58:r59], [r54:r55], [r58^:r59^].w0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r58-r61,r63 (25 vregs)
+ 861 [0x1AE8] 03A3F80000007AE2   IADD.u64 [r56:r57], thread_local_pointer.w0, [r58^:r59^]
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r56-r57,r59-r61,r63 (26 vregs)
+ 862 [0x1AF0] 1060BA8218000038   LOAD.i32.unsigned.slot0.wait1 @r58, [r56:r57], offset:0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r56-r61,r63 (27 vregs)
+ 863 [0x1AF8] 08B4F50011C07F75   RSHIFT_OR.i32.wait0 r53, r53^, r63^.b00, 0x0
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r56-r61,r63 (27 vregs)
+ 864 [0x1B00] 00B4FA59517A3DD6   LSHIFT_OR.i32.not_result r58, 0x477FFF00.b1, r61.b00, r58^.not
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r56-r61,r63 (27 vregs)
+ 865 [0x1B08] 00B4F541117A7D75   LSHIFT_OR.i32 r53, r53^.b0, r61^.b00, r58^
+// live: r0,r2,r4-r15,r48-r50,r52-r54,r56-r60,r63 (26 vregs)
+ 866 [0x1B10] 006175029B000078   STORE.i32.force.slot2 @r53, [r56^:r57^], offset:0
+// live: r0,r2,r4-r15,r48-r50,r52,r54,r58-r60,r63 (23 vregs)
+ 867 [0x1B18] 00F0F50080C00A31   ICMP_OR.u32.eq.m1 r53, r49, r10, 0x0
+// live-in: r0,r2,r4-r15,r48-r50,r52-r54,r58-r60,r63 (24 vregs)
+ 868 [0x1B20] 001FC017FFFFE535   BRANCHZ.eq r53, offset:-27 /* jumps to 0x1A50 (instruction #842) */
+// live-out: r0,r2,r4-r15,r48-r50,r52,r54,r58-r60,r63 (23 vregs)
 
-// live: r0,r2,r4,r6-r8,r10-r13,r60,r62 (12 vregs)
- 848 [0x1A80] 2000C00000000000   NOP.wait2 
-// live: r0,r2,r4,r6-r8,r10-r13,r60,r62 (12 vregs)
- 849 [0x1A88] 0260B0F4280108E2   LOAD.i64.unsigned.slot0 @r48:r49, thread_local_pointer.w0, offset:264
-// live: r0,r2,r4,r6-r8,r10-r13,r48-r49,r60,r62 (14 vregs)
- 850 [0x1A90] 0110C500000004C0   IADD_IMM.i32 r5, 0x0, #0x4
-// live: r0,r2,r4-r8,r10-r13,r48-r49,r60,r62 (15 vregs)
- 851 [0x1A98] 0151C9039A45C004   CSEL.v2u16.ne r9, r4, 0x0, r5^, u13.w0 /* 6 (0x6) */
-// live: r0,r2,r4,r6-r13,r48-r49,r60,r62 (15 vregs)
- 852 [0x1AA0] 0110FB00018242C0   IADD_IMM.i32 r59, 0x0, #0x18242
-// live: r0,r2,r4,r6-r13,r48-r49,r59-r60,r62 (16 vregs)
- 853 [0x1AA8] 0151C4039D7BC044   CSEL.v2u16.ne r4, r4^, 0x0, r59^, u14.w1 /* 66114 (0x10242) */
-// live: r0,r2,r4,r6-r13,r48-r49,r60,r62 (15 vregs)
- 854 [0x1AB0] 0910FA00000000C0   IADD_IMM.i32.wait0 r58, 0x0, #0x0
-// live: r0,r2,r4,r6-r13,r48-r49,r60,r62 (15 vregs)
- 855 [0x1AB8] 01B7CE0011C0CC30   RSHIFT_OR.i64 [r14:r15], [r48:r49], 0x13121110.b00, 0x0
-// live: r0,r2,r4,r6-r14,r48-r49,r60,r62 (16 vregs)
- 856 [0x1AC0] 00A1C50000054E30   MKVEC.v2i16 r5, r48.h0, r14^.h0
-// live: r0,r2,r4-r13,r48-r49,r60,r62 (16 vregs)
- 857 [0x1AC8] 00B4F5211005C0D6   LSHIFT_AND.i32 r53, 0x477FFF00.h0, 0x0.b00, r5
-// live: r0,r2,r4-r13,r48-r49,r53,r60,r62 (17 vregs)
- 858 [0x1AD0] 0118FE00FF000005   
-// live: r0,r2,r4-r13,r48-r49,r53,r60,r62 (17 vregs)
- 859 [0x1AD8] 00B4F40011C0CE05   RSHIFT_OR.i32 r52, r5, 0x1B1A1918.b00, 0x0
-// live: r0,r2,r4-r13,r48-r49,r52-r53,r60,r62 (18 vregs)
- 860 [0x1AE0] 00B4FD0011C00934   RSHIFT_OR.i32 r61, r52, r9.b00, 0x0
-// live: r0,r2,r4-r13,r48-r49,r52-r53,r60-r62 (19 vregs)
- 861 [0x1AE8] 00A0FD001C0ACE7D   IMUL.i32 r61, r61^, 0x1B1A1918.b3
-// live: r0,r2,r4-r13,r48-r49,r52-r53,r60-r62 (19 vregs)
- 862 [0x1AF0] 0118C5FF00000045   
-// live: r0,r2,r4-r13,r48-r49,r52-r53,r60-r62 (19 vregs)
- 863 [0x1AF8] 0090F60000100030   U8_TO_U32 r54, r48.b0
-// live: r0,r2,r4-r13,r48-r49,r52-r54,r60-r62 (20 vregs)
- 864 [0x1B00] 00A0F50000003675   IADD.u32 r53, r53^, r54
-// live: r0,r2,r4-r13,r48-r49,r52-r54,r60-r62 (20 vregs)
- 865 [0x1B08] 00A0FE0000007E75   IADD.u32 r62, r53^, r62^
-// live: r0,r2,r4-r13,r48-r49,r52,r54,r60-r62 (19 vregs)
- 866 [0x1B10] 00A0C5000000457E   IADD.u32 r5, r62^, r5^
-// live: r0,r2,r4-r13,r48-r49,r52,r54,r60-r61 (18 vregs)
- 867 [0x1B18] 00B4F90011C0CC05   RSHIFT_OR.i32 r57, r5, 0x13121110.b00, 0x0
-// live: r0,r2,r4-r13,r48-r49,r52,r54,r57,r60-r61 (19 vregs)
- 868 [0x1B20] 00B4FF4011C00939   RSHIFT_OR.i32 r63, r57.b0, r9.b00, 0x0
-// live: r0,r2,r4-r13,r48-r49,r52,r54,r57,r60-r61,r63 (20 vregs)
- 869 [0x1B28] 00A18110200ACA7F   IMUL.v2i16 r1.h1, r63^.h10, 0xB0A0908.b11
-// live: r0-r2,r4-r13,r48-r49,r52,r54,r57,r60-r61 (20 vregs)
- 870 [0x1B30] 00B4C50011C0CA45   RSHIFT_OR.i32 r5, r5^, 0xB0A0908.b00, 0x0
-// live: r0-r2,r4-r13,r48-r49,r52,r54,r57,r60-r61 (20 vregs)
- 871 [0x1B38] 00B4F54011C00905   RSHIFT_OR.i32 r53, r5.b0, r9.b00, 0x0
-// live: r0-r2,r4-r13,r48-r49,r52-r54,r57,r60-r61 (21 vregs)
- 872 [0x1B40] 00A0F5001C0AC875   IMUL.i32 r53, r53^, 0x3020100.b3
-// live: r0-r2,r4-r13,r48-r49,r52-r54,r57,r60-r61 (21 vregs)
- 873 [0x1B48] 00B4F70011C00936   RSHIFT_OR.i32 r55, r54, r9.b00, 0x0
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r57,r60-r61 (22 vregs)
- 874 [0x1B50] 0710FE00000A98FE   IADD_IMM.i32 r62, program_counter.w0, #0xA98
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r57,r60-r62 (23 vregs)
- 875 [0x1B58] 0691FF00000000FF   MOV.i32 r63, program_counter.w1
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r57,r60-r62 (23 vregs)
- 876 [0x1B60] 00B4F609517609C1   LSHIFT_OR.i32.not_result r54, 0xFFFFFFFF, r9.b00, r54^.not
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r57,r60-r62 (23 vregs)
- 877 [0x1B68] 00B4F60115C0CC76   LSHIFT_OR.i32 r54, r54^, 0x13121110.b11, 0x0
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r57,r60-r62 (23 vregs)
- 878 [0x1B70] 00A0C40000007644   IADD.u32 r4, r4^, r54^
-// live: r0-r2,r4-r13,r48-r49,r52-r53,r55,r57,r60-r62 (22 vregs)
- 879 [0x1B78] 00B4F609517909C1   LSHIFT_OR.i32.not_result r54, 0xFFFFFFFF, r9.b00, r57^.not
-// live: r0-r2,r4-r13,r48-r49,r52-r55,r60-r62 (22 vregs)
- 880 [0x1B80] 0091F20000000031   MOV.i32 r50, r49
-// live: r0-r2,r4-r13,r48,r50,r52-r55,r60-r62 (22 vregs)
- 881 [0x1B88] 0090F30000100032   U8_TO_U32 r51, r50.b0
-// live: r0-r2,r4-r13,r48,r50-r55,r60-r62 (23 vregs)
- 882 [0x1B90] 00B4CF0011C00933   RSHIFT_OR.i32 r15, r51, r9.b00, 0x0
-// live: r0-r2,r4-r13,r15,r48,r50-r55,r60-r62 (24 vregs)
- 883 [0x1B98] 00A0CF00000A9B4F   IMUL.i32 r15, r15^, u13.w1 /* 81 (0x51) */
-// live: r0-r2,r4-r13,r15,r48,r50-r55,r60-r62 (24 vregs)
- 884 [0x1BA0] 00A0FD0000007D4F   IADD.u32 r61, r15^, r61^
-// live: r0-r2,r4-r13,r48,r50-r55,r60-r62 (23 vregs)
- 885 [0x1BA8] 00A0FD000C00017D   IADD.u32 r61, r61^, r1.h1
-// live: r0-r2,r4-r13,r48,r50-r55,r60-r62 (23 vregs)
- 886 [0x1BB0] 00A0FD000000757D   IADD.u32 r61, r61^, r53^
-// live: r0-r2,r4-r13,r48,r50-r52,r54-r55,r60-r62 (22 vregs)
- 887 [0x1BB8] 00A0F8000000777D   IADD.u32 r56, r61^, r55^
-// live: r0-r2,r4-r13,r48,r50-r52,r54-r56,r60,r62 (22 vregs)
- 888 [0x1BC0] 0118F7FFFFFFFC38   
-// live: r0-r2,r4-r13,r48,r50-r52,r54-r56,r60,r62 (22 vregs)
- 889 [0x1BC8] 01A3FE002400367E   IADD.u64 [r62:r63], [r62^:r63^], [r54:r55].reserved
-// live: r0-r2,r4-r13,r48,r50-r52,r54,r56,r60,r62-r63 (22 vregs)
- 890 [0x1BD0] 00608E821800007E   LOAD.i32.unsigned.slot0 @r14, [r62^:r63^], offset:0
-// live: r0-r2,r4-r14,r48,r50-r52,r54,r56,r60 (21 vregs)
- 891 [0x1BD8] 00B4CF011C94C878   LSHIFT_AND.i32 r15, r56^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
- 892 [0x1BE0] 00A0FD001400CC09   IADD.u32 r61, r9, 0x13121110.b1
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60-r61 (22 vregs)
- 893 [0x1BE8] 00B4FE09514509C1   LSHIFT_OR.i32.not_result r62, 0xFFFFFFFF, r9.b00, r5^.not
-// live: r0-r2,r4,r6-r15,r48,r50-r52,r54,r60-r62 (22 vregs)
- 894 [0x1BF0] 00A0C5001C00CC09   IADD.u32 r5, r9, 0x13121110.b3
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60-r62 (23 vregs)
- 895 [0x1BF8] 00A0FF50000109CB   ISUB.u32 r63, 0xF0E0D0C.b1, r9
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60-r63 (24 vregs)
- 896 [0x1C00] 08B4FF0011C07F3E   RSHIFT_OR.i32.wait0 r63, r62, r63^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60-r63 (24 vregs)
- 897 [0x1C08] 00B4F500109C0F0E   RSHIFT_AND.i32 r53, r14, r15.b00, u14.w0 /* 3 (0x3) */
-// live: r0-r2,r4-r15,r48,r50-r54,r60-r63 (25 vregs)
- 898 [0x1C10] 00B4C40111447D75   LSHIFT_OR.i32 r4, r53^, r61^.b00, r4^
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60,r62-r63 (23 vregs)
- 899 [0x1C18] 00B4C4011144057E   LSHIFT_OR.i32 r4, r62^, r5.b00, r4^
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60,r63 (22 vregs)
- 900 [0x1C20] 00A0F50000000945   IADD.u32 r53, r5^, r9
-// live: r0-r2,r4,r6-r15,r48,r50-r54,r60,r63 (22 vregs)
- 901 [0x1C28] 0150F701C07F9E35   CSEL.u32.gt r55, r53, u15.w0 /* 32 (0x20) */, r63^, 0x0
-// live: r0-r2,r4,r6-r15,r48,r50-r55,r60 (22 vregs)
- 902 [0x1C30] 00B4F9511035C0C5   LSHIFT_AND.i32 r57, 0x80002000.b1, 0x0.b00, r53
-// live: r0-r2,r4,r6-r15,r48,r50-r55,r57,r60 (23 vregs)
- 903 [0x1C38] 00B4CF0011C04F4E   RSHIFT_OR.i32 r15, r14^, r15^.b00, 0x0
-// live: r0-r2,r4,r6-r13,r15,r48,r50-r55,r57,r60 (22 vregs)
- 904 [0x1C40] 00B4F800189CC80F   RSHIFT_AND.i32 r56, r15, 0x3020100.b22, u14.w0 /* 3 (0x3) */
-// live: r0-r2,r4,r6-r13,r15,r48,r50-r57,r60 (23 vregs)
- 905 [0x1C48] 00B4C50111C03538   LSHIFT_OR.i32 r5, r56, r53.b00, 0x0
-// live: r0-r2,r4-r13,r15,r48,r50-r57,r60 (24 vregs)
- 906 [0x1C50] 00B4CE0952C109C1   LSHIFT_XOR.i32.not_result r14, 0xFFFFFFFF, r9.b00, 0xFFFFFFFF.not
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 907 [0x1C58] 001FC00000000679   BRANCHZ r57^, offset:6 /* jumps to 0x1C90 (instruction #914) */
-// live-out: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
+// live: r0,r2,r4,r6-r9,r11-r12,r14,r60,r63 (12 vregs)
+ 869 [0x1B28] 2000C00000000000   NOP.wait2 
+// live: r0,r2,r4,r6-r9,r11-r12,r14,r60,r63 (12 vregs)
+ 870 [0x1B30] 0069400018006080   >>> DEBUG_INFO: block 24 <<<
+// live: r0,r2,r4,r6-r9,r11-r12,r14,r60,r63 (12 vregs)
+ 871 [0x1B38] 0110C500000004C0   IADD_IMM.i32 r5, 0x0, #0x4
+// live: r0,r2,r4-r9,r11-r12,r14,r60,r63 (13 vregs)
+ 872 [0x1B40] 0151CA039945C004   CSEL.v2u16.ne r10, r4, 0x0, r5^, u12.w1 /* 6 (0x6) */
+// live: r0,r2,r4,r6-r12,r14,r60,r63 (13 vregs)
+ 873 [0x1B48] 00A0FE001400CC0A   IADD.u32 r62, r10, 0x13121110.b1
+// live: r0,r2,r4,r6-r12,r14,r60,r62-r63 (14 vregs)
+ 874 [0x1B50] 0110FB00018242C0   IADD_IMM.i32 r59, 0x0, #0x18242
+// live: r0,r2,r4,r6-r12,r14,r59-r60,r62-r63 (15 vregs)
+ 875 [0x1B58] 0151C4039D7BC044   CSEL.v2u16.ne r4, r4^, 0x0, r59^, u14.w1 /* 66114 (0x10242) */
+// live: r0,r2,r4,r6-r12,r14,r60,r62-r63 (14 vregs)
+ 876 [0x1B60] 0910FA00000000C0   IADD_IMM.i32.wait0 r58, 0x0, #0x0
+// live: r0,r2,r4,r6-r12,r14,r60,r62-r63 (14 vregs)
+ 877 [0x1B68] 0A60B2F4280108E2   LOAD.i64.unsigned.slot0.wait0 @r50:r51, thread_local_pointer.w0, offset:264
+// live: r0,r2,r4,r6-r12,r14,r50-r51,r60,r62-r63 (16 vregs)
+ 878 [0x1B70] 01B7F40011C0CC32   RSHIFT_OR.i64 [r52:r53], [r50:r51], 0x13121110.b00, 0x0
+// live: r0,r2,r4,r6-r12,r14,r50-r52,r60,r62-r63 (17 vregs)
+ 879 [0x1B78] 00A1CD0000057432   MKVEC.v2i16 r13, r50.h0, r52^.h0
+// live: r0,r2,r4,r6-r14,r50-r51,r60,r62-r63 (17 vregs)
+ 880 [0x1B80] 00B4F521100DC0D6   LSHIFT_AND.i32 r53, 0x477FFF00.h0, 0x0.b00, r13
+// live: r0,r2,r4,r6-r14,r50-r51,r53,r60,r62-r63 (18 vregs)
+ 881 [0x1B88] 0118FF00FF00000D   
+// live: r0,r2,r4,r6-r14,r50-r51,r53,r60,r62-r63 (18 vregs)
+ 882 [0x1B90] 00B4F40011C0CE0D   RSHIFT_OR.i32 r52, r13, 0x1B1A1918.b00, 0x0
+// live: r0,r2,r4,r6-r14,r50-r53,r60,r62-r63 (19 vregs)
+ 883 [0x1B98] 00B4CF0011C00A34   RSHIFT_OR.i32 r15, r52, r10.b00, 0x0
+// live: r0,r2,r4,r6-r15,r50-r53,r60,r62-r63 (20 vregs)
+ 884 [0x1BA0] 00A0CF001C0ACE4F   IMUL.i32 r15, r15^, 0x1B1A1918.b3
+// live: r0,r2,r4,r6-r15,r50-r53,r60,r62-r63 (20 vregs)
+ 885 [0x1BA8] 0118CDFF0000004D   
+// live: r0,r2,r4,r6-r15,r50-r53,r60,r62-r63 (20 vregs)
+ 886 [0x1BB0] 0090F80000100032   U8_TO_U32 r56, r50.b0
+// live: r0,r2,r4,r6-r15,r50-r53,r56,r60,r62-r63 (21 vregs)
+ 887 [0x1BB8] 00A0F50000003875   IADD.u32 r53, r53^, r56
+// live: r0,r2,r4,r6-r15,r50-r53,r56,r60,r62-r63 (21 vregs)
+ 888 [0x1BC0] 00A0FF0000007F75   IADD.u32 r63, r53^, r63^
+// live: r0,r2,r4,r6-r15,r50-r52,r56,r60,r62-r63 (20 vregs)
+ 889 [0x1BC8] 00A0CD0000004D7F   IADD.u32 r13, r63^, r13^
+// live: r0,r2,r4,r6-r15,r50-r52,r56,r60,r62 (19 vregs)
+ 890 [0x1BD0] 00B4F90011C0CC0D   RSHIFT_OR.i32 r57, r13, 0x13121110.b00, 0x0
+// live: r0,r2,r4,r6-r15,r50-r52,r56-r57,r60,r62 (20 vregs)
+ 891 [0x1BD8] 00B4F54011C00A39   RSHIFT_OR.i32 r53, r57.b0, r10.b00, 0x0
+// live: r0,r2,r4,r6-r15,r50-r53,r56-r57,r60,r62 (21 vregs)
+ 892 [0x1BE0] 00A18110200ACA75   IMUL.v2i16 r1.h1, r53^.h10, 0xB0A0908.b11
+// live: r0-r2,r4,r6-r15,r50-r52,r56-r57,r60,r62 (21 vregs)
+ 893 [0x1BE8] 00B4CD0011C0CA4D   RSHIFT_OR.i32 r13, r13^, 0xB0A0908.b00, 0x0
+// live: r0-r2,r4,r6-r15,r50-r52,r56-r57,r60,r62 (21 vregs)
+ 894 [0x1BF0] 00B4F64011C00A0D   RSHIFT_OR.i32 r54, r13.b0, r10.b00, 0x0
+// live: r0-r2,r4,r6-r15,r50-r52,r54,r56-r57,r60,r62 (22 vregs)
+ 895 [0x1BF8] 00A0F6001C0AC876   IMUL.i32 r54, r54^, 0x3020100.b3
+// live: r0-r2,r4,r6-r15,r50-r52,r54,r56-r57,r60,r62 (22 vregs)
+ 896 [0x1C00] 00B4CD09514D0AC1   LSHIFT_OR.i32.not_result r13, 0xFFFFFFFF, r10.b00, r13^.not
+// live: r0-r2,r4,r6-r15,r50-r52,r54,r56-r57,r60,r62 (22 vregs)
+ 897 [0x1C08] 00B4F70011C00A38   RSHIFT_OR.i32 r55, r56, r10.b00, 0x0
+// live: r0-r2,r4,r6-r15,r50-r52,r54-r57,r60,r62 (23 vregs)
+ 898 [0x1C10] 00B4FD0951780AC1   LSHIFT_OR.i32.not_result r61, 0xFFFFFFFF, r10.b00, r56^.not
+// live: r0-r2,r4,r6-r15,r50-r52,r54-r55,r57,r60-r62 (23 vregs)
+ 899 [0x1C18] 00B4FD0115C0CC7D   LSHIFT_OR.i32 r61, r61^, 0x13121110.b11, 0x0
+// live: r0-r2,r4,r6-r15,r50-r52,r54-r55,r57,r60-r62 (23 vregs)
+ 900 [0x1C20] 00A0C40000007D44   IADD.u32 r4, r4^, r61^
+// live: r0-r2,r4,r6-r15,r50-r52,r54-r55,r57,r60,r62 (22 vregs)
+ 901 [0x1C28] 00A0FF5000010ACB   ISUB.u32 r63, 0xF0E0D0C.b1, r10
+// live: r0-r2,r4,r6-r15,r50-r52,r54-r55,r57,r60,r62-r63 (23 vregs)
+ 902 [0x1C30] 0091F00000000033   MOV.i32 r48, r51
+// live: r0-r2,r4,r6-r15,r48,r50,r52,r54-r55,r57,r60,r62-r63 (23 vregs)
+ 903 [0x1C38] 0090F10000100030   U8_TO_U32 r49, r48.b0
+// live: r0-r2,r4,r6-r15,r48-r50,r52,r54-r55,r57,r60,r62-r63 (24 vregs)
+ 904 [0x1C40] 00B4C50011C00A31   RSHIFT_OR.i32 r5, r49, r10.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52,r54-r55,r57,r60,r62-r63 (25 vregs)
+ 905 [0x1C48] 00A0C500000A9B45   IMUL.i32 r5, r5^, u13.w1 /* 81 (0x51) */
+// live: r0-r2,r4-r15,r48-r50,r52,r54-r55,r57,r60,r62-r63 (25 vregs)
+ 906 [0x1C50] 00A0C50000004F45   IADD.u32 r5, r5^, r15^
+// live: r0-r2,r4-r15,r48-r50,r52,r54-r55,r57,r60,r62-r63 (25 vregs)
+ 907 [0x1C58] 00A0C5000C000145   IADD.u32 r5, r5^, r1.h1
+// live: r0-r2,r4-r15,r48-r50,r52,r54-r55,r57,r60,r62-r63 (25 vregs)
+ 908 [0x1C60] 00A0C50000007645   IADD.u32 r5, r5^, r54^
+// live: r0-r2,r4-r15,r48-r50,r52,r55,r57,r60,r62-r63 (24 vregs)
+ 909 [0x1C68] 00A0C50000007745   IADD.u32 r5, r5^, r55^
+// live: r0-r2,r4-r15,r48-r50,r52,r57,r60,r62-r63 (23 vregs)
+ 910 [0x1C70] 0118CFFFFFFFFC05   
+// live: r0-r2,r4-r15,r48-r50,r52,r57,r60,r62-r63 (23 vregs)
+ 911 [0x1C78] 00B4C5011C94C845   LSHIFT_AND.i32 r5, r5^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
+// live: r0-r2,r4-r15,r48-r50,r52,r57,r60,r62-r63 (23 vregs)
+ 912 [0x1C80] 0710F6000009E8FE   IADD_IMM.i32 r54, program_counter.w0, #0x9E8
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r57,r60,r62-r63 (24 vregs)
+ 913 [0x1C88] 0691F700000000FF   MOV.i32 r55, program_counter.w1
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r57,r60,r62-r63 (24 vregs)
+ 914 [0x1C90] 01A3F60024000E76   IADD.u64 [r54:r55], [r54^:r55^], [r14:r15].reserved
+// live: r0-r2,r4-r14,r48-r50,r52,r54-r55,r57,r60,r62-r63 (24 vregs)
+ 915 [0x1C98] 00608F8218000076   LOAD.i32.unsigned.slot0 @r15, [r54^:r55^], offset:0
+// live: r0-r2,r4-r15,r48-r50,r52,r57,r60,r62-r63 (23 vregs)
+ 916 [0x1CA0] 08B4F60951790AC1   LSHIFT_OR.i32.not_result.wait0 r54, 0xFFFFFFFF, r10.b00, r57^.not
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r60,r62-r63 (23 vregs)
+ 917 [0x1CA8] 00B4F500109C050F   RSHIFT_AND.i32 r53, r15, r5.b00, u14.w0 /* 3 (0x3) */
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60,r62-r63 (24 vregs)
+ 918 [0x1CB0] 00B4C40111447E75   LSHIFT_OR.i32 r4, r53^, r62^.b00, r4^
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r60,r63 (22 vregs)
+ 919 [0x1CB8] 00A0F5001C00CC0A   IADD.u32 r53, r10, 0x13121110.b3
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60,r63 (23 vregs)
+ 920 [0x1CC0] 00B4C4011144350D   LSHIFT_OR.i32 r4, r13, r53.b00, r4^
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60,r63 (23 vregs)
+ 921 [0x1CC8] 00A0F50000000A75   IADD.u32 r53, r53^, r10
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60,r63 (23 vregs)
+ 922 [0x1CD0] 00B4F9511035C0C5   LSHIFT_AND.i32 r57, 0x80002000.b1, 0x0.b00, r53
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r57,r60,r63 (24 vregs)
+ 923 [0x1CD8] 00B4CD0011C07F4D   RSHIFT_OR.i32 r13, r13^, r63^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r57,r60 (23 vregs)
+ 924 [0x1CE0] 0150F701C04D9E35   CSEL.u32.gt r55, r53, u15.w0 /* 32 (0x20) */, r13^, 0x0
+// live: r0-r2,r4-r12,r14-r15,r48-r50,r52-r55,r57,r60 (23 vregs)
+ 925 [0x1CE8] 00B4CD0952C10AC1   LSHIFT_XOR.i32.not_result r13, 0xFFFFFFFF, r10.b00, 0xFFFFFFFF.not
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r57,r60 (24 vregs)
+ 926 [0x1CF0] 00B4CF0011C0454F   RSHIFT_OR.i32 r15, r15^, r5^.b00, 0x0
+// live: r0-r2,r4,r6-r15,r48-r50,r52-r55,r57,r60 (23 vregs)
+ 927 [0x1CF8] 00B4F800189CC80F   RSHIFT_AND.i32 r56, r15, 0x3020100.b22, u14.w0 /* 3 (0x3) */
+// live: r0-r2,r4,r6-r15,r48-r50,r52-r57,r60 (24 vregs)
+ 928 [0x1D00] 00B4C50111C03538   LSHIFT_OR.i32 r5, r56, r53.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 929 [0x1D08] 001FC00000000679   BRANCHZ r57^, offset:6 /* jumps to 0x1D40 (instruction #936) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
- 908 [0x1C60] 00A0FA00000135C0   ISUB.u32 r58, 0x0, r53
-// live: r0-r2,r4-r15,r48,r50-r56,r58,r60 (25 vregs)
- 909 [0x1C68] 00B4F80011C07A78   RSHIFT_OR.i32 r56, r56^, r58^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
- 910 [0x1C70] 00B4F9711035C0CF   LSHIFT_AND.i32 r57, 0x1F1E1D1C.b3, 0x0.b00, r53
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 911 [0x1C78] 0150F800C0789F79   CSEL.u32.eq r56, r57^, u15.w1 /* 31 (0x1F) */, r56^, 0x0
-// live: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
- 912 [0x1C80] 00B4C4011145C044   LSHIFT_OR.i32 r4, r4^, 0x0.b00, r5^
-// live: r0-r2,r4,r6-r15,r48,r50-r56,r60 (23 vregs)
- 913 [0x1C88] 5091C50000000078   MOV.i32.reconverge r5, r56^
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
+ 930 [0x1D10] 00A0FA00000135C0   ISUB.u32 r58, 0x0, r53
+// live: r0-r2,r4-r15,r48-r50,r52-r56,r58,r60 (25 vregs)
+ 931 [0x1D18] 00B4F80011C07A78   RSHIFT_OR.i32 r56, r56^, r58^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
+ 932 [0x1D20] 00B4F9711035C0CF   LSHIFT_AND.i32 r57, 0x1F1E1D1C.b3, 0x0.b00, r53
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 933 [0x1D28] 0150F800C0789F79   CSEL.u32.eq r56, r57^, u15.w1 /* 31 (0x1F) */, r56^, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
+ 934 [0x1D30] 00B4C4011145C044   LSHIFT_OR.i32 r4, r4^, 0x0.b00, r5^
+// live: r0-r2,r4,r6-r15,r48-r50,r52-r56,r60 (23 vregs)
+ 935 [0x1D38] 5091C50000000078   MOV.i32.reconverge r5, r56^
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
-/* Jump target from: 0x1C58 */
-// live-in: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 914 [0x1C90] 00B4F901100EC076   LSHIFT_AND.i32 r57, r54^, 0x0.b00, r14
-// live: r0-r2,r4-r15,r48,r50-r53,r55,r57,r60 (23 vregs)
- 915 [0x1C98] 00A0F6001800C835   IADD.u32 r54, r53, 0x3020100.b2
-// live: r0-r2,r4-r15,r48,r50-r55,r57,r60 (24 vregs)
- 916 [0x1CA0] 00B4F80111C03639   LSHIFT_OR.i32 r56, r57, r54.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 917 [0x1CA8] 00B4FA0015C0C936   RSHIFT_OR.i32 r58, r54, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r58,r60 (26 vregs)
- 918 [0x1CB0] 00B4C5011145C077   LSHIFT_OR.i32 r5, r55^, 0x0.b00, r5^
-// live-in: r0-r2,r4-r15,r48,r50-r54,r56-r58,r60 (25 vregs)
- 919 [0x1CB8] 001FC0100000043A   BRANCHZ.eq r58, offset:4 /* jumps to 0x1CE0 (instruction #924) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r56-r58,r60 (25 vregs)
+/* Jump target from: 0x1D08 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 936 [0x1D40] 00B4F901100DC076   LSHIFT_AND.i32 r57, r54^, 0x0.b00, r13
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55,r57,r60 (23 vregs)
+ 937 [0x1D48] 00A0F6001800C835   IADD.u32 r54, r53, 0x3020100.b2
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r57,r60 (24 vregs)
+ 938 [0x1D50] 00B4F80111C03639   LSHIFT_OR.i32 r56, r57, r54.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 939 [0x1D58] 00B4FA0015C0C936   RSHIFT_OR.i32 r58, r54, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r58,r60 (26 vregs)
+ 940 [0x1D60] 00B4C5011145C077   LSHIFT_OR.i32 r5, r55^, 0x0.b00, r5^
+// live-in: r0-r2,r4-r15,r48-r50,r52-r54,r56-r58,r60 (25 vregs)
+ 941 [0x1D68] 001FC0100000043A   BRANCHZ.eq r58, offset:4 /* jumps to 0x1D90 (instruction #946) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r56-r58,r60 (25 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r56-r58,r60 (24 vregs)
- 920 [0x1CC0] 011AF5000000017A   UNK_IMM_11A r53, r58^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
- 921 [0x1CC8] 001FC00000000975   BRANCHZ r53^, offset:9 /* jumps to 0x1D18 (instruction #931) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r56-r58,r60 (24 vregs)
+ 942 [0x1D70] 011AF5000000017A   UNK_IMM_11A r53, r58^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
+ 943 [0x1D78] 001FC00000000975   BRANCHZ r53^, offset:9 /* jumps to 0x1DC8 (instruction #953) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
- 922 [0x1CD0] 00B4C5011178C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r56^
-// live: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
- 923 [0x1CD8] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x1D18 (instruction #931) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
+ 944 [0x1D80] 00B4C5011178C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r56^
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
+ 945 [0x1D88] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x1DC8 (instruction #953) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
 
-/* Jump target from: 0x1CB8 */
-// live-in: r0-r2,r4-r15,r48,r50-r54,r56-r57,r60 (24 vregs)
- 924 [0x1CE0] 00B4F7711036C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r54
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 925 [0x1CE8] 00A0F70000000977   IADD.u32 r55, r55^, r9
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 926 [0x1CF0] 00A0F560000175CF   ISUB.u32 r53, 0x1F1E1D1C.b2, r53^
-// live: r0-r2,r4-r15,r48,r50-r57,r60 (25 vregs)
- 927 [0x1CF8] 00B4F50011C07579   RSHIFT_OR.i32 r53, r57^, r53^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
- 928 [0x1D00] 0150F501C0759E77   CSEL.u32.gt r53, r55^, u15.w0 /* 32 (0x20) */, r53^, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r56,r60 (23 vregs)
- 929 [0x1D08] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r56,r60 (22 vregs)
- 930 [0x1D10] 50B4C4011178C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r56^
-// live-out: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
+/* Jump target from: 0x1D68 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r54,r56-r57,r60 (24 vregs)
+ 946 [0x1D90] 00B4F7711036C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r54
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 947 [0x1D98] 00A0F70000000A77   IADD.u32 r55, r55^, r10
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 948 [0x1DA0] 00A0F560000175CF   ISUB.u32 r53, 0x1F1E1D1C.b2, r53^
+// live: r0-r2,r4-r15,r48-r50,r52-r57,r60 (25 vregs)
+ 949 [0x1DA8] 00B4F50011C07579   RSHIFT_OR.i32 r53, r57^, r53^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
+ 950 [0x1DB0] 0150F501C0759E77   CSEL.u32.gt r53, r55^, u15.w0 /* 32 (0x20) */, r53^, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56,r60 (23 vregs)
+ 951 [0x1DB8] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r56,r60 (22 vregs)
+ 952 [0x1DC0] 50B4C4011178C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r56^
+// live-out: r0-r2,r4-r15,r48-r50,r52,r54,r60 (21 vregs)
 
-/* Jump target from: 0x1CC8, 0x1CD8 */
-// live-in: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
- 931 [0x1D18] 00B4F50010A0C90F   RSHIFT_AND.i32 r53, r15, 0x7060504.b00, u16.w0 /* 1 (0x1) */
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 932 [0x1D20] 00A0F60000000976   IADD.u32 r54, r54^, r9
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 933 [0x1D28] 00B4F50111C03675   LSHIFT_OR.i32 r53, r53^, r54.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 934 [0x1D30] 00B4F70015C0C936   RSHIFT_OR.i32 r55, r54, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 935 [0x1D38] 00B4F409517409C1   LSHIFT_OR.i32.not_result r52, 0xFFFFFFFF, r9.b00, r52^.not
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 936 [0x1D40] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1D68 (instruction #941) */
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+/* Jump target from: 0x1D78, 0x1D88 */
+// live-in: r0-r2,r4-r15,r48-r50,r52,r54,r60 (21 vregs)
+ 953 [0x1DC8] 00B4F50010A0C90F   RSHIFT_AND.i32 r53, r15, 0x7060504.b00, u16.w0 /* 1 (0x1) */
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 954 [0x1DD0] 00A0F60000000A76   IADD.u32 r54, r54^, r10
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 955 [0x1DD8] 00B4F50111C03675   LSHIFT_OR.i32 r53, r53^, r54.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 956 [0x1DE0] 00B4F70015C0C936   RSHIFT_OR.i32 r55, r54, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 957 [0x1DE8] 00B4F40951740AC1   LSHIFT_OR.i32.not_result r52, 0xFFFFFFFF, r10.b00, r52^.not
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 958 [0x1DF0] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1E18 (instruction #963) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 937 [0x1D48] 011AF70000000177   UNK_IMM_11A r55, r55^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 938 [0x1D50] 001FC00000000377   BRANCHZ r55^, offset:3 /* jumps to 0x1D70 (instruction #942) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 959 [0x1DF8] 011AF70000000177   UNK_IMM_11A r55, r55^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 960 [0x1E00] 001FC00000000377   BRANCHZ r55^, offset:3 /* jumps to 0x1E20 (instruction #964) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 939 [0x1D58] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 940 [0x1D60] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x1D70 (instruction #942) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 961 [0x1E08] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 962 [0x1E10] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x1E20 (instruction #964) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-/* Jump target from: 0x1D40 */
-// live-in: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 941 [0x1D68] 50B4C4011175C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r53^
-// live-out: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
+/* Jump target from: 0x1DF0 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 963 [0x1E18] 50B4C4011175C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r53^
+// live-out: r0-r2,r4-r15,r48-r50,r52,r54,r60 (21 vregs)
 
-/* Jump target from: 0x1D50, 0x1D60 */
-// live-in: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
- 942 [0x1D70] 00A0F5001C00C436   IADD.u32 r53, r54, 0x1000000.b3
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 943 [0x1D78] 00B4F80015C0C935   RSHIFT_OR.i32 r56, r53, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r56,r60 (23 vregs)
- 944 [0x1D80] 00B4F70111C03534   LSHIFT_OR.i32 r55, r52, r53.b00, 0x0
-// live-in: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
- 945 [0x1D88] 001FC01000000438   BRANCHZ.eq r56, offset:4 /* jumps to 0x1DB0 (instruction #950) */
-// live-out: r0-r2,r4-r15,r48,r50-r56,r60 (24 vregs)
+/* Jump target from: 0x1E00, 0x1E10 */
+// live-in: r0-r2,r4-r15,r48-r50,r52,r54,r60 (21 vregs)
+ 964 [0x1E20] 00A0F5001C00C436   IADD.u32 r53, r54, 0x1000000.b3
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 965 [0x1E28] 00B4F80015C0C935   RSHIFT_OR.i32 r56, r53, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56,r60 (23 vregs)
+ 966 [0x1E30] 00B4F70111C03534   LSHIFT_OR.i32 r55, r52, r53.b00, 0x0
+// live-in: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
+ 967 [0x1E38] 001FC01000000438   BRANCHZ.eq r56, offset:4 /* jumps to 0x1E60 (instruction #972) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r56,r60 (24 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r51,r53-r56,r60 (23 vregs)
- 946 [0x1D90] 011AF40000000178   UNK_IMM_11A r52, r56^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 947 [0x1D98] 001FC00000000A74   BRANCHZ r52^, offset:10 /* jumps to 0x1DF0 (instruction #958) */
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+// live: r0-r2,r4-r15,r48-r50,r53-r56,r60 (23 vregs)
+ 968 [0x1E40] 011AF40000000178   UNK_IMM_11A r52, r56^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 969 [0x1E48] 001FC00000000A74   BRANCHZ r52^, offset:10 /* jumps to 0x1EA0 (instruction #980) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 948 [0x1DA0] 00B4C5011177C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r55^
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 949 [0x1DA8] 001FC000000008C1   BRANCHZ 0xFFFFFFFF, offset:8 /* jumps to 0x1DF0 (instruction #958) */
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 970 [0x1E50] 00B4C5011177C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r55^
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 971 [0x1E58] 001FC000000008C1   BRANCHZ 0xFFFFFFFF, offset:8 /* jumps to 0x1EA0 (instruction #980) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
-/* Jump target from: 0x1D88 */
-// live-in: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 950 [0x1DB0] 00B4F6711076C0CF   LSHIFT_AND.i32 r54, 0x1F1E1D1C.b3, 0x0.b00, r54^
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 951 [0x1DB8] 00B4F6711276C0CF   LSHIFT_XOR.i32 r54, 0x1F1E1D1C.b3, 0x0.b00, r54^
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 952 [0x1DC0] 00B4F40011C07674   RSHIFT_OR.i32 r52, r52^, r54^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r53,r55,r60 (22 vregs)
- 953 [0x1DC8] 00B4F8711035C0CF   LSHIFT_AND.i32 r56, 0x1F1E1D1C.b3, 0x0.b00, r53
-// live: r0-r2,r4-r15,r48,r50-r53,r55-r56,r60 (23 vregs)
- 954 [0x1DD0] 00A0F80000000978   IADD.u32 r56, r56^, r9
-// live: r0-r2,r4-r15,r48,r50-r53,r55-r56,r60 (23 vregs)
- 955 [0x1DD8] 0150F401C0749E78   CSEL.u32.gt r52, r56^, u15.w0 /* 32 (0x20) */, r52^, 0x0
-// live: r0-r2,r4-r15,r48,r50-r53,r55,r60 (22 vregs)
- 956 [0x1DE0] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
-// live: r0-r2,r4-r15,r48,r50-r51,r53,r55,r60 (21 vregs)
- 957 [0x1DE8] 50B4C4011177C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r55^
-// live-out: r0-r2,r4-r15,r48,r50-r51,r53,r60 (20 vregs)
+/* Jump target from: 0x1E38 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 972 [0x1E60] 00B4F6711076C0CF   LSHIFT_AND.i32 r54, 0x1F1E1D1C.b3, 0x0.b00, r54^
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 973 [0x1E68] 00B4F6711276C0CF   LSHIFT_XOR.i32 r54, 0x1F1E1D1C.b3, 0x0.b00, r54^
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 974 [0x1E70] 00B4F40011C07674   RSHIFT_OR.i32 r52, r52^, r54^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55,r60 (22 vregs)
+ 975 [0x1E78] 00B4F8711035C0CF   LSHIFT_AND.i32 r56, 0x1F1E1D1C.b3, 0x0.b00, r53
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55-r56,r60 (23 vregs)
+ 976 [0x1E80] 00A0F80000000A78   IADD.u32 r56, r56^, r10
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55-r56,r60 (23 vregs)
+ 977 [0x1E88] 0150F401C0749E78   CSEL.u32.gt r52, r56^, u15.w0 /* 32 (0x20) */, r52^, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55,r60 (22 vregs)
+ 978 [0x1E90] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
+// live: r0-r2,r4-r15,r48-r50,r53,r55,r60 (21 vregs)
+ 979 [0x1E98] 50B4C4011177C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r55^
+// live-out: r0-r2,r4-r15,r48-r50,r53,r60 (20 vregs)
 
-/* Jump target from: 0x1D98, 0x1DA8 */
-// live-in: r0-r2,r4-r15,r48,r50-r51,r53,r60 (20 vregs)
- 958 [0x1DF0] 00B4F600149CC90F   RSHIFT_AND.i32 r54, r15, 0x7060504.b11, u14.w0 /* 3 (0x3) */
-// live: r0-r2,r4-r15,r48,r50-r51,r53-r54,r60 (21 vregs)
- 959 [0x1DF8] 00A0F40000000975   IADD.u32 r52, r53^, r9
-// live: r0-r2,r4-r15,r48,r50-r52,r54,r60 (21 vregs)
- 960 [0x1E00] 00B4F50111C03436   LSHIFT_OR.i32 r53, r54, r52.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 961 [0x1E08] 00B4F70015C0C934   RSHIFT_OR.i32 r55, r52, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 962 [0x1E10] 00B4F309517309C1   LSHIFT_OR.i32.not_result r51, 0xFFFFFFFF, r9.b00, r51^.not
-// live-in: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 963 [0x1E18] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1E40 (instruction #968) */
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+/* Jump target from: 0x1E48, 0x1E58 */
+// live-in: r0-r2,r4-r15,r48-r50,r53,r60 (20 vregs)
+ 980 [0x1EA0] 00B4F600149CC90F   RSHIFT_AND.i32 r54, r15, 0x7060504.b11, u14.w0 /* 3 (0x3) */
+// live: r0-r2,r4-r15,r48-r50,r53-r54,r60 (21 vregs)
+ 981 [0x1EA8] 00A0F40000000A75   IADD.u32 r52, r53^, r10
+// live: r0-r2,r4-r15,r48-r50,r52,r54,r60 (21 vregs)
+ 982 [0x1EB0] 00B4F50111C03436   LSHIFT_OR.i32 r53, r54, r52.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 983 [0x1EB8] 00B4F70015C0C934   RSHIFT_OR.i32 r55, r52, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 984 [0x1EC0] 00B4F10951710AC1   LSHIFT_OR.i32.not_result r49, 0xFFFFFFFF, r10.b00, r49^.not
+// live-in: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 985 [0x1EC8] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1EF0 (instruction #990) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r53,r55,r60 (22 vregs)
- 964 [0x1E20] 011AF60000000177   UNK_IMM_11A r54, r55^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 965 [0x1E28] 001FC00000000876   BRANCHZ r54^, offset:8 /* jumps to 0x1E70 (instruction #974) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55,r60 (22 vregs)
+ 986 [0x1ED0] 011AF60000000177   UNK_IMM_11A r54, r55^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 987 [0x1ED8] 001FC00000000876   BRANCHZ r54^, offset:8 /* jumps to 0x1F20 (instruction #996) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 966 [0x1E30] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 967 [0x1E38] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x1E70 (instruction #974) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 988 [0x1EE0] 00B4C5011175C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r53^
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 989 [0x1EE8] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x1F20 (instruction #996) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-/* Jump target from: 0x1E18 */
-// live-in: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 968 [0x1E40] 00A0F800000134C0   ISUB.u32 r56, 0x0, r52
-// live: r0-r2,r4-r15,r48,r50-r54,r56,r60 (23 vregs)
- 969 [0x1E48] 00B4F60011C07876   RSHIFT_OR.i32 r54, r54^, r56^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 970 [0x1E50] 00B4F7711034C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r52
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 971 [0x1E58] 0150F600C0769F77   CSEL.u32.eq r54, r55^, u15.w1 /* 31 (0x1F) */, r54^, 0x0
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 972 [0x1E60] 00B4C5011176C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r54^
-// live: r0-r2,r4-r15,r48,r50-r53,r60 (21 vregs)
- 973 [0x1E68] 50B4C4011175C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r53^
-// live-out: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
+/* Jump target from: 0x1EC8 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 990 [0x1EF0] 00A0F800000134C0   ISUB.u32 r56, 0x0, r52
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r56,r60 (23 vregs)
+ 991 [0x1EF8] 00B4F60011C07876   RSHIFT_OR.i32 r54, r54^, r56^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 992 [0x1F00] 00B4F7711034C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r52
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 993 [0x1F08] 0150F600C0769F77   CSEL.u32.eq r54, r55^, u15.w1 /* 31 (0x1F) */, r54^, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+ 994 [0x1F10] 00B4C5011176C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r54^
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r60 (21 vregs)
+ 995 [0x1F18] 50B4C4011175C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r53^
+// live-out: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
 
-/* Jump target from: 0x1E28, 0x1E38 */
-// live-in: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
- 974 [0x1E70] 00A0F5001800C834   IADD.u32 r53, r52, 0x3020100.b2
-// live: r0-r2,r4-r15,r48,r50-r53,r60 (21 vregs)
- 975 [0x1E78] 00B4F70015C0C935   RSHIFT_OR.i32 r55, r53, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r53,r55,r60 (22 vregs)
- 976 [0x1E80] 00B4F60111C03533   LSHIFT_OR.i32 r54, r51, r53.b00, 0x0
-// live-in: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 977 [0x1E88] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1EB0 (instruction #982) */
-// live-out: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
+/* Jump target from: 0x1ED8, 0x1EE8 */
+// live-in: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
+ 996 [0x1F20] 00A0F5001800C834   IADD.u32 r53, r52, 0x3020100.b2
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r60 (21 vregs)
+ 997 [0x1F28] 00B4F70015C0C935   RSHIFT_OR.i32 r55, r53, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52-r53,r55,r60 (22 vregs)
+ 998 [0x1F30] 00B4F60111C03531   LSHIFT_OR.i32 r54, r49, r53.b00, 0x0
+// live-in: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+ 999 [0x1F38] 001FC01000000437   BRANCHZ.eq r55, offset:4 /* jumps to 0x1F60 (instruction #1004) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
 
 // live: r0-r2,r4-r15,r48,r50,r52-r55,r60 (22 vregs)
- 978 [0x1E90] 011AF30000000177   UNK_IMM_11A r51, r55^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 979 [0x1E98] 001FC00000000933   BRANCHZ r51, offset:9 /* jumps to 0x1EE8 (instruction #989) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+1000 [0x1F40] 011AF10000000177   UNK_IMM_11A r49, r55^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+1001 [0x1F48] 001FC00000000931   BRANCHZ r49, offset:9 /* jumps to 0x1F98 (instruction #1011) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 980 [0x1EA0] 00B4C5011176C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r54^
-// live: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 981 [0x1EA8] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x1EE8 (instruction #989) */
-// live-out: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+1002 [0x1F50] 00B4C5011176C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r54^
+// live: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+1003 [0x1F58] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x1F98 (instruction #1011) */
+// live-out: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
 
-/* Jump target from: 0x1E88 */
-// live-in: r0-r2,r4-r15,r48,r50-r54,r60 (22 vregs)
- 982 [0x1EB0] 00B4F7711035C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r53
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 983 [0x1EB8] 00A0F70000000977   IADD.u32 r55, r55^, r9
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 984 [0x1EC0] 00A0F460000174CF   ISUB.u32 r52, 0x1F1E1D1C.b2, r52^
-// live: r0-r2,r4-r15,r48,r50-r55,r60 (23 vregs)
- 985 [0x1EC8] 00B4F30011C07473   RSHIFT_OR.i32 r51, r51^, r52^.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r51,r53-r55,r60 (22 vregs)
- 986 [0x1ED0] 0150F301C0739E77   CSEL.u32.gt r51, r55^, u15.w0 /* 32 (0x20) */, r51^, 0x0
-// live: r0-r2,r4-r15,r48,r50-r51,r53-r54,r60 (21 vregs)
- 987 [0x1ED8] 00B4C5011133C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51
+/* Jump target from: 0x1F38 */
+// live-in: r0-r2,r4-r15,r48-r50,r52-r54,r60 (22 vregs)
+1004 [0x1F60] 00B4F7711035C0CF   LSHIFT_AND.i32 r55, 0x1F1E1D1C.b3, 0x0.b00, r53
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+1005 [0x1F68] 00A0F70000000A77   IADD.u32 r55, r55^, r10
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+1006 [0x1F70] 00A0F460000174CF   ISUB.u32 r52, 0x1F1E1D1C.b2, r52^
+// live: r0-r2,r4-r15,r48-r50,r52-r55,r60 (23 vregs)
+1007 [0x1F78] 00B4F10011C07471   RSHIFT_OR.i32 r49, r49^, r52^.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r53-r55,r60 (22 vregs)
+1008 [0x1F80] 0150F101C0719E77   CSEL.u32.gt r49, r55^, u15.w0 /* 32 (0x20) */, r49^, 0x0
+// live: r0-r2,r4-r15,r48-r50,r53-r54,r60 (21 vregs)
+1009 [0x1F88] 00B4C5011131C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r49
 // live: r0-r2,r4-r15,r48,r50,r53-r54,r60 (20 vregs)
- 988 [0x1EE0] 50B4C4011176C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r54^
+1010 [0x1F90] 50B4C4011176C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r54^
 // live-out: r0-r2,r4-r15,r48,r50,r53,r60 (19 vregs)
 
-/* Jump target from: 0x1E98, 0x1EA8 */
+/* Jump target from: 0x1F48, 0x1F58 */
 // live-in: r0-r2,r4-r15,r48,r50,r53,r60 (19 vregs)
- 989 [0x1EE8] 00B4CF001CA0C94F   RSHIFT_AND.i32 r15, r15^, 0x7060504.b33, u16.w0 /* 1 (0x1) */
+1011 [0x1F98] 00B4CF001CA0C94F   RSHIFT_AND.i32 r15, r15^, 0x7060504.b33, u16.w0 /* 1 (0x1) */
 // live: r0-r2,r4-r15,r48,r50,r53,r60 (19 vregs)
- 990 [0x1EF0] 00A0F30000000975   IADD.u32 r51, r53^, r9
-// live: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
- 991 [0x1EF8] 00B4CF0111C0334F   LSHIFT_OR.i32 r15, r15^, r51.b00, 0x0
-// live: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
- 992 [0x1F00] 00B4F40015C0C933   RSHIFT_OR.i32 r52, r51, 0x7060504.b11, 0x0
-// live: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
- 993 [0x1F08] 001FC01000000434   BRANCHZ.eq r52, offset:4 /* jumps to 0x1F30 (instruction #998) */
-// live-out: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
+1012 [0x1FA0] 00A0F10000000A75   IADD.u32 r49, r53^, r10
+// live: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
+1013 [0x1FA8] 00B4CF0111C0314F   LSHIFT_OR.i32 r15, r15^, r49.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
+1014 [0x1FB0] 00B4F40015C0C931   RSHIFT_OR.i32 r52, r49, 0x7060504.b11, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
+1015 [0x1FB8] 001FC01000000434   BRANCHZ.eq r52, offset:4 /* jumps to 0x1FE0 (instruction #1020) */
+// live-out: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
- 994 [0x1F10] 011AF40000000174   UNK_IMM_11A r52, r52^, #0x1
-// live: r0-r2,r4-r15,r48,r50-r52,r60 (20 vregs)
- 995 [0x1F18] 001FC00000000374   BRANCHZ r52^, offset:3 /* jumps to 0x1F38 (instruction #999) */
-// live-out: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
+// live: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
+1016 [0x1FC0] 011AF40000000174   UNK_IMM_11A r52, r52^, #0x1
+// live: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
+1017 [0x1FC8] 001FC00000000374   BRANCHZ r52^, offset:3 /* jumps to 0x1FE8 (instruction #1021) */
+// live-out: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
 
-// live: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
- 996 [0x1F20] 00B4C501114FC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r15^
-// live: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
- 997 [0x1F28] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x1F38 (instruction #999) */
-// live-out: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
+// live: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
+1018 [0x1FD0] 00B4C501114FC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r15^
+// live: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
+1019 [0x1FD8] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x1FE8 (instruction #1021) */
+// live-out: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
 
-/* Jump target from: 0x1F08 */
-// live-in: r0-r2,r4-r15,r48,r50-r51,r60 (19 vregs)
- 998 [0x1F30] 50B4C401114FC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r15^
-// live-out: r0-r2,r4-r14,r48,r50-r51,r60 (18 vregs)
+/* Jump target from: 0x1FB8 */
+// live-in: r0-r2,r4-r15,r48-r50,r60 (19 vregs)
+1020 [0x1FE0] 50B4C401114FC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r15^
+// live-out: r0-r2,r4-r14,r48-r50,r60 (18 vregs)
 
-/* Jump target from: 0x1F18, 0x1F28 */
-// live-in: r0-r2,r4-r14,r48,r50-r51,r60 (18 vregs)
- 999 [0x1F38] 00A0F4001C00C433   IADD.u32 r52, r51, 0x1000000.b3
-// live: r0-r2,r4-r14,r48,r50-r52,r60 (19 vregs)
-1000 [0x1F40] 0090CF0010100032   U8_TO_U32 r15, r50.b1
-// live: r0-r2,r4-r15,r48,r51-r52,r60 (19 vregs)
-1001 [0x1F48] 001FC03000000741   BRANCHZ.eq r1^.h0, offset:7 /* jumps to 0x1F88 (instruction #1009) */
-// live-out: r0,r2,r4-r15,r48,r51-r52,r60 (18 vregs)
+/* Jump target from: 0x1FC8, 0x1FD8 */
+// live-in: r0-r2,r4-r14,r48-r50,r60 (18 vregs)
+1021 [0x1FE8] 00A0F4001C00C431   IADD.u32 r52, r49, 0x1000000.b3
+// live: r0-r2,r4-r14,r48-r50,r52,r60 (19 vregs)
+1022 [0x1FF0] 0090CF0010100030   U8_TO_U32 r15, r48.b1
+// live: r0-r2,r4-r15,r49-r50,r52,r60 (19 vregs)
+1023 [0x1FF8] 001FC03000000741   BRANCHZ.eq r1^.h0, offset:7 /* jumps to 0x2038 (instruction #1031) */
+// live-out: r0,r2,r4-r15,r49-r50,r52,r60 (18 vregs)
 
-// live: r0,r2,r4-r15,r48,r51-r52,r60 (18 vregs)
-1002 [0x1F50] 01B7F00011C0C670   RSHIFT_OR.i64 [r48:r49], [r48^:r49^], 0x70605030.b00, 0x0
-// live: r0,r2,r4-r15,r48,r51-r52,r60 (18 vregs)
-1003 [0x1F58] 00A1B2100800C070   IADD.v2u16 r50.h1, r48^.h10, 0x0
-// live: r0,r2,r4-r15,r50-r52,r60 (18 vregs)
-1004 [0x1F60] 00B4C1001091CA32   RSHIFT_AND.i32 r1, r50, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
-// live: r0-r2,r4-r15,r50-r52,r60 (19 vregs)
-1005 [0x1F68] 00A0C1000000414F   IADD.u32 r1, r15^, r1^
-// live: r0-r2,r4-r14,r50-r52,r60 (18 vregs)
-1006 [0x1F70] 00B4CF0011C0CA72   RSHIFT_OR.i32 r15, r50^, 0xB0A0908.b00, 0x0
-// live: r0-r2,r4-r14,r51-r52,r60 (17 vregs)
-1007 [0x1F78] 01104F00000000C0   IADD_IMM.i32 r15.h0, 0x0, #0x0
-// live: r0-r2,r4-r15,r51-r52,r60 (18 vregs)
-1008 [0x1F80] 50A0CF0000004F41   IADD.u32.reconverge r15, r1^, r15^
-// live-out: r0,r2,r4-r15,r51-r52,r60 (17 vregs)
+// live: r0,r2,r4-r15,r49-r50,r52,r60 (18 vregs)
+1024 [0x2000] 01B7F20011C0C672   RSHIFT_OR.i64 [r50:r51], [r50^:r51^], 0x70605030.b00, 0x0
+// live: r0,r2,r4-r15,r49-r50,r52,r60 (18 vregs)
+1025 [0x2008] 00A1B0100800C072   IADD.v2u16 r48.h1, r50^.h10, 0x0
+// live: r0,r2,r4-r15,r48-r49,r52,r60 (18 vregs)
+1026 [0x2010] 00B4C1001091CA30   RSHIFT_AND.i32 r1, r48, 0xB0A0908.b00, u8.w1 /* 65280 (0xFF00) */
+// live: r0-r2,r4-r15,r48-r49,r52,r60 (19 vregs)
+1027 [0x2018] 00A0C1000000414F   IADD.u32 r1, r15^, r1^
+// live: r0-r2,r4-r14,r48-r49,r52,r60 (18 vregs)
+1028 [0x2020] 00B4CF0011C0CA70   RSHIFT_OR.i32 r15, r48^, 0xB0A0908.b00, 0x0
+// live: r0-r2,r4-r14,r49,r52,r60 (17 vregs)
+1029 [0x2028] 01104F00000000C0   IADD_IMM.i32 r15.h0, 0x0, #0x0
+// live: r0-r2,r4-r15,r49,r52,r60 (18 vregs)
+1030 [0x2030] 50A0CF0000004F41   IADD.u32.reconverge r15, r1^, r15^
+// live-out: r0,r2,r4-r15,r49,r52,r60 (17 vregs)
 
-/* Jump target from: 0x1F48 */
-// live-in: r0,r2,r4-r15,r51-r52,r60 (17 vregs)
-1009 [0x1F88] 00B4F10011C0CA0F   RSHIFT_OR.i32 r49, r15, 0xB0A0908.b00, 0x0
-// live: r0,r2,r4-r15,r49,r51-r52,r60 (18 vregs)
-1010 [0x1F90] 00B4C14011C00931   RSHIFT_OR.i32 r1, r49.b0, r9.b00, 0x0
-// live: r0-r2,r4-r15,r49,r51-r52,r60 (19 vregs)
-1011 [0x1F98] 00A0C1001C0AC841   IMUL.i32 r1, r1^, 0x3020100.b3
-// live: r0-r2,r4-r15,r49,r51-r52,r60 (19 vregs)
-1012 [0x1FA0] 00B4F00011C0CC0F   RSHIFT_OR.i32 r48, r15, 0x13121110.b00, 0x0
-// live: r0-r2,r4-r15,r48-r49,r51-r52,r60 (20 vregs)
-1013 [0x1FA8] 00B4F20011C00930   RSHIFT_OR.i32 r50, r48, r9.b00, 0x0
+/* Jump target from: 0x1FF8 */
+// live-in: r0,r2,r4-r15,r49,r52,r60 (17 vregs)
+1031 [0x2038] 00B4F20011C0CA0F   RSHIFT_OR.i32 r50, r15, 0xB0A0908.b00, 0x0
+// live: r0,r2,r4-r15,r49-r50,r52,r60 (18 vregs)
+1032 [0x2040] 00B4C14011C00A32   RSHIFT_OR.i32 r1, r50.b0, r10.b00, 0x0
+// live: r0-r2,r4-r15,r49-r50,r52,r60 (19 vregs)
+1033 [0x2048] 00A0C1001C0AC841   IMUL.i32 r1, r1^, 0x3020100.b3
+// live: r0-r2,r4-r15,r49-r50,r52,r60 (19 vregs)
+1034 [0x2050] 00B4F00011C0CC0F   RSHIFT_OR.i32 r48, r15, 0x13121110.b00, 0x0
+// live: r0-r2,r4-r15,r48-r50,r52,r60 (20 vregs)
+1035 [0x2058] 00B4F30011C00A30   RSHIFT_OR.i32 r51, r48, r10.b00, 0x0
 // live: r0-r2,r4-r15,r48-r52,r60 (21 vregs)
-1014 [0x1FB0] 00A14320200ACA72   IMUL.v2i16 r3.h0, r50^, 0xB0A0908.b11
+1036 [0x2060] 00A14320200ACA73   IMUL.v2i16 r3.h0, r51^, 0xB0A0908.b11
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1015 [0x1FB8] 00A0C12000004103   IADD.u32 r1, r3.h0, r1^
+1037 [0x2068] 00A0C12000004103   IADD.u32 r1, r3.h0, r1^
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1016 [0x1FC0] 00B4FF4011C0090F   RSHIFT_OR.i32 r63, r15.b0, r9.b00, 0x0
+1038 [0x2070] 00B4FF4011C00A0F   RSHIFT_OR.i32 r63, r15.b0, r10.b00, 0x0
 // live: r0-r15,r48-r52,r60,r63 (23 vregs)
-1017 [0x1FC8] 00A0C10000007F41   IADD.u32 r1, r1^, r63^
+1039 [0x2078] 00A0C10000007F41   IADD.u32 r1, r1^, r63^
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1018 [0x1FD0] 0118F20003FFFC01   
+1040 [0x2080] 0118F30003FFFC01   
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1019 [0x1FD8] 00B4C1011C94C841   LSHIFT_AND.i32 r1, r1^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
+1041 [0x2088] 00B4C1011C94C841   LSHIFT_AND.i32 r1, r1^, 0x3020100.b33, u10.w0 /* 24 (0x18) */
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1020 [0x1FE0] 0710F600000608FE   IADD_IMM.i32 r54, program_counter.w0, #0x608
+1042 [0x2090] 0710F6000005D8FE   IADD_IMM.i32 r54, program_counter.w0, #0x5D8
 // live: r0-r15,r48-r52,r54,r60 (23 vregs)
-1021 [0x1FE8] 0691F700000000FF   MOV.i32 r55, program_counter.w1
+1043 [0x2098] 0691F700000000FF   MOV.i32 r55, program_counter.w1
 // live: r0-r15,r48-r52,r54,r60 (23 vregs)
-1022 [0x1FF0] 01A3F60020003276   IADD.u64 [r54:r55], [r54^:r55^], [r50:r51].w0
-// live: r0-r15,r48-r49,r51-r52,r54-r55,r60 (23 vregs)
-1023 [0x1FF8] 0060B28218000076   LOAD.i32.unsigned.slot0 @r50, [r54^:r55^], offset:0
+1044 [0x20A0] 01A3F60024003276   IADD.u64 [r54:r55], [r54^:r55^], [r50:r51].reserved
+// live: r0-r15,r48-r50,r52,r54-r55,r60 (23 vregs)
+1045 [0x20A8] 0060B38218000076   LOAD.i32.unsigned.slot0 @r51, [r54^:r55^], offset:0
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1024 [0x2000] 00B4CF09514F09C1   LSHIFT_OR.i32.not_result r15, 0xFFFFFFFF, r9.b00, r15^.not
+1046 [0x20B0] 00B4CF09514F0AC1   LSHIFT_OR.i32.not_result r15, 0xFFFFFFFF, r10.b00, r15^.not
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1025 [0x2008] 08B4F50015C0C934   RSHIFT_OR.i32.wait0 r53, r52, 0x7060504.b11, 0x0
+1047 [0x20B8] 08B4F50015C0C934   RSHIFT_OR.i32.wait0 r53, r52, 0x7060504.b11, 0x0
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1026 [0x2010] 00B4C10011C04172   RSHIFT_OR.i32 r1, r50^, r1^.b00, 0x0
-// live: r0-r15,r48-r49,r51-r53,r60 (22 vregs)
-1027 [0x2018] 00B4F20111C0340F   LSHIFT_OR.i32 r50, r15, r52.b00, 0x0
+1048 [0x20C0] 00B4C10011C04173   RSHIFT_OR.i32 r1, r51^, r1^.b00, 0x0
+// live: r0-r15,r48-r50,r52-r53,r60 (22 vregs)
+1049 [0x20C8] 00B4F30111C0340F   LSHIFT_OR.i32 r51, r15, r52.b00, 0x0
 // live-in: r0-r15,r48-r53,r60 (23 vregs)
-1028 [0x2020] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x2048 (instruction #1033) */
+1050 [0x20D0] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x20F8 (instruction #1055) */
 // live-out: r0-r15,r48-r53,r60 (23 vregs)
 
-// live: r0-r15,r48-r50,r52-r53,r60 (22 vregs)
-1029 [0x2028] 011AF30000000175   UNK_IMM_11A r51, r53^, #0x1
+// live: r0-r15,r48,r50-r53,r60 (22 vregs)
+1051 [0x20D8] 011AF10000000175   UNK_IMM_11A r49, r53^, #0x1
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1030 [0x2030] 001FC00000000973   BRANCHZ r51^, offset:9 /* jumps to 0x2080 (instruction #1040) */
+1052 [0x20E0] 001FC00000000971   BRANCHZ r49^, offset:9 /* jumps to 0x2130 (instruction #1062) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1031 [0x2038] 00B4C5011172C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r50^
+1053 [0x20E8] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1032 [0x2040] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x2080 (instruction #1040) */
+1054 [0x20F0] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x2130 (instruction #1062) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
-/* Jump target from: 0x2020 */
+/* Jump target from: 0x20D0 */
 // live-in: r0-r15,r48-r52,r60 (22 vregs)
-1033 [0x2048] 00B4F5711034C0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r52
+1055 [0x20F8] 00B4F5711034C0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r52
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1034 [0x2050] 00A0F50000000975   IADD.u32 r53, r53^, r9
+1056 [0x2100] 00A0F50000000A75   IADD.u32 r53, r53^, r10
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1035 [0x2058] 00B4F3791073C0CF   LSHIFT_AND.i32 r51, 0x1F1E1D1C.b3, 0x0.b00, r51^.not
+1057 [0x2108] 00B4F1791071C0CF   LSHIFT_AND.i32 r49, 0x1F1E1D1C.b3, 0x0.b00, r49^.not
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1036 [0x2060] 00B4F30011C0730F   RSHIFT_OR.i32 r51, r15, r51^.b00, 0x0
+1058 [0x2110] 00B4F10011C0710F   RSHIFT_OR.i32 r49, r15, r49^.b00, 0x0
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1037 [0x2068] 0150F301C0739E75   CSEL.u32.gt r51, r53^, u15.w0 /* 32 (0x20) */, r51^, 0x0
+1059 [0x2118] 0150F101C0719E75   CSEL.u32.gt r49, r53^, u15.w0 /* 32 (0x20) */, r49^, 0x0
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1038 [0x2070] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
-// live: r0-r15,r48-r50,r52,r60 (21 vregs)
-1039 [0x2078] 50B4C4011172C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r50^
-// live-out: r0-r15,r48-r49,r52,r60 (20 vregs)
+1060 [0x2120] 00B4C5011171C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r49^
+// live: r0-r15,r48,r50-r52,r60 (21 vregs)
+1061 [0x2128] 50B4C4011173C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r51^
+// live-out: r0-r15,r48,r50,r52,r60 (20 vregs)
 
-/* Jump target from: 0x2030, 0x2040 */
-// live-in: r0-r15,r48-r49,r52,r60 (20 vregs)
-1040 [0x2080] 00A0F20000000974   IADD.u32 r50, r52^, r9
+/* Jump target from: 0x20E0, 0x20F0 */
+// live-in: r0-r15,r48,r50,r52,r60 (20 vregs)
+1062 [0x2130] 00B4F10951720AC1   LSHIFT_OR.i32.not_result r49, 0xFFFFFFFF, r10.b00, r50^.not
+// live: r0-r15,r48-r49,r52,r60 (20 vregs)
+1063 [0x2138] 00A0F20000000A74   IADD.u32 r50, r52^, r10
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1041 [0x2088] 00B4F50015C0C932   RSHIFT_OR.i32 r53, r50, 0x7060504.b11, 0x0
+1064 [0x2140] 00B4F50015C0C932   RSHIFT_OR.i32 r53, r50, 0x7060504.b11, 0x0
 // live: r0-r15,r48-r50,r53,r60 (21 vregs)
-1042 [0x2090] 00B4F4711001C0C8   LSHIFT_AND.i32 r52, 0x3020100.b3, 0x0.b00, r1
+1065 [0x2148] 00B4F4711001C0C8   LSHIFT_AND.i32 r52, 0x3020100.b3, 0x0.b00, r1
 // live: r0-r15,r48-r50,r52-r53,r60 (22 vregs)
-1043 [0x2098] 00B4F30111C03234   LSHIFT_OR.i32 r51, r52, r50.b00, 0x0
-// live: r0-r15,r48-r53,r60 (23 vregs)
-1044 [0x20A0] 00B4F109517109C1   LSHIFT_OR.i32.not_result r49, 0xFFFFFFFF, r9.b00, r49^.not
+1066 [0x2150] 00B4F30111C03234   LSHIFT_OR.i32 r51, r52, r50.b00, 0x0
 // live-in: r0-r15,r48-r53,r60 (23 vregs)
-1045 [0x20A8] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x20D0 (instruction #1050) */
+1067 [0x2158] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x2180 (instruction #1072) */
 // live-out: r0-r15,r48-r53,r60 (23 vregs)
 
 // live: r0-r15,r48-r51,r53,r60 (22 vregs)
-1046 [0x20B0] 011AF40000000175   UNK_IMM_11A r52, r53^, #0x1
+1068 [0x2160] 011AF40000000175   UNK_IMM_11A r52, r53^, #0x1
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1047 [0x20B8] 001FC00000000874   BRANCHZ r52^, offset:8 /* jumps to 0x2100 (instruction #1056) */
+1069 [0x2168] 001FC00000000874   BRANCHZ r52^, offset:8 /* jumps to 0x21B0 (instruction #1078) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1048 [0x20C0] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
+1070 [0x2170] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1049 [0x20C8] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x2100 (instruction #1056) */
+1071 [0x2178] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x21B0 (instruction #1078) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
-/* Jump target from: 0x20A8 */
+/* Jump target from: 0x2158 */
 // live-in: r0-r15,r48-r52,r60 (22 vregs)
-1050 [0x20D0] 00A0F600000132C0   ISUB.u32 r54, 0x0, r50
+1072 [0x2180] 00A0F600000132C0   ISUB.u32 r54, 0x0, r50
 // live: r0-r15,r48-r52,r54,r60 (23 vregs)
-1051 [0x20D8] 00B4F40011C07674   RSHIFT_OR.i32 r52, r52^, r54^.b00, 0x0
+1073 [0x2188] 00B4F40011C07674   RSHIFT_OR.i32 r52, r52^, r54^.b00, 0x0
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1052 [0x20E0] 00B4F5711032C0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r50
+1074 [0x2190] 00B4F5711032C0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r50
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1053 [0x20E8] 0150F400C0749F75   CSEL.u32.eq r52, r53^, u15.w1 /* 31 (0x1F) */, r52^, 0x0
+1075 [0x2198] 0150F400C0749F75   CSEL.u32.eq r52, r53^, u15.w1 /* 31 (0x1F) */, r52^, 0x0
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1054 [0x20F0] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
+1076 [0x21A0] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1055 [0x20F8] 50B4C4011173C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r51^
+1077 [0x21A8] 50B4C4011173C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r51^
 // live-out: r0-r15,r48-r50,r60 (20 vregs)
 
-/* Jump target from: 0x20B8, 0x20C8 */
+/* Jump target from: 0x2168, 0x2178 */
 // live-in: r0-r15,r48-r50,r60 (20 vregs)
-1056 [0x2100] 0091F300000D004C   BITREV.i32 r51, r12^
-// live: r0-r11,r13-r15,r48-r51,r60 (20 vregs)
-1057 [0x2108] 00A0CC001800C832   IADD.u32 r12, r50, 0x3020100.b2
+1078 [0x21B0] 00A0F3001800C832   IADD.u32 r51, r50, 0x3020100.b2
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1058 [0x2110] 00B4F50015C0C90C   RSHIFT_OR.i32 r53, r12, 0x7060504.b11, 0x0
+1079 [0x21B8] 00B4F50015C0C933   RSHIFT_OR.i32 r53, r51, 0x7060504.b11, 0x0
 // live: r0-r15,r48-r51,r53,r60 (22 vregs)
-1059 [0x2118] 00B4F40111C00C31   LSHIFT_OR.i32 r52, r49, r12.b00, 0x0
+1080 [0x21C0] 00B4F40111C03331   LSHIFT_OR.i32 r52, r49, r51.b00, 0x0
+// live: r0-r15,r48-r53,r60 (23 vregs)
+1081 [0x21C8] 0091CE00000D004E   BITREV.i32 r14, r14^
 // live-in: r0-r15,r48-r53,r60 (23 vregs)
-1060 [0x2120] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x2148 (instruction #1065) */
+1082 [0x21D0] 001FC01000000435   BRANCHZ.eq r53, offset:4 /* jumps to 0x21F8 (instruction #1087) */
 // live-out: r0-r15,r48-r53,r60 (23 vregs)
 
 // live: r0-r15,r48-r49,r51-r53,r60 (22 vregs)
-1061 [0x2128] 011AF20000000175   UNK_IMM_11A r50, r53^, #0x1
+1083 [0x21D8] 011AF20000000175   UNK_IMM_11A r50, r53^, #0x1
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1062 [0x2130] 001FC00000000972   BRANCHZ r50^, offset:9 /* jumps to 0x2180 (instruction #1072) */
+1084 [0x21E0] 001FC00000000972   BRANCHZ r50^, offset:9 /* jumps to 0x2230 (instruction #1094) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1063 [0x2138] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
+1085 [0x21E8] 00B4C5011174C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r52^
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1064 [0x2140] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x2180 (instruction #1072) */
+1086 [0x21F0] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x2230 (instruction #1094) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
-/* Jump target from: 0x2120 */
+/* Jump target from: 0x21D0 */
 // live-in: r0-r15,r48-r52,r60 (22 vregs)
-1065 [0x2148] 00B4F571100CC0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r12
+1087 [0x21F8] 00B4F5711033C0CF   LSHIFT_AND.i32 r53, 0x1F1E1D1C.b3, 0x0.b00, r51
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1066 [0x2150] 00A0F50000000975   IADD.u32 r53, r53^, r9
+1088 [0x2200] 00A0F50000000A75   IADD.u32 r53, r53^, r10
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1067 [0x2158] 00A0F260000172CF   ISUB.u32 r50, 0x1F1E1D1C.b2, r50^
+1089 [0x2208] 00A0F260000172CF   ISUB.u32 r50, 0x1F1E1D1C.b2, r50^
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1068 [0x2160] 00B4F20011C07231   RSHIFT_OR.i32 r50, r49, r50^.b00, 0x0
+1090 [0x2210] 00B4F20011C07231   RSHIFT_OR.i32 r50, r49, r50^.b00, 0x0
 // live: r0-r15,r48-r53,r60 (23 vregs)
-1069 [0x2168] 0150F201C0729E75   CSEL.u32.gt r50, r53^, u15.w0 /* 32 (0x20) */, r50^, 0x0
+1091 [0x2218] 0150F201C0729E75   CSEL.u32.gt r50, r53^, u15.w0 /* 32 (0x20) */, r50^, 0x0
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1070 [0x2170] 00B4C5011172C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r50^
+1092 [0x2220] 00B4C5011172C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r50^
 // live: r0-r15,r48-r49,r51-r52,r60 (21 vregs)
-1071 [0x2178] 50B4C4011174C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r52^
+1093 [0x2228] 50B4C4011174C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r52^
 // live-out: r0-r15,r48-r49,r51,r60 (20 vregs)
 
-/* Jump target from: 0x2130, 0x2140 */
+/* Jump target from: 0x21E0, 0x21F0 */
 // live-in: r0-r15,r48-r49,r51,r60 (20 vregs)
-1072 [0x2180] 00B4F201114DC073   LSHIFT_OR.i32 r50, r51^, 0x0.b00, r13^
-// live: r0-r12,r14-r15,r48-r50,r60 (19 vregs)
-1073 [0x2188] 00B4F300189CC801   RSHIFT_AND.i32 r51, r1, 0x3020100.b22, u14.w0 /* 3 (0x3) */
-// live: r0-r12,r14-r15,r48-r51,r60 (20 vregs)
-1074 [0x2190] 00A0CC000000094C   IADD.u32 r12, r12^, r9
-// live: r0-r12,r14-r15,r48-r51,r60 (20 vregs)
-1075 [0x2198] 00B4F40015C0C90C   RSHIFT_OR.i32 r52, r12, 0x7060504.b11, 0x0
-// live: r0-r12,r14-r15,r48-r52,r60 (21 vregs)
-1076 [0x21A0] 00B4F10111C0CA71   LSHIFT_OR.i32 r49, r49^, 0xB0A0908.b00, 0x0
-// live: r0-r12,r14-r15,r48-r52,r60 (21 vregs)
-1077 [0x21A8] 00B4CD09517009C1   LSHIFT_OR.i32.not_result r13, 0xFFFFFFFF, r9.b00, r48^.not
+1094 [0x2230] 00B4F201114CC04E   LSHIFT_OR.i32 r50, r14^, 0x0.b00, r12^
+// live: r0-r11,r13,r15,r48-r51,r60 (19 vregs)
+1095 [0x2238] 00B4F400189CC801   RSHIFT_AND.i32 r52, r1, 0x3020100.b22, u14.w0 /* 3 (0x3) */
+// live: r0-r11,r13,r15,r48-r52,r60 (20 vregs)
+1096 [0x2240] 00A0CC0000000A73   IADD.u32 r12, r51^, r10
+// live: r0-r13,r15,r48-r50,r52,r60 (20 vregs)
+1097 [0x2248] 00B4F30015C0C90C   RSHIFT_OR.i32 r51, r12, 0x7060504.b11, 0x0
+// live: r0-r13,r15,r48-r52,r60 (21 vregs)
+1098 [0x2250] 00B4F10111C0CA71   LSHIFT_OR.i32 r49, r49^, 0xB0A0908.b00, 0x0
+// live: r0-r13,r15,r48-r52,r60 (21 vregs)
+1099 [0x2258] 00B4CE0951700AC1   LSHIFT_OR.i32.not_result r14, 0xFFFFFFFF, r10.b00, r48^.not
 // live: r0-r15,r49-r52,r60 (21 vregs)
-1078 [0x21B0] 00B4F00111C00C33   LSHIFT_OR.i32 r48, r51, r12.b00, 0x0
-// live-in: r0-r15,r48-r52,r60 (22 vregs)
-1079 [0x21B8] 001FC01000000434   BRANCHZ.eq r52, offset:4 /* jumps to 0x21E0 (instruction #1084) */
+1100 [0x2260] 00B4F00111C00C34   LSHIFT_OR.i32 r48, r52, r12.b00, 0x0
+// live: r0-r15,r48-r52,r60 (22 vregs)
+1101 [0x2268] 001FC01000000433   BRANCHZ.eq r51, offset:4 /* jumps to 0x2290 (instruction #1106) */
 // live-out: r0-r15,r48-r52,r60 (22 vregs)
 
-// live: r0-r15,r48-r50,r52,r60 (21 vregs)
-1080 [0x21C0] 011AF30000000174   UNK_IMM_11A r51, r52^, #0x1
-// live: r0-r15,r48-r51,r60 (21 vregs)
-1081 [0x21C8] 001FC00000000873   BRANCHZ r51^, offset:8 /* jumps to 0x2210 (instruction #1090) */
-// live-out: r0-r15,r48-r51,r60 (21 vregs)
-
-// live: r0-r15,r48-r51,r60 (21 vregs)
-1082 [0x21D0] 00B4C5011170C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r48^
-// live: r0-r15,r48-r51,r60 (21 vregs)
-1083 [0x21D8] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x2210 (instruction #1090) */
-// live-out: r0-r15,r48-r51,r60 (21 vregs)
-
-/* Jump target from: 0x21B8 */
-// live-in: r0-r15,r48-r51,r60 (21 vregs)
-1084 [0x21E0] 00A0F50000010CC0   ISUB.u32 r53, 0x0, r12
-// live: r0-r15,r48-r51,r53,r60 (22 vregs)
-1085 [0x21E8] 00B4F30011C07573   RSHIFT_OR.i32 r51, r51^, r53^.b00, 0x0
-// live: r0-r15,r48-r51,r60 (21 vregs)
-1086 [0x21F0] 00B4F471100CC0CF   LSHIFT_AND.i32 r52, 0x1F1E1D1C.b3, 0x0.b00, r12
 // live: r0-r15,r48-r52,r60 (22 vregs)
-1087 [0x21F8] 0150F300C0739F74   CSEL.u32.eq r51, r52^, u15.w1 /* 31 (0x1F) */, r51^, 0x0
+1102 [0x2270] 011AF30000000173   UNK_IMM_11A r51, r51^, #0x1
+// live: r0-r15,r48-r52,r60 (22 vregs)
+1103 [0x2278] 001FC00000000873   BRANCHZ r51^, offset:8 /* jumps to 0x22C0 (instruction #1112) */
+// live-out: r0-r15,r48-r50,r52,r60 (21 vregs)
+
+// live: r0-r15,r48-r50,r52,r60 (21 vregs)
+1104 [0x2280] 00B4C5011170C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r48^
+// live: r0-r15,r48-r50,r52,r60 (21 vregs)
+1105 [0x2288] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x22C0 (instruction #1112) */
+// live-out: r0-r15,r48-r50,r52,r60 (21 vregs)
+
+/* Jump target from: 0x2268 */
+// live-in: r0-r15,r48-r50,r52,r60 (21 vregs)
+1106 [0x2290] 00A0F50000010CC0   ISUB.u32 r53, 0x0, r12
+// live: r0-r15,r48-r50,r52-r53,r60 (22 vregs)
+1107 [0x2298] 00B4F40011C07574   RSHIFT_OR.i32 r52, r52^, r53^.b00, 0x0
+// live: r0-r15,r48-r50,r52,r60 (21 vregs)
+1108 [0x22A0] 00B4F371100CC0CF   LSHIFT_AND.i32 r51, 0x1F1E1D1C.b3, 0x0.b00, r12
+// live: r0-r15,r48-r52,r60 (22 vregs)
+1109 [0x22A8] 0150F300C0749F73   CSEL.u32.eq r51, r51^, u15.w1 /* 31 (0x1F) */, r52^, 0x0
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1088 [0x2200] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
+1110 [0x22B0] 00B4C5011173C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r51^
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1089 [0x2208] 50B4C4011170C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r48^
+1111 [0x22B8] 50B4C4011170C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r48^
 // live-out: r0-r15,r49-r50,r60 (19 vregs)
 
-/* Jump target from: 0x21C8, 0x21D8 */
+/* Jump target from: 0x2278, 0x2288 */
 // live-in: r0-r15,r49-r50,r60 (19 vregs)
-1090 [0x2210] 00B4CB01114BC072   LSHIFT_OR.i32 r11, r50^, 0x0.b00, r11^
+1112 [0x22C0] 00B4CB01114BC072   LSHIFT_OR.i32 r11, r50^, 0x0.b00, r11^
 // live: r0-r15,r49,r60 (18 vregs)
-1091 [0x2218] 00B4F00111C0CC0D   LSHIFT_OR.i32 r48, r13, 0x13121110.b00, 0x0
+1113 [0x22C8] 00B4F00111C0CC0E   LSHIFT_OR.i32 r48, r14, 0x13121110.b00, 0x0
 // live: r0-r15,r48-r49,r60 (19 vregs)
-1092 [0x2220] 00B4F201100EC04D   LSHIFT_AND.i32 r50, r13^, 0x0.b00, r14
-// live: r0-r12,r14-r15,r48-r50,r60 (19 vregs)
-1093 [0x2228] 00A0CD001800C80C   IADD.u32 r13, r12, 0x3020100.b2
+1114 [0x22D0] 00B4F201100DC04E   LSHIFT_AND.i32 r50, r14^, 0x0.b00, r13
+// live: r0-r13,r15,r48-r50,r60 (19 vregs)
+1115 [0x22D8] 00A0CE001800C80C   IADD.u32 r14, r12, 0x3020100.b2
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1094 [0x2230] 00B4F30015C0C90D   RSHIFT_OR.i32 r51, r13, 0x7060504.b11, 0x0
+1116 [0x22E0] 00B4F30015C0C90E   RSHIFT_OR.i32 r51, r14, 0x7060504.b11, 0x0
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1095 [0x2238] 00A0CF000000714F   IADD.u32 r15, r15^, r49^
+1117 [0x22E8] 00A0CF000000714F   IADD.u32 r15, r15^, r49^
 // live: r0-r15,r48,r50-r51,r60 (20 vregs)
-1096 [0x2240] 00B4F10111C00D32   LSHIFT_OR.i32 r49, r50, r13.b00, 0x0
+1118 [0x22F0] 00B4F10111C00E32   LSHIFT_OR.i32 r49, r50, r14.b00, 0x0
 // live-in: r0-r15,r48-r51,r60 (21 vregs)
-1097 [0x2248] 001FC01000000433   BRANCHZ.eq r51, offset:4 /* jumps to 0x2270 (instruction #1102) */
+1119 [0x22F8] 001FC01000000433   BRANCHZ.eq r51, offset:4 /* jumps to 0x2320 (instruction #1124) */
 // live-out: r0-r15,r48-r51,r60 (21 vregs)
 
 // live: r0-r11,r13-r15,r48-r51,r60 (20 vregs)
-1098 [0x2250] 011ACC0000000173   UNK_IMM_11A r12, r51^, #0x1
+1120 [0x2300] 011ACC0000000173   UNK_IMM_11A r12, r51^, #0x1
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1099 [0x2258] 001FC0000000094C   BRANCHZ r12^, offset:9 /* jumps to 0x22A8 (instruction #1109) */
+1121 [0x2308] 001FC0000000094C   BRANCHZ r12^, offset:9 /* jumps to 0x2358 (instruction #1131) */
 // live-out: r0-r15,r48-r50,r60 (20 vregs)
 
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1100 [0x2260] 00B4C5011171C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r49^
+1122 [0x2310] 00B4C5011171C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r49^
 // live: r0-r15,r48-r50,r60 (20 vregs)
-1101 [0x2268] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x22A8 (instruction #1109) */
+1123 [0x2318] 001FC000000007C1   BRANCHZ 0xFFFFFFFF, offset:7 /* jumps to 0x2358 (instruction #1131) */
 // live-out: r0-r15,r48-r50,r60 (20 vregs)
 
-/* Jump target from: 0x2248 */
+/* Jump target from: 0x22F8 */
 // live-in: r0-r15,r48-r50,r60 (20 vregs)
-1102 [0x2270] 00B4F371100DC0CF   LSHIFT_AND.i32 r51, 0x1F1E1D1C.b3, 0x0.b00, r13
+1124 [0x2320] 00B4F371100EC0CF   LSHIFT_AND.i32 r51, 0x1F1E1D1C.b3, 0x0.b00, r14
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1103 [0x2278] 00A0F30000000973   IADD.u32 r51, r51^, r9
+1125 [0x2328] 00A0F30000000A73   IADD.u32 r51, r51^, r10
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1104 [0x2280] 00A0CC6000014CCF   ISUB.u32 r12, 0x1F1E1D1C.b2, r12^
+1126 [0x2330] 00A0CC6000014CCF   ISUB.u32 r12, 0x1F1E1D1C.b2, r12^
 // live: r0-r15,r48-r51,r60 (21 vregs)
-1105 [0x2288] 00B4CC0011C04C72   RSHIFT_OR.i32 r12, r50^, r12^.b00, 0x0
+1127 [0x2338] 00B4CC0011C04C72   RSHIFT_OR.i32 r12, r50^, r12^.b00, 0x0
 // live: r0-r15,r48-r49,r51,r60 (20 vregs)
-1106 [0x2290] 0150CC01C04C9E73   CSEL.u32.gt r12, r51^, u15.w0 /* 32 (0x20) */, r12^, 0x0
+1128 [0x2340] 0150CC01C04C9E73   CSEL.u32.gt r12, r51^, u15.w0 /* 32 (0x20) */, r12^, 0x0
 // live: r0-r15,r48-r49,r60 (19 vregs)
-1107 [0x2298] 00B4C501114CC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r12^
+1129 [0x2348] 00B4C501114CC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r12^
 // live: r0-r11,r13-r15,r48-r49,r60 (18 vregs)
-1108 [0x22A0] 50B4C4011171C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r49^
+1130 [0x2350] 50B4C4011171C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r49^
 // live-out: r0-r11,r13-r15,r48,r60 (17 vregs)
 
-/* Jump target from: 0x2258, 0x2268 */
+/* Jump target from: 0x2308, 0x2318 */
 // live-in: r0-r11,r13-r15,r48,r60 (17 vregs)
-1109 [0x22A8] 00B4CA01114AC04B   LSHIFT_OR.i32 r10, r11^, 0x0.b00, r10^
+1131 [0x2358] 00B4C9011149C04B   LSHIFT_OR.i32 r9, r11^, 0x0.b00, r9^
 // live: r0-r10,r13-r15,r48,r60 (16 vregs)
-1110 [0x22B0] 00B4FF0010A0C901   RSHIFT_AND.i32 r63, r1, 0x7060504.b00, u16.w0 /* 1 (0x1) */
+1132 [0x2360] 00B4FF0010A0C901   RSHIFT_AND.i32 r63, r1, 0x7060504.b00, u16.w0 /* 1 (0x1) */
 // live: r0-r10,r13-r15,r48,r60,r63 (17 vregs)
-1111 [0x22B8] 00A0CB000000094D   IADD.u32 r11, r13^, r9
-// live: r0-r11,r14-r15,r48,r60,r63 (17 vregs)
-1112 [0x22C0] 00B4CD0111C00B7F   LSHIFT_OR.i32 r13, r63^, r11.b00, 0x0
+1133 [0x2368] 00A0CB0000000A4E   IADD.u32 r11, r14^, r10
+// live: r0-r11,r13,r15,r48,r60,r63 (17 vregs)
+1134 [0x2370] 00B4CE0111C00B7F   LSHIFT_OR.i32 r14, r63^, r11.b00, 0x0
 // live: r0-r11,r13-r15,r48,r60 (17 vregs)
-1113 [0x22C8] 00A0CC000000704F   IADD.u32 r12, r15^, r48^
+1135 [0x2378] 00A0CC000000704F   IADD.u32 r12, r15^, r48^
 // live: r0-r14,r60 (16 vregs)
-1114 [0x22D0] 00B4CF0015C0C90B   RSHIFT_OR.i32 r15, r11, 0x7060504.b11, 0x0
+1136 [0x2380] 00B4CF0015C0C90B   RSHIFT_OR.i32 r15, r11, 0x7060504.b11, 0x0
 // live: r0-r15,r60 (17 vregs)
-1115 [0x22D8] 001FC0100000040F   BRANCHZ.eq r15, offset:4 /* jumps to 0x2300 (instruction #1120) */
+1137 [0x2388] 001FC0100000040F   BRANCHZ.eq r15, offset:4 /* jumps to 0x23B0 (instruction #1142) */
 // live-out: r0-r15,r60 (17 vregs)
 
 // live: r0-r15,r60 (17 vregs)
-1116 [0x22E0] 011ACF000000014F   UNK_IMM_11A r15, r15^, #0x1
+1138 [0x2390] 011ACF000000014F   UNK_IMM_11A r15, r15^, #0x1
 // live: r0-r15,r60 (17 vregs)
-1117 [0x22E8] 001FC0000000034F   BRANCHZ r15^, offset:3 /* jumps to 0x2308 (instruction #1121) */
+1139 [0x2398] 001FC0000000034F   BRANCHZ r15^, offset:3 /* jumps to 0x23B8 (instruction #1143) */
 // live-out: r0-r14,r60 (16 vregs)
 
 // live: r0-r14,r60 (16 vregs)
-1118 [0x22F0] 00B4C501114DC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r13^
+1140 [0x23A0] 00B4C501114EC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r14^
 // live: r0-r14,r60 (16 vregs)
-1119 [0x22F8] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x2308 (instruction #1121) */
+1141 [0x23A8] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x23B8 (instruction #1143) */
 // live-out: r0-r14,r60 (16 vregs)
 
-/* Jump target from: 0x22D8 */
+/* Jump target from: 0x2388 */
 // live-in: r0-r14,r60 (16 vregs)
-1120 [0x2300] 50B4C401114DC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r13^
-// live-out: r0-r12,r14,r60 (15 vregs)
+1142 [0x23B0] 50B4C401114EC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r14^
+// live-out: r0-r13,r60 (15 vregs)
 
-/* Jump target from: 0x22E8, 0x22F8 */
-// live-in: r0-r12,r14,r60 (15 vregs)
-1121 [0x2308] 00B4CA31114AC048   LSHIFT_OR.i32 r10, r8^.h1, 0x0.b00, r10^
-// live: r0-r7,r9-r12,r14,r60 (14 vregs)
-1122 [0x2310] 00B4CD00104ECE4C   RSHIFT_AND.i32 r13, r12^, 0x1B1A1918.b00, r14^
+/* Jump target from: 0x2398, 0x23A8 */
+// live-in: r0-r13,r60 (15 vregs)
+1143 [0x23B8] 00B4C9311149C048   LSHIFT_OR.i32 r9, r8^.h1, 0x0.b00, r9^
+// live: r0-r7,r9-r13,r60 (14 vregs)
+1144 [0x23C0] 00B4CD00104DCE4C   RSHIFT_AND.i32 r13, r12^, 0x1B1A1918.b00, r13^
 // live: r0-r7,r9-r11,r13,r60 (13 vregs)
-1123 [0x2318] 00A0C8001C00C40B   IADD.u32 r8, r11, 0x1000000.b3
+1145 [0x23C8] 00A0C8001C00C40B   IADD.u32 r8, r11, 0x1000000.b3
 // live: r0-r11,r13,r60 (14 vregs)
-1124 [0x2320] 00B4CC0111C0080D   LSHIFT_OR.i32 r12, r13, r8.b00, 0x0
+1146 [0x23D0] 00B4CC0111C0080D   LSHIFT_OR.i32 r12, r13, r8.b00, 0x0
 // live: r0-r13,r60 (15 vregs)
-1125 [0x2328] 00B4CE0015C0C908   RSHIFT_OR.i32 r14, r8, 0x7060504.b11, 0x0
+1147 [0x23D8] 00B4CE0015C0C908   RSHIFT_OR.i32 r14, r8, 0x7060504.b11, 0x0
 // live-in: r0-r14,r60 (16 vregs)
-1126 [0x2330] 001FC0100000040E   BRANCHZ.eq r14, offset:4 /* jumps to 0x2358 (instruction #1131) */
+1148 [0x23E0] 001FC0100000040E   BRANCHZ.eq r14, offset:4 /* jumps to 0x2408 (instruction #1153) */
 // live-out: r0-r14,r60 (16 vregs)
 
 // live: r0-r10,r12-r14,r60 (15 vregs)
-1127 [0x2338] 011ACB000000014E   UNK_IMM_11A r11, r14^, #0x1
+1149 [0x23E8] 011ACB000000014E   UNK_IMM_11A r11, r14^, #0x1
 // live: r0-r13,r60 (15 vregs)
-1128 [0x2340] 001FC00000000A4B   BRANCHZ r11^, offset:10 /* jumps to 0x2398 (instruction #1139) */
+1150 [0x23F0] 001FC00000000A4B   BRANCHZ r11^, offset:10 /* jumps to 0x2448 (instruction #1161) */
 // live-out: r0-r13,r60 (15 vregs)
 
 // live: r0-r13,r60 (15 vregs)
-1129 [0x2348] 00B4C501114CC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r12^
+1151 [0x23F8] 00B4C501114CC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r12^
 // live: r0-r13,r60 (15 vregs)
-1130 [0x2350] 001FC000000008C1   BRANCHZ 0xFFFFFFFF, offset:8 /* jumps to 0x2398 (instruction #1139) */
+1152 [0x2400] 001FC000000008C1   BRANCHZ 0xFFFFFFFF, offset:8 /* jumps to 0x2448 (instruction #1161) */
 // live-out: r0-r13,r60 (15 vregs)
 
-/* Jump target from: 0x2330 */
+/* Jump target from: 0x23E0 */
 // live-in: r0-r13,r60 (15 vregs)
-1131 [0x2358] 00B4CB71104BC0CF   LSHIFT_AND.i32 r11, 0x1F1E1D1C.b3, 0x0.b00, r11^
+1153 [0x2408] 00B4CB71104BC0CF   LSHIFT_AND.i32 r11, 0x1F1E1D1C.b3, 0x0.b00, r11^
 // live: r0-r13,r60 (15 vregs)
-1132 [0x2360] 00B4CB71124BC0CF   LSHIFT_XOR.i32 r11, 0x1F1E1D1C.b3, 0x0.b00, r11^
+1154 [0x2410] 00B4CB71124BC0CF   LSHIFT_XOR.i32 r11, 0x1F1E1D1C.b3, 0x0.b00, r11^
 // live: r0-r13,r60 (15 vregs)
-1133 [0x2368] 00B4CB0011C04B4D   RSHIFT_OR.i32 r11, r13^, r11^.b00, 0x0
+1155 [0x2418] 00B4CB0011C04B4D   RSHIFT_OR.i32 r11, r13^, r11^.b00, 0x0
 // live: r0-r12,r60 (14 vregs)
-1134 [0x2370] 00B4CE711008C0CF   LSHIFT_AND.i32 r14, 0x1F1E1D1C.b3, 0x0.b00, r8
+1156 [0x2420] 00B4CE711008C0CF   LSHIFT_AND.i32 r14, 0x1F1E1D1C.b3, 0x0.b00, r8
 // live: r0-r12,r14,r60 (15 vregs)
-1135 [0x2378] 00A0CE000000094E   IADD.u32 r14, r14^, r9
+1157 [0x2428] 00A0CE0000000A4E   IADD.u32 r14, r14^, r10
 // live: r0-r12,r14,r60 (15 vregs)
-1136 [0x2380] 0150CB01C04B9E4E   CSEL.u32.gt r11, r14^, u15.w0 /* 32 (0x20) */, r11^, 0x0
+1158 [0x2430] 0150CB01C04B9E4E   CSEL.u32.gt r11, r14^, u15.w0 /* 32 (0x20) */, r11^, 0x0
 // live: r0-r12,r60 (14 vregs)
-1137 [0x2388] 00B4C501114BC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r11^
+1159 [0x2438] 00B4C501114BC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r11^
 // live: r0-r10,r12,r60 (13 vregs)
-1138 [0x2390] 50B4C401114CC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r12^
+1160 [0x2440] 50B4C401114CC044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r12^
 // live-out: r0-r10,r60 (12 vregs)
 
-/* Jump target from: 0x2340, 0x2350 */
+/* Jump target from: 0x23F0, 0x2400 */
 // live-in: r0-r10,r60 (12 vregs)
-1139 [0x2398] 00B4CA011147C04A   LSHIFT_OR.i32 r10, r10^, 0x0.b00, r7^
+1161 [0x2448] 00B4C9011147C049   LSHIFT_OR.i32 r9, r9^, 0x0.b00, r7^
 // live: r0-r6,r8-r10,r60 (11 vregs)
-1140 [0x23A0] 00B4CB00149CC901   RSHIFT_AND.i32 r11, r1, 0x7060504.b11, u14.w0 /* 3 (0x3) */
+1162 [0x2450] 00B4CB00149CC901   RSHIFT_AND.i32 r11, r1, 0x7060504.b11, u14.w0 /* 3 (0x3) */
 // live: r0-r6,r8-r11,r60 (12 vregs)
-1141 [0x23A8] 00A0C70000000948   IADD.u32 r7, r8^, r9
+1163 [0x2458] 00A0C70000000A48   IADD.u32 r7, r8^, r10
 // live: r0-r7,r9-r11,r60 (12 vregs)
-1142 [0x23B0] 00B4C80111C0070B   LSHIFT_OR.i32 r8, r11, r7.b00, 0x0
+1164 [0x2460] 00B4C80111C0070B   LSHIFT_OR.i32 r8, r11, r7.b00, 0x0
 // live: r0-r11,r60 (13 vregs)
-1143 [0x23B8] 00B4CC0015C0C907   RSHIFT_OR.i32 r12, r7, 0x7060504.b11, 0x0
+1165 [0x2468] 00B4CC0015C0C907   RSHIFT_OR.i32 r12, r7, 0x7060504.b11, 0x0
 // live-in: r0-r12,r60 (14 vregs)
-1144 [0x23C0] 001FC0100000040C   BRANCHZ.eq r12, offset:4 /* jumps to 0x23E8 (instruction #1149) */
+1166 [0x2470] 001FC0100000040C   BRANCHZ.eq r12, offset:4 /* jumps to 0x2498 (instruction #1171) */
 // live-out: r0-r12,r60 (14 vregs)
 
 // live: r0-r10,r12,r60 (13 vregs)
-1145 [0x23C8] 011ACB000000014C   UNK_IMM_11A r11, r12^, #0x1
+1167 [0x2478] 011ACB000000014C   UNK_IMM_11A r11, r12^, #0x1
 // live: r0-r11,r60 (13 vregs)
-1146 [0x23D0] 001FC0000000084B   BRANCHZ r11^, offset:8 /* jumps to 0x2418 (instruction #1155) */
+1168 [0x2480] 001FC0000000084B   BRANCHZ r11^, offset:8 /* jumps to 0x24C8 (instruction #1177) */
 // live-out: r0-r11,r60 (13 vregs)
 
 // live: r0-r11,r60 (13 vregs)
-1147 [0x23D8] 00B4C5011148C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r8^
+1169 [0x2488] 00B4C5011148C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r8^
 // live: r0-r11,r60 (13 vregs)
-1148 [0x23E0] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x2418 (instruction #1155) */
+1170 [0x2490] 001FC000000006C1   BRANCHZ 0xFFFFFFFF, offset:6 /* jumps to 0x24C8 (instruction #1177) */
 // live-out: r0-r11,r60 (13 vregs)
 
-/* Jump target from: 0x23C0 */
+/* Jump target from: 0x2470 */
 // live-in: r0-r11,r60 (13 vregs)
-1149 [0x23E8] 00A0CD00000107C0   ISUB.u32 r13, 0x0, r7
+1171 [0x2498] 00A0CD00000107C0   ISUB.u32 r13, 0x0, r7
 // live: r0-r11,r13,r60 (14 vregs)
-1150 [0x23F0] 00B4CB0011C04D4B   RSHIFT_OR.i32 r11, r11^, r13^.b00, 0x0
+1172 [0x24A0] 00B4CB0011C04D4B   RSHIFT_OR.i32 r11, r11^, r13^.b00, 0x0
 // live: r0-r11,r60 (13 vregs)
-1151 [0x23F8] 00B4CC711007C0CF   LSHIFT_AND.i32 r12, 0x1F1E1D1C.b3, 0x0.b00, r7
+1173 [0x24A8] 00B4CC711007C0CF   LSHIFT_AND.i32 r12, 0x1F1E1D1C.b3, 0x0.b00, r7
 // live: r0-r12,r60 (14 vregs)
-1152 [0x2400] 0150CB00C04B9F4C   CSEL.u32.eq r11, r12^, u15.w1 /* 31 (0x1F) */, r11^, 0x0
+1174 [0x24B0] 0150CB00C04B9F4C   CSEL.u32.eq r11, r12^, u15.w1 /* 31 (0x1F) */, r11^, 0x0
 // live: r0-r11,r60 (13 vregs)
-1153 [0x2408] 00B4C501114BC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r11^
+1175 [0x24B8] 00B4C501114BC045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r11^
 // live: r0-r10,r60 (12 vregs)
-1154 [0x2410] 50B4C4011148C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r8^
+1176 [0x24C0] 50B4C4011148C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r8^
 // live-out: r0-r7,r9-r10,r60 (11 vregs)
 
-/* Jump target from: 0x23D0, 0x23E0 */
+/* Jump target from: 0x2480, 0x2490 */
 // live-in: r0-r7,r9-r10,r60 (11 vregs)
-1155 [0x2418] 00A0C70000004947   IADD.u32 r7, r7^, r9^
-// live: r0-r7,r10,r60 (10 vregs)
-1156 [0x2420] 00A0C8001800C847   IADD.u32 r8, r7^, 0x3020100.b2
-// live: r0-r6,r8,r10,r60 (10 vregs)
-1157 [0x2428] 00B4C70015C0C908   RSHIFT_OR.i32 r7, r8, 0x7060504.b11, 0x0
-// live: r0-r8,r10,r60 (11 vregs)
-1158 [0x2430] 00B4C1001CA0C941   RSHIFT_AND.i32 r1, r1^, 0x7060504.b33, u16.w0 /* 1 (0x1) */
-// live: r0-r8,r10,r60 (11 vregs)
-1159 [0x2438] 00B4C10111C04841   LSHIFT_OR.i32 r1, r1^, r8^.b00, 0x0
-// live: r0-r7,r10,r60 (10 vregs)
-1160 [0x2440] 00B4C371114AC043   LSHIFT_OR.i32 r3, r3^.b3, 0x0.b00, r10^
+1177 [0x24C8] 00A0C70000004A47   IADD.u32 r7, r7^, r10^
+// live: r0-r7,r9,r60 (10 vregs)
+1178 [0x24D0] 00A0C8001800C847   IADD.u32 r8, r7^, 0x3020100.b2
+// live: r0-r6,r8-r9,r60 (10 vregs)
+1179 [0x24D8] 00B4C70015C0C908   RSHIFT_OR.i32 r7, r8, 0x7060504.b11, 0x0
+// live: r0-r9,r60 (11 vregs)
+1180 [0x24E0] 00B4C1001CA0C941   RSHIFT_AND.i32 r1, r1^, 0x7060504.b33, u16.w0 /* 1 (0x1) */
+// live: r0-r9,r60 (11 vregs)
+1181 [0x24E8] 00B4C10111C04841   LSHIFT_OR.i32 r1, r1^, r8^.b00, 0x0
+// live: r0-r7,r9,r60 (10 vregs)
+1182 [0x24F0] 00B4C3711149C043   LSHIFT_OR.i32 r3, r3^.b3, 0x0.b00, r9^
 // live: r0-r7,r60 (9 vregs)
-1161 [0x2448] 001FC01000000407   BRANCHZ.eq r7, offset:4 /* jumps to 0x2470 (instruction #1166) */
+1183 [0x24F8] 001FC01000000407   BRANCHZ.eq r7, offset:4 /* jumps to 0x2520 (instruction #1188) */
 // live-out: r0-r7,r60 (9 vregs)
 
 // live: r0-r7,r60 (9 vregs)
-1162 [0x2450] 011AC70000000147   UNK_IMM_11A r7, r7^, #0x1
+1184 [0x2500] 011AC70000000147   UNK_IMM_11A r7, r7^, #0x1
 // live: r0-r7,r60 (9 vregs)
-1163 [0x2458] 001FC00000000307   BRANCHZ r7, offset:3 /* jumps to 0x2478 (instruction #1167) */
+1185 [0x2508] 001FC00000000307   BRANCHZ r7, offset:3 /* jumps to 0x2528 (instruction #1189) */
 // live-out: r0-r6,r60 (8 vregs)
 
 // live: r0-r6,r60 (8 vregs)
-1164 [0x2460] 00B4C5011141C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r1^
+1186 [0x2510] 00B4C5011141C045   LSHIFT_OR.i32 r5, r5^, 0x0.b00, r1^
 // live: r0-r6,r60 (8 vregs)
-1165 [0x2468] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x2478 (instruction #1167) */
+1187 [0x2518] 001FC000000001C1   BRANCHZ 0xFFFFFFFF, offset:1 /* jumps to 0x2528 (instruction #1189) */
 // live-out: r0-r6,r60 (8 vregs)
 
-/* Jump target from: 0x2448 */
+/* Jump target from: 0x24F8 */
 // live-in: r0-r6,r60 (8 vregs)
-1166 [0x2470] 50B4C4011141C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r1^
+1188 [0x2520] 50B4C4011141C044   LSHIFT_OR.i32.reconverge r4, r4^, 0x0.b00, r1^
 // live-out: r0,r2-r6,r60 (7 vregs)
 
-/* Jump target from: 0x2458, 0x2468 */
+/* Jump target from: 0x2508, 0x2518 */
 // live-in: r0,r2-r6,r60 (7 vregs)
-1167 [0x2478] 0069400018007880   >>> DEBUG_INFO: block 30 <<<
+1189 [0x2528] 0110C100000001C0   IADD_IMM.i32 r1, 0x0, #0x1
 // live: r0,r2-r6,r60 (7 vregs)
-1168 [0x2480] 00A0C00000007C40   IADD.u32 r0, r0^, r60^ /* gl_GlobalInvocationID.x */
+1190 [0x2530] 0068410218806480   >>> DEBUG_INFO: block 25 <<<
+// live: r0,r2-r6,r60 (7 vregs)
+1191 [0x2538] 00A0C00000007C40   IADD.u32 r0, r0^, r60^ /* gl_GlobalInvocationID.x */
 // live: r0,r2-r6 (6 vregs)
-1169 [0x2488] 01A3C00020474084   SHADDX.u64 [r0:r1], u2 /* @_1514_astc_blocks_0 */, [r0^:r1^].w0, shift:0x4
-// live: r0-r6 (7 vregs)
-1170 [0x2490] 08B4C7011142C043   LSHIFT_OR.i32.wait0 r7, r3^, 0x0.b00, r2^
+1192 [0x2540] 08B4C7011142C043   LSHIFT_OR.i32.wait0 r7, r3^, 0x0.b00, r2^
+// live: r0,r4-r7 (5 vregs)
+1193 [0x2548] 0069400018007880   >>> DEBUG_INFO: block 30 <<<
+// live: r0,r4-r7 (5 vregs)
+1194 [0x2550] 09A3C00020474084   SHADDX.u64.wait0 [r0:r1], u2 /* @_1522_astc_blocks_0 */, [r0^:r1^].w0, shift:0x4
 // live: r0-r1,r4-r7 (6 vregs)
-1171 [0x2498] 5061440838000040   STORE.i128.slot0.reconverge @r4:r5:r6:r7, [r0^:r1^], offset:0
+1195 [0x2558] 5061440838000040   STORE.i128.slot0.reconverge @r4:r5:r6:r7, [r0^:r1^], offset:0
 // live-out: none (0 vregs) */
 
 /* Jump target from: 0x0020 */
 // live-in: none (0 vregs) */
-1172 [0x24A0] 7800C00000000000   NOP.end 
+1196 [0x2560] 7800C00000000000   NOP.end 
 // live-out: none (0 vregs) */
 
-.rodata: // 576 bytes
-/* [0x24A8] */  00000000 00000000 00000000 00000000  | ................ |
-/* [0x24B8] */  00000000 00000000 00000000 00000000  | ................ |
-/* [0x24C8] */  00000000 00000000 00000000 00000000  | ................ |
-/* [0x24D8] */  00000000 00000000 00000000 00000000  | ................ |
-/* [0x24E8] */  00000000 00000000 00000000 00000000  | ................ |
-/* [0x24F8] */  00000000 00000000 02201000 14042212  | .......... ..".. |
-/* [0x2508] */  26160624 0A281808 1C0C2A1A 2E1E0E2C  | $..&..(..*..,... |
-/* [0x2518] */  2D0F1F2F 1B2B0D1D 0919290B 25071727  | /..-..+..)..'..% |
-/* [0x2528] */  13230515 01112103 02804000 44048242  | ..#..!...@..B..D |
-/* [0x2538] */  86460684 0A884808 4C0C8A4A 8E4E0E8C  | ..F..H..J..L..N. |
-/* [0x2548] */  12905010 54149252 96561694 1A985818  | .P..R..T..V..X.. |
-/* [0x2558] */  5C1C9A5A 9E5E1E9C 22A06020 6424A262  | Z..\..^. `."b.$d |
-/* [0x2568] */  A66626A4 2AA86828 6C2CAA6A AE6E2EAC  | .&f.(h.*j.,l..n. |
-/* [0x2578] */  32B07030 7434B272 B67636B4 3AB87838  | 0p.2r.4t.6v.8x.: |
-/* [0x2588] */  7C3CBA7A BE7E3EBC BD3F7FBF 7BBB3D7D  | z.<|.>~...?.}=.{ |
-/* [0x2598] */  3979B93B B53777B7 73B33575 3171B133  | ;.y9.w7.u5.s3.q1 |
-/* [0x25A8] */  AD2F6FAF 6BAB2D6D 2969A92B A52767A7  | .o/.m-.k+.i).g'. |
-/* [0x25B8] */  63A32565 2161A123 9D1F5F9F 5B9B1D5D  | e%.c#.a!._..]..[ |
-/* [0x25C8] */  1959991B 95175797 53931555 11519113  | ..Y..W..U..S..Q. |
-/* [0x25D8] */  8D0F4F8F 4B8B0D4D 0949890B 85074787  | .O..M..K..I..G.. |
-/* [0x25E8] */  43830545 01418103 04020100 09080605  | E..C..A......... |
-/* [0x25F8] */  1211100A 18161514 07031A19 1B17130F  | ................ |
-/* [0x2608] */  200E0D0C 25242221 2A292826 34323130  | ... !"$%&()*0124 |
-/* [0x2618] */  39383635 2F27233A 2C3B3733 41402E2D  | 5689:#'/37;,-.@A |
-/* [0x2628] */  46454442 504A4948 55545251 5A595856  | BDEFHIJPQRTUVXYZ |
-/* [0x2638] */  534F4743 4D4C5B57 8281804E 88868584  | CGOSW[LMN....... |
-/* [0x2648] */  91908A89 96959492 839A9998 97938F87  | ................ |
-/* [0x2658] */  8E8D8C9B A4A2A1A0 A9A8A6A5 B2B1B0AA  | ................ |
-/* [0x2668] */  B8B6B5B4 A7A3BAB9 BBB7B3AF C0AEADAC  | ................ |
-/* [0x2678] */  C5C4C2C1 CAC9C8C6 D4D2D1D0 D9D8D6D5  | ................ |
-/* [0x2688] */  CFC7C3DA CCDBD7D3 6160CECD 66656462  | ..........`abdef |
-/* [0x2698] */  706A6968 75747271 7A797876 736F6763  | hijpqrtuvxyzcgos |
-/* [0x26A8] */  6D6C7B77 E2E1E06E E8E6E5E4 F1F0EAE9  | w{lmn........... |
-/* [0x26B8] */  F6F5F4F2 E3FAF9F8 F7F3EFE7 EEEDECFB  | ................ |
-/* [0x26C8] */  3C1E1D1C 5D5C3E3D 9E9D9C5E DCBEBDBC  | ...<=>\]^....... |
-/* [0x26D8] */  3F1FDEDD FFBF9F7F 00FEFDFC 00000000  | ...?............ |
+.rodata: // 512 bytes
+/* [0x2568] */  00000000 00000000 00000000 00000000  | ................ |
+/* [0x2578] */  00000000 00000000 02201000 14042212  | .......... ..".. |
+/* [0x2588] */  26160624 0A281808 1C0C2A1A 2E1E0E2C  | $..&..(..*..,... |
+/* [0x2598] */  2D0F1F2F 1B2B0D1D 0919290B 25071727  | /..-..+..)..'..% |
+/* [0x25A8] */  13230515 01112103 02804000 44048242  | ..#..!...@..B..D |
+/* [0x25B8] */  86460684 0A884808 4C0C8A4A 8E4E0E8C  | ..F..H..J..L..N. |
+/* [0x25C8] */  12905010 54149252 96561694 1A985818  | .P..R..T..V..X.. |
+/* [0x25D8] */  5C1C9A5A 9E5E1E9C 22A06020 6424A262  | Z..\..^. `."b.$d |
+/* [0x25E8] */  A66626A4 2AA86828 6C2CAA6A AE6E2EAC  | .&f.(h.*j.,l..n. |
+/* [0x25F8] */  32B07030 7434B272 B67636B4 3AB87838  | 0p.2r.4t.6v.8x.: |
+/* [0x2608] */  7C3CBA7A BE7E3EBC BD3F7FBF 7BBB3D7D  | z.<|.>~...?.}=.{ |
+/* [0x2618] */  3979B93B B53777B7 73B33575 3171B133  | ;.y9.w7.u5.s3.q1 |
+/* [0x2628] */  AD2F6FAF 6BAB2D6D 2969A92B A52767A7  | .o/.m-.k+.i).g'. |
+/* [0x2638] */  63A32565 2161A123 9D1F5F9F 5B9B1D5D  | e%.c#.a!._..]..[ |
+/* [0x2648] */  1959991B 95175797 53931555 11519113  | ..Y..W..U..S..Q. |
+/* [0x2658] */  8D0F4F8F 4B8B0D4D 0949890B 85074787  | .O..M..K..I..G.. |
+/* [0x2668] */  43830545 01418103 04020100 09080605  | E..C..A......... |
+/* [0x2678] */  1211100A 18161514 07031A19 1B17130F  | ................ |
+/* [0x2688] */  200E0D0C 25242221 2A292826 34323130  | ... !"$%&()*0124 |
+/* [0x2698] */  39383635 2F27233A 2C3B3733 41402E2D  | 5689:#'/37;,-.@A |
+/* [0x26A8] */  46454442 504A4948 55545251 5A595856  | BDEFHIJPQRTUVXYZ |
+/* [0x26B8] */  534F4743 4D4C5B57 8281804E 88868584  | CGOSW[LMN....... |
+/* [0x26C8] */  91908A89 96959492 839A9998 97938F87  | ................ |
+/* [0x26D8] */  8E8D8C9B A4A2A1A0 A9A8A6A5 B2B1B0AA  | ................ |
+/* [0x26E8] */  B8B6B5B4 A7A3BAB9 BBB7B3AF C0AEADAC  | ................ |
+/* [0x26F8] */  C5C4C2C1 CAC9C8C6 D4D2D1D0 D9D8D6D5  | ................ |
+/* [0x2708] */  CFC7C3DA CCDBD7D3 6160CECD 66656462  | ..........`abdef |
+/* [0x2718] */  706A6968 75747271 7A797876 736F6763  | hijpqrtuvxyzcgos |
+/* [0x2728] */  6D6C7B77 E2E1E06E E8E6E5E4 F1F0EAE9  | w{lmn........... |
+/* [0x2738] */  F6F5F4F2 E3FAF9F8 F7F3EFE7 EEEDECFB  | ................ |
+/* [0x2748] */  3C1E1D1C 5D5C3E3D 9E9D9C5E DCBEBDBC  | ...<=>\]^....... |
+/* [0x2758] */  3F1FDEDD FFBF9F7F 00FEFDFC 00000000  | ...?............ |
 
 
 ; End of Disassembly
