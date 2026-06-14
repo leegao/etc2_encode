@@ -78,7 +78,8 @@ jobs:
 
             - name: Extract MBS2
               run: |
-                  frida -f /opt/moc/mali_offline_compiler/malioc -l hook.js -- -c Mali-G615 --vulkan astc_enc.comp || true
+                  slangc astc_enc.slang -target glsl -line-directive-mode none -D DISABLE_RECONSTRUCTION -D ENABLE_DEBUG_LINE_INFO > astc_enc_line_info.comp
+                  frida -f /opt/moc/mali_offline_compiler/malioc -l hook.js -- -c Mali-G615 --vulkan astc_enc_line_info.comp || true
                   gcc disassemble_astc_enc.c disassemble.c -o disassemble_astc_enc.out
                   echo "Disassembling astc_enc_mbs2_shader..."
                   ./disassemble_astc_enc.out | tee disassembled_astc_enc.txt

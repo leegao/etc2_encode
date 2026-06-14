@@ -13123,7 +13123,7 @@ va_disasm_instr(FILE *fp, uint64_t instr, const cmpbe_chunk_CMMN *ctx, unsigned 
              const char *res_name = va_get_resource_name(ctx, src0_type, src0_val, fau_page);
              if (res_name && strstr(res_name, "_DEBUG_LINE_BUFFER_")) {
                  uint32_t parsed_offset = (instr >> 8) & 0xFFFF;
-                 fprintf(fp, ">>> DEBUG_INFO: line %u <<<", parsed_offset / 4);
+                 fprintf(fp, ">>> DEBUG_INFO: block %u <<<", parsed_offset / 4);
                  return;
              }
          }
@@ -13189,7 +13189,7 @@ va_disasm_instr(FILE *fp, uint64_t instr, const cmpbe_chunk_CMMN *ctx, unsigned 
              const char *res_name = va_get_resource_name(ctx, src0_type, src0_val, fau_page);
              if (res_name && strstr(res_name, "_DEBUG_LINE_BUFFER_")) {
                  uint32_t parsed_offset = (instr >> 8) & 0xFFFF;
-                 fprintf(fp, ">>> DEBUG_INFO: line %u <<<", parsed_offset / 4);
+                 fprintf(fp, ">>> DEBUG_INFO: block %u <<<", parsed_offset / 4);
                  return;
              }
          }
@@ -13253,6 +13253,22 @@ va_disasm_instr(FILE *fp, uint64_t instr, const cmpbe_chunk_CMMN *ctx, unsigned 
       }
 
 
+   {
+
+         unsigned src0_type = (instr >> 6) & 3;
+         unsigned src0_val  = (instr >> 0) & 0x3f;
+         unsigned fau_page  = (instr >> 57) & 0x3;
+         unsigned atomic_op = (instr >> 22) & 0xF;
+
+         if (atomic_op == 2) { // ".aadd"
+             const char *res_name = va_get_resource_name(ctx, src0_type, src0_val, fau_page);
+             if (res_name && strstr(res_name, "_DEBUG_LINE_BUFFER_")) {
+                 uint32_t parsed_offset = (instr >> 8) & MASK(8);
+                 fprintf(fp, ">>> DEBUG_INFO: block %u <<<", parsed_offset / 4);
+                 return;
+             }
+         }
+   }
       fputs("ATOM.i32", fp);
       fputs(valhall_slot[(instr >> 30) & 0x7], fp);
       fputs(valhall_atomic_operation[(instr >> 22) & 0xf], fp);
@@ -13303,6 +13319,22 @@ va_disasm_instr(FILE *fp, uint64_t instr, const cmpbe_chunk_CMMN *ctx, unsigned 
       }
 
 
+   {
+
+         unsigned src0_type = (instr >> 6) & 3;
+         unsigned src0_val  = (instr >> 0) & 0x3f;
+         unsigned fau_page  = (instr >> 57) & 0x3;
+         unsigned atomic_op = (instr >> 22) & 0xF;
+
+         if (atomic_op == 2) { // ".aadd"
+             const char *res_name = va_get_resource_name(ctx, src0_type, src0_val, fau_page);
+             if (res_name && strstr(res_name, "_DEBUG_LINE_BUFFER_")) {
+                 uint32_t parsed_offset = (instr >> 8) & MASK(8);
+                 fprintf(fp, ">>> DEBUG_INFO: block %u <<<", parsed_offset / 4);
+                 return;
+             }
+         }
+   }
       fputs("ATOM.i64", fp);
       fputs(valhall_slot[(instr >> 30) & 0x7], fp);
       fputs(valhall_atomic_operation[(instr >> 22) & 0xf], fp);

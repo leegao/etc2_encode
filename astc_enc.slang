@@ -4,6 +4,16 @@
 import astc_pack;
 import encoder_utils;
 
+#pragma warning(disable: 20101)
+#ifdef ENABLE_DEBUG_LINE_INFO // DO NOT ENABLE IN PROD
+RWStructuredBuffer<uint> __DEBUG_LINE_BUFFER__;
+#define BLOCK(i)                                                               \
+  InterlockedAdd(__DEBUG_LINE_BUFFER__[i], 1);                                 \
+  if (true)
+#else
+#define BLOCK(i) if (false)
+#endif
+
 [[vk::binding(0, 0)]]
 StructuredBuffer<uint> input_rgba8_buffer;
 
@@ -90,6 +100,8 @@ extension uint4 {
 void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
   let L = ep1 - ep0;
   let invLenSq = 1.0h / (dot(L, L) + 0.000001h);
+  // Start of solve weights loop
+  BLOCK(12);
   for (int i = 0; i < 16; i++) {
 #ifndef UNROLL_SOLVE_WEIGHTS
     // 3x + 1 mod 3 is always 1, but our compilers aren't smart enough to figure
@@ -107,6 +119,7 @@ void solve_weights(half4 ep0, half4 ep1, out PackedArray<8, 16> weights) {
     let w = pDotL * invLenSq;
     weights[i] = uint(saturate(w) * 255);
   }
+  BLOCK(13);
 }
 
 void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
@@ -129,11 +142,14 @@ void encode_block_AABB(out uint4 endpoint_start, out uint4 endpoint_end,
     max_a = max(max_a, pixels[i].w);
   }
 
+  // After the block of max/min reductions
+  BLOCK(11);
   endpoint_start = uint4(min_r, min_g, min_b, min_a);
   endpoint_end = uint4(max_r, max_g, max_b, max_a);
   var ep0 = half4(endpoint_start) / 255.0h;
   var ep1 = half4(endpoint_end) / 255.0h;
   solve_weights(ep0, ep1, weights);
+  BLOCK(19);
 }
 
 [shader("compute")]
@@ -151,6 +167,9 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
   buffer_index =
       block_pos.y * (pushConstants.u_TextureDimensions.x / 4) + block_pos.x;
+
+  // Start of shader
+  BLOCK(0);
 
   // Encoding
   uint width = pushConstants.u_TextureDimensions.x;
@@ -186,6 +205,8 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
     }
   }
 
+  // After pixels are read
+  BLOCK(10);
   uint4 ep0, ep1;
   PackedArray<8, 16> weights_1p;
   uint quant_weight_mode_1p;
@@ -194,11 +215,15 @@ void main(uint3 gl_GlobalInvocationID: SV_DispatchThreadID) {
 
   // TODO(leegao): look for bit tricks for the 1-partition AABB case
   encode_block_AABB(ep0, ep1, weights_1p);
+  // After encode_block_AABB
+  BLOCK(20);
   quant_weight_mode_1p = 8u; // get_quant_ep_mode is 19 for rgb, 13 for rgba
   eps[0] = uint4(ep0);
   eps[1] = uint4(ep1);
   // TODO(leegao): this is the bottleneck
   packed_1p = pack_astc_4x4_block(eps, weights_1p, use_alpha);
+  // After pack_astc_4x4_block
+  BLOCK(30);
   astc_blocks[buffer_index] = packed_1p;
 
 #ifdef ENABLE_DIAGNOSTICS

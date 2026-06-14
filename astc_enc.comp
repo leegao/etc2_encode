@@ -26,7 +26,10 @@ layout(std430) uniform block_PushConstants_0
     ivec2 u_TextureDimensions_0;
     Flags_0 u_Flags_0;
 }pushConstants_0;
-layout(std430, binding = 0) readonly buffer StructuredBuffer_uint_t_0 {
+layout(std430, binding = 2) buffer StructuredBuffer_uint_t_0 {
+    uint _data[];
+} _DEBUG_LINE_BUFFER_0;
+layout(std430, binding = 0) readonly buffer StructuredBuffer_uint_t_1 {
     uint _data[];
 } input_rgba8_buffer_0;
 layout(std430, binding = 1) buffer StructuredBuffer_vectorx3Cuintx2C4x3E_t_0 {
@@ -112,6 +115,7 @@ void solve_weights_0(f16vec4 ep0_0, f16vec4 ep1_0, out PackedArray_1 weights_0)
 {
     f16vec4 _S1 = ep1_0 - ep0_0;
     float16_t _S2 = 1.0HF / (dot(_S1, _S1) + 1.01327896118164062e-06HF);
+    uint _S3 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(12)], 1U);
     int i_0 = 0;
     for(;;)
     {
@@ -127,11 +131,12 @@ void solve_weights_0(f16vec4 ep0_0, f16vec4 ep1_0, out PackedArray_1 weights_0)
             i_0 = i_0 + 1;
             continue;
         }
-        uint _S3 = uint(i_0);
-        uint bitOffset_0 = _S3 % 4U * 8U;
-        weights_0.data_0[_S3 / 4U] = ((weights_0.data_0[_S3 / 4U]) & (~(255U << bitOffset_0))) | ((uint(saturate_0(dot(to_unorm_0(pixels_0[i_0]) - ep0_0, _S1) * _S2) * 255.0HF) & 255U) << bitOffset_0);
+        uint _S4 = uint(i_0);
+        uint bitOffset_0 = _S4 % 4U * 8U;
+        weights_0.data_0[_S4 / 4U] = ((weights_0.data_0[_S4 / 4U]) & (~(255U << bitOffset_0))) | ((uint(saturate_0(dot(to_unorm_0(pixels_0[i_0]) - ep0_0, _S1) * _S2) * 255.0HF) & 255U) << bitOffset_0);
         i_0 = i_0 + 1;
     }
+    uint _S5 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(13)], 1U);
     return;
 }
 
@@ -155,45 +160,47 @@ void encode_block_AABB_0(out uvec4 endpoint_start_0, out uvec4 endpoint_end_0, o
         {
             break;
         }
-        uint _S4 = min(min_r_0, pixels_0[i_1].x);
-        uint _S5 = min(min_g_0, pixels_0[i_1].y);
-        uint _S6 = min(min_b_0, pixels_0[i_1].z);
-        uint _S7 = min(min_a_0, pixels_0[i_1].w);
-        uint _S8 = max(max_r_0, pixels_0[i_1].x);
-        uint _S9 = max(max_g_0, pixels_0[i_1].y);
-        uint _S10 = max(max_b_0, pixels_0[i_1].z);
-        uint _S11 = max(max_a_0, pixels_0[i_1].w);
+        uint _S6 = min(min_r_0, pixels_0[i_1].x);
+        uint _S7 = min(min_g_0, pixels_0[i_1].y);
+        uint _S8 = min(min_b_0, pixels_0[i_1].z);
+        uint _S9 = min(min_a_0, pixels_0[i_1].w);
+        uint _S10 = max(max_r_0, pixels_0[i_1].x);
+        uint _S11 = max(max_g_0, pixels_0[i_1].y);
+        uint _S12 = max(max_b_0, pixels_0[i_1].z);
+        uint _S13 = max(max_a_0, pixels_0[i_1].w);
         int i_2 = i_1 + 1;
-        min_r_0 = _S4;
-        min_g_0 = _S5;
-        min_b_0 = _S6;
-        min_a_0 = _S7;
-        max_r_0 = _S8;
-        max_g_0 = _S9;
-        max_b_0 = _S10;
-        max_a_0 = _S11;
+        min_r_0 = _S6;
+        min_g_0 = _S7;
+        min_b_0 = _S8;
+        min_a_0 = _S9;
+        max_r_0 = _S10;
+        max_g_0 = _S11;
+        max_b_0 = _S12;
+        max_a_0 = _S13;
         i_1 = i_2;
     }
+    uint _S14 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(11)], 1U);
     endpoint_start_0 = uvec4(min_r_0, min_g_0, min_b_0, min_a_0);
-    uvec4 _S12 = uvec4(max_r_0, max_g_0, max_b_0, max_a_0);
-    endpoint_end_0 = _S12;
-    solve_weights_0(f16vec4(endpoint_start_0) / 255.0HF, f16vec4(_S12) / 255.0HF, weights_1);
+    uvec4 _S15 = uvec4(max_r_0, max_g_0, max_b_0, max_a_0);
+    endpoint_end_0 = _S15;
+    solve_weights_0(f16vec4(endpoint_start_0) / 255.0HF, f16vec4(_S15) / 255.0HF, weights_1);
+    uint _S16 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(19)], 1U);
     return;
 }
 
 uint unscramble_quantized_0(uint quant_mode_0, uint q_val_0)
 {
-    uint _S13;
+    uint _S17;
     if(quant_mode_0 == 19U)
     {
-        _S13 = 48U;
+        _S17 = 48U;
     }
     else
     {
-        _S13 = 0U;
+        _S17 = 0U;
     }
-    uint _S14 = q_val_0 + _S13;
-    return ((packed_unscrambler_data_0[_S14 >> 2]) >> ((_S14 & 3U) << 3)) & 255U;
+    uint _S18 = q_val_0 + _S17;
+    return ((packed_unscrambler_data_0[_S18 >> 2]) >> ((_S18 & 3U) << 3)) & 255U;
 }
 
 uint get_integer_from_trits_0(uint index_0)
@@ -257,11 +264,11 @@ void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_o
             {
                 break;
             }
-            uint _S15 = i_3 + j_0;
-            if(_S15 < count_1)
+            uint _S19 = i_3 + j_0;
+            if(_S19 < count_1)
             {
                 uint bitOffset_1 = j_0 % 4U * 8U;
-                group_0.data_0[j_0 / 4U] = ((group_0.data_0[j_0 / 4U]) & (~(255U << bitOffset_1))) | (((PackedArray_operatorx5Bx5D_get_2(numbers_0, _S15)) & 255U) << bitOffset_1);
+                group_0.data_0[j_0 / 4U] = ((group_0.data_0[j_0 / 4U]) & (~(255U << bitOffset_1))) | (((PackedArray_operatorx5Bx5D_get_2(numbers_0, _S19)) & 255U) << bitOffset_1);
             }
             j_0 = j_0 + 1U;
         }
@@ -302,23 +309,23 @@ void encode_trits_0(inout uint block_x_1, inout uint block_y_1, inout uint bit_o
 uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_alpha_0)
 {
     uvec4 final_block_0 = uvec4(0U, 0U, 0U, 0U);
-    uint _S16;
+    uint _S20;
     if(use_alpha_0)
     {
-        _S16 = 8U;
+        _S20 = 8U;
     }
     else
     {
-        _S16 = 6U;
+        _S20 = 6U;
     }
-    uint _S17;
+    uint _S21;
     if(use_alpha_0)
     {
-        _S17 = 13U;
+        _S21 = 13U;
     }
     else
     {
-        _S17 = 19U;
+        _S21 = 19U;
     }
     uint i_4;
     if(use_alpha_0)
@@ -329,14 +336,14 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
     {
         i_4 = 8U;
     }
-    uint _S18;
+    uint _S22;
     if(use_alpha_0)
     {
-        _S18 = 4U;
+        _S22 = 4U;
     }
     else
     {
-        _S18 = 6U;
+        _S22 = 6U;
     }
     final_block_0[0] = 578U | ((i_4 & 15U) << 13U);
     uint fwd_offset_0 = 17U;
@@ -378,7 +385,7 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
     [[unroll]]
     for(;;)
     {
-        if(i_5 < _S16)
+        if(i_5 < _S20)
         {
         }
         else
@@ -386,24 +393,25 @@ uvec4 pack_astc_4x4_block_0(uvec4  eps_0[2], PackedArray_1 weights_2, bool use_a
             break;
         }
         uint bitOffset_3 = i_5 % 4U * 8U;
-        quantized_endpoints_0.data_0[i_5 / 4U] = ((quantized_endpoints_0.data_0[i_5 / 4U]) & (~(255U << bitOffset_3))) | (((unscramble_quantized_0(_S17, clamp(uint(float(PackedArray_operatorx5Bx5D_get_2(raw_endpoints_0, i_5)) * float(i_4) / 255.0 + 0.5), 0U, i_4))) & 255U) << bitOffset_3);
+        quantized_endpoints_0.data_0[i_5 / 4U] = ((quantized_endpoints_0.data_0[i_5 / 4U]) & (~(255U << bitOffset_3))) | (((unscramble_quantized_0(_S21, clamp(uint(float(PackedArray_operatorx5Bx5D_get_2(raw_endpoints_0, i_5)) * float(i_4) / 255.0 + 0.5), 0U, i_4))) & 255U) << bitOffset_3);
         i_5 = i_5 + 1U;
     }
-    encode_trits_0(final_block_0[0], final_block_0[1], fwd_offset_0, quantized_endpoints_0, _S18, _S16);
+    encode_trits_0(final_block_0[0], final_block_0[1], fwd_offset_0, quantized_endpoints_0, _S22, _S20);
     return final_block_0;
 }
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 void main()
 {
-    ivec2 _S19 = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tex_coord_0 = _S19 * 4;
+    ivec2 _S23 = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 tex_coord_0 = _S23 * 4;
     if((any(bvec2((greaterThanEqual(tex_coord_0,pushConstants_0.u_TextureDimensions_0))))))
     {
         return;
     }
-    buffer_index_0 = uint(_S19.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S19.x);
-    uint _S20 = uint(pushConstants_0.u_TextureDimensions_0.x);
+    buffer_index_0 = uint(_S23.y * (pushConstants_0.u_TextureDimensions_0.x / 4) + _S23.x);
+    uint _S24 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(0)], 1U);
+    uint _S25 = uint(pushConstants_0.u_TextureDimensions_0.x);
     bool use_alpha_1 = false;
     int y_0 = 0;
     for(;;)
@@ -432,7 +440,7 @@ void main()
             uint a_1;
             if(Flags_use_sfloat16_get_0(pushConstants_0.u_Flags_0))
             {
-                uint tex_coord_1 = (uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1)) * 2U;
+                uint tex_coord_1 = (uint(tex_coord_0.y + y_0) * _S25 + uint(tex_coord_0.x + x_1)) * 2U;
                 uint hi_0 = input_rgba8_buffer_0._data[uint(tex_coord_1)];
                 r_1 = sfloat16_to_uint8_0((hi_0 >> 0) & 65535U);
                 g_1 = sfloat16_to_uint8_0((hi_0 >> 16) & 65535U);
@@ -444,11 +452,11 @@ void main()
             {
                 if(Flags_use_snorm8_get_0(pushConstants_0.u_Flags_0))
                 {
-                    unpack_snorm_to_unorm_float_0(input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1))], r_1, g_1, b_1, a_1);
+                    unpack_snorm_to_unorm_float_0(input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S25 + uint(tex_coord_0.x + x_1))], r_1, g_1, b_1, a_1);
                 }
                 else
                 {
-                    uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S20 + uint(tex_coord_0.x + x_1))];
+                    uint tex_element_0 = input_rgba8_buffer_0._data[uint(uint(tex_coord_0.y + y_0) * _S25 + uint(tex_coord_0.x + x_1))];
                     a_1 = (tex_element_0 >> 24) & 255U;
                     b_1 = (tex_element_0 >> 16) & 255U;
                     g_1 = (tex_element_0 >> 8) & 255U;
@@ -462,21 +470,25 @@ void main()
             }
             x_1 = x_1 + 1;
         }
-        int _S21 = y_0 + 1;
+        int _S26 = y_0 + 1;
         use_alpha_1 = use_alpha_2;
-        y_0 = _S21;
+        y_0 = _S26;
     }
-    const uvec4 _S22 = uvec4(0U);
+    uint _S27 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(10)], 1U);
+    const uvec4 _S28 = uvec4(0U);
     uvec4  eps_1[2];
-    eps_1[0] = _S22;
-    eps_1[1] = _S22;
+    eps_1[0] = _S28;
+    eps_1[1] = _S28;
     uvec4 ep0_1;
     uvec4 ep1_1;
     PackedArray_1 weights_1p_0;
     encode_block_AABB_0(ep0_1, ep1_1, weights_1p_0);
+    uint _S29 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(20)], 1U);
     eps_1[0] = ep0_1;
     eps_1[1] = ep1_1;
-    astc_blocks_0._data[uint(buffer_index_0)] = pack_astc_4x4_block_0(eps_1, weights_1p_0, use_alpha_1);
+    uvec4 packed_1p_0 = pack_astc_4x4_block_0(eps_1, weights_1p_0, use_alpha_1);
+    uint _S30 = atomicAdd(_DEBUG_LINE_BUFFER_0._data[uint(30)], 1U);
+    astc_blocks_0._data[uint(buffer_index_0)] = packed_1p_0;
     return;
 }
 
